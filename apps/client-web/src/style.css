@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@source "./";
+@source "../../../packages/foldkit-preview/src";
+
+@layer base {
+  body {
+    @apply m-0 bg-[#101820] font-sans text-[#eef6ff];
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@qaveai/server-core",
+  "type": "module",
+  "private": true,
+  "module": "index.ts",
+  "scripts": {
+    "dev": "bun --watch index.ts",
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@effect/platform": "^0.96.1",
+    "@effect/platform-bun": "^0.89.0",
+    "@effect/rpc": "^0.75.1",
+    "@effect/workflow": "^0.18.1",
+    "@qaveai/shared": "workspace:*",
+    "effect": "^3.21.2",
+    "effect-qb": "^0.15.0"
+  }
+}

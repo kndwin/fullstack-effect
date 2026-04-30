@@ -1,0 +1,21 @@
+{
+  "name": "qaveai",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:client": "bun run --cwd apps/client-web dev",
+    "preview:client": "bun run --cwd apps/client-web preview",
+    "dev:server": "bun run --cwd apps/server-core dev",
+    "typecheck": "tsgo --noEmit",
+    "typecheck:tsc": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@typescript/native-preview": "beta",
+    "typescript": "^6.0.3"
+  }
+}
