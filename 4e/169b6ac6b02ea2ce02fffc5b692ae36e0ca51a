@@ -1,0 +1,737 @@
+packages/client-ds/src/rich-text-editor/nodes/bold.node.ts
+  s_27ca32cdfdd838::t_3f278dee16dab9 1-12
+packages/client-ds/src/rich-text-editor/rich-text-editor.commands.ts
+  s_27ca32cdfdd838::t_73eb750a379667 10-11,29,31
+  s_27ca32cdfdd838::t_302de22438ce32 28,30
+  27ca32cdfdd83826 3,6-9,32-38
+  s_27ca32cdfdd838::t_a7dde850c44a61 1-2,4-5,12
+  s_27ca32cdfdd838::t_621b7bb70692b7 13-27
+packages/client-ds/src/tooltip/tooltip.view.ts
+  a5da58bae2a34702 29
+  ec044f73bbb42c09 1-6,17-28,30-55
+  02a4ded1bb320161 7-16
+packages/client-ds/src/rich-text-editor/rich-text-editor.dom.ts
+  27ca32cdfdd83826 1-5,12,34-36,40-49,52-54,68-118
+  s_27ca32cdfdd838::t_6a5a7c217bed87 6-11,13-33,50-51
+  s_27ca32cdfdd838::t_ee5884c3184213 37-39,56
+  s_27ca32cdfdd838::t_b25c96b188ebff 55,57-67
+packages/client-ds/src/button/button.view.ts
+  ec044f73bbb42c09 11-19,23,25-28,33-35,38
+  02a4ded1bb320161 36-37,47
+  a5da58bae2a34702 20-22,24,29-32
+package.json
+  02a4ded1bb320161 8,13-18,26-28
+  7fbd1a38dd4744fd 23
+packages/client-ds/src/rich-text-editor/nodes/heading.node.ts
+  s_27ca32cdfdd838::t_3f278dee16dab9 1-39
+packages/client-ds/src/switch/switch.preview.ts
+  ec044f73bbb42c09 1-8,10-12,32-36,40-41,66-85,89-101
+  b66376d20b31d91a 27-30
+  4b07a9f4099f4042 9,13-26,31,37-39,46-47,52-53,58-59
+  02a4ded1bb320161 42-45,48-51,54-57,60-65,86-88
+packages/client-ds/src/radio-group/radio-group.view.ts
+  a5da58bae2a34702 26,42-43
+  02a4ded1bb320161 49-76
+  ec044f73bbb42c09 1-25,27-41,44-48,77-85
+packages/client-ds/src/rich-text-editor/rich-text-editor.slash-menu.view.ts
+  27ca32cdfdd83826 1-35,37-74
+  s_27ca32cdfdd838::t_10d21bf0c0dbf5 36
+packages/foldkit-preview/package.json
+  c7774a575d8fda74 19
+  02a4ded1bb320161 7-8
+  b7b6259f2ceebba6 17,20-21
+packages/client-ds/src/popover/popover.preview.ts
+  ec044f73bbb42c09 2,4-9,11-14,39-41,58-64,68-69,88-114
+  02a4ded1bb320161 42-57,70-73,76-79,82-87
+  b66376d20b31d91a 33-35
+  4b07a9f4099f4042 1,3,10,15-32,36-38,65-67,74-75,80-81
+packages/client-ds/src/input/input.preview.ts
+  ec044f73bbb42c09 1-11,46-70,75-80
+  02a4ded1bb320161 12-45,71-74
+packages/client-ds/src/tooltip/tooltip.preview.ts
+  4b07a9f4099f4042 6,10,14-46,52-54,61-62,67-68,85
+  02a4ded1bb320161 57-60,63-66,69-74,97-101
+  ec044f73bbb42c09 1-5,7-9,11-13,47-51,55-56,75-84,86-96,102-106,108-115
+packages/client-ds/src/rich-text-editor/nodes/text.node.ts
+  s_27ca32cdfdd838::t_4effa8723ab4e1 14-20
+  s_27ca32cdfdd838::t_3f278dee16dab9 1-13,21-28
+packages/client-ds/src/textarea/textarea.preview.ts
+  ec044f73bbb42c09 1-11,50-75,80-85
+  02a4ded1bb320161 12-49,76-79
+packages/client-ds/src/slider/slider.preview.ts
+  ec044f73bbb42c09 6,94,100,103,107-109,119,125,128-132,137-170
+  4b07a9f4099f4042 13-19,71-84,89-90,120-124,126-127
+  02a4ded1bb320161 45,93,97-99,101-102,104-106,110-112,133-134,136
+  4a4499fae7f8e02d 85-88,135
+  b7b6259f2ceebba6 116
+packages/client-ds/src/rich-text-editor/rich-text-editor.preview.ts
+  7fbd1a38dd4744fd 7-8,13-14,17,29,31-34,51-53,152,154,157-158,213
+  9e1316885087ec92 1-5,11-12,19-20,22-28,35,42-50,56-110,112-150,156,159,220-226
+  s_27ca32cdfdd838::t_848a1703447900 18,30
+  s_27ca32cdfdd838::t_3095d91c76f358 153,162,167,186,200,209
+  27ca32cdfdd83826 6,9-10,15-16,21,36-41,54-55,151,155,160-161,163-166,168-185,187-199,201-208,210-212,214-219
+  s_27ca32cdfdd838::t_163e07117d95ab 111
+packages/client-ds/src/fieldset/fieldset.view.ts
+  ec044f73bbb42c09 1-17,19-26,47-48
+  a5da58bae2a34702 18
+  02a4ded1bb320161 27-46
+packages/client-ds/src/toast/toast.view.ts
+  a5da58bae2a34702 25,39
+  b66376d20b31d91a 30-37,68-73
+  ec044f73bbb42c09 1-24,26-29,38,40-67,74-87
+packages/client-ds/src/rich-text-editor/rich-text-editor.keyboard.ts
+  s_27ca32cdfdd838::t_16b71a5440431a 13,44
+  s_27ca32cdfdd838::t_e55bec8a586620 54
+  27ca32cdfdd83826 1-12,14-43,45-52,55-72
+  s_27ca32cdfdd838::t_0e3b9ea95f588f 53
+packages/client-ds/src/select/select.preview.ts
+  ec044f73bbb42c09 1-18,56-79,84-89
+  02a4ded1bb320161 19-55,80-83
+packages/client-ds/src/listbox/listbox.preview.ts
+  b66376d20b31d91a 42-44
+  4b07a9f4099f4042 1,3,9,13-21,28-41,45-46,53-55,62-63,68-69,74-75,80-81
+  02a4ded1bb320161 58-61,64-67,70-73,76-79,82-86,110-113
+  ec044f73bbb42c09 2,4-8,10-12,22-27,47-52,56-57,87-109,114-119
+packages/client-ds/src/theme.css
+  a5da58bae2a34702 5-6,23-24,115-175,246-247,249-250,252-253,255-258,260-261,263-264,266-267,269-271,274-276,288-298
+  ec044f73bbb42c09 56-97,178-224,241-245,248,251,254,259,262,265,268,272-273,277-286
+  ccacbb632c7bd270 3-4,7-22,25-52
+  9c0386e51461f193 104-110,231-237,287
+packages/client-ds/src/ui.view.skill.md
+  ec044f73bbb42c09 1-58,60-64,66-70,72-76,78-95
+  02a4ded1bb320161 59,65,71,77
+packages/client-ds/src/example/settings-panel.preview.ts
+  4b1ec1957cdd4604 1-202
+packages/client-ds/src/example/assign-dialog.preview.ts
+  4b1ec1957cdd4604 1-49,51-232
+  8ae3cadadb67fefd 50
+packages/client-ds/src/dialog/dialog.view.ts
+  b66376d20b31d91a 1-17,20-22,24-25,27-34,36,38-49
+  8ae3cadadb67fefd 18-19,23,26,35,37
+packages/client-ds/src/ui.preview.skill.md
+  ec044f73bbb42c09 1-61,63-138
+  02a4ded1bb320161 62
+packages/client-ds/src/badge/badge.preview.ts
+  ec044f73bbb42c09 1-13,23-28
+  02a4ded1bb320161 14-22
+packages/client-ds/src/radio-group/radio-group.preview.ts
+  02a4ded1bb320161 53-56,59-62,65-69,72-77
+  ec044f73bbb42c09 1-8,10-12,21-26,42-47,51-52,78-110
+  4b07a9f4099f4042 9,13-20,27-37,48-50,57-58,63-64,70-71
+  b66376d20b31d91a 38-41
+packages/client-ds/src/app-shell/app-shell.preview.ts
+  9c0386e51461f193 3-5,7-25,27-43,45-53,55-64,66-88,90-95,103-112,117,165-176,178,183,185-186,188-191,193,202,204-207,209-214,216-236,265-267,269-270,276-277,284-292,297-298,310-358
+  f06750fc620434af 89,113-116,177,179-182,194-201,203,208,237-264,268,271-275,278-283,293-296,299-309
+  969a33c732371274 1-2,6,26,44,54,65,96-102,118-164,184,187,192,215
+packages/client-ds/src/separator/separator.preview.ts
+  ec044f73bbb42c09 1-13,35-40
+  02a4ded1bb320161 14-34
+.mcp.json
+  s_27ca32cdfdd838::t_5c16f2413bb2a1 7-10
+  7fbd1a38dd4744fd 1-6,11-13
+packages/foldkit-preview/preview/vite.config.ts
+  c7774a575d8fda74 84-85
+  02a4ded1bb320161 12-15,19,40-42,50,64-66,71
+packages/client-ds/src/dialog/dialog.preview.ts
+  8ae3cadadb67fefd 24,82-83
+  b66376d20b31d91a 1-23,25-81,84-133
+packages/client-ds/src/alert/alert.preview.ts
+  ec044f73bbb42c09 1-13,36-41
+  02a4ded1bb320161 14-35
+packages/foldkit-preview/src/index.ts
+  466e82bee7058654 30-31,35-36,40,70,79,374,441-444,862,892,956-963,968,978,1000,1006,1020,1025-1027,1032,1038,1075,1184,1270,1449
+  ec044f73bbb42c09 78,205-206,347,414,446-449,893-894,900-941,943-944,1031,1338,1454
+  b7b6259f2ceebba6 339,418
+  4ffade188163ec48 66-68,455,486,587-594,597-618,620-622,624-629,636-655,898,1080,1297-1298,1373,1375,1439,2276-2280
+  c7774a575d8fda74 1,19-24,29,41-46,53-56,58-60,63-65,75,85-98,102-106,171-204,207-210,212-334,364-365,367,369,372-373,413,415,420-423,430-435,488,491-510,514-534,543-565,841-843,846-858,860-861,863,865,870-871,876-878,880-885,888-889,899,946,951,964,966-967,969-977,979-980,998-999,1001-1005,1007-1015,1017,1040,1052-1055,1057,1060,1063-1064,1071,1152,1161,1163,1167,1299,1305,1326-1328,1330,1332-1337,1339,1374,1376-1387,1391-1392,1396-1399,1425,1434,1442-1443,1447,1451,2274
+  fb96f60aa7fd8412 349,410-412,467,566-586,619,623,656,800-822,826-828,879,1139-1140,1452-1453,1484,1486-1488,1501-1505,1522,2134-2136,2150,2171
+  a242fcad617b611e 744,749,751-754,760-761,773-774,790-791
+  cc980f6a97702ccf 750,762,764,775,1519
+  1b0411302bd55623 1458-1459,2236
+  f06750fc620434af 133-154,595-596,823-825,1471-1473,1508-1516,1554-1555,1557,1559,1561,1575-1756,1788-1791,1836-1838,1845-1848,1877-1892,1919-1968,1973-1974,1976-1978,1980-1981,1983-1986,2000-2023,2028-2031,2082-2088,2137-2149,2234-2235,2237
+  077ae8368f49c14a 2,129-132,166-170,384-385,450-454,483-485,511,895-897,1291-1296,1300-1301,1306-1316,1318-1323,1329,1331,1366,1368,1401-1417,1462,1466-1467,1469-1470,1550-1552,1760-1764,1767-1768,1770-1781,1783-1784,1787,1793-1795,1797-1799,1801-1834,1841-1844,1849-1876,1893-1910,1912-1918,1969-1972,1975,1979,1982,1987-1999,2024-2027,2032,2034-2071,2075-2081,2089-2091,2202
+  dd0aec56cbd6f5f9 3,370-371,436-440,445,512-513,890-891,1400,1418,1421-1424,1426,1429-1433,1464-1465,1468
+  ccacbb632c7bd270 155-165,340-346,394-402,460-463,630-635,661-740,872-875,1097-1132,1553,1556,1558,1560,1562-1574,1757-1759,2190,2193-2196,2229
+  02a4ded1bb320161 32-34,37-39,47-51,80-83,100,352-363,375-383,457-459,464-466,468-482,487,535-542,745-748,836,838-840,844-845,866-869,942,945,947-950,952-955,981-997,1021-1024,1028-1030,1034-1037,1039,1041-1048,1058-1059,1061-1062,1065-1070,1072-1074,1076-1079,1081-1096,1133-1138,1141-1151,1153-1160,1162,1164-1166,1168-1183,1185-1269,1271,1273-1290,1302-1304,1342-1365,1367,1369-1371,1388-1390,1393-1395,1419-1420,1427-1428,1460-1461,1463,1489-1500,1506,1517,1524-1547,1765-1766,1769,1782,1785-1786,1792,1796,1800,1835,1839-1840,1911,2033,2092-2094,2098-2133,2151-2170,2172-2189,2191-2192,2197-2201,2203-2228,2230-2233,2238-2265
+  9c0386e51461f193 2072-2074
+  39622c23f9f356c8 25-28,52,57,69,366,368,424-425,427-429,859,886-887,1016,1018-1019,1033,1049-1051,1056,1444-1446,1448
+packages/client-ds/src/example/data-table-toolbar.preview.ts
+  4b1ec1957cdd4604 1-200
+packages/client-ds/src/tabs/tabs.view.ts
+  02a4ded1bb320161 48-52,58-63
+  ec044f73bbb42c09 1-27,29,31-45,47,53-57,64-72
+  a5da58bae2a34702 28,30,46
+packages/client-ds/src/listbox/listbox.view.ts
+  a5da58bae2a34702 45,47,49
+  ec044f73bbb42c09 1-14,32-44,46,48,50-72,77-79,87-94
+  02a4ded1bb320161 15-31,73-76,80-86
+packages/client-ds/src/example/app-workspace.preview.ts
+  f06750fc620434af 95,114-118,128,133,147,150,188,191,202,246,259
+  4b1ec1957cdd4604 1-94,96-113,119-127,129-132,134-146,148-149,151-187,189-190,192-201,203-245,247-258,260-293
+packages/client-ds/src/popover/popover.view.ts
+  ec044f73bbb42c09 1-6,17-29,31,33-57
+  02a4ded1bb320161 7-16
+  a5da58bae2a34702 30,32
+packages/client-ds/src/menu/menu.view.ts
+  a5da58bae2a34702 29,31,33
+  b66376d20b31d91a 1-28,30,32,34-83
+packages/client-ds/src/rich-text-editor/nodes/paragraph.node.ts
+  s_27ca32cdfdd838::t_3f278dee16dab9 1-4,6-15,17-22
+  s_27ca32cdfdd838::t_fbec74f5428b66 5,16
+packages/client-ds/src/card/card.preview.ts
+  02a4ded1bb320161 18-49,57-86
+  ec044f73bbb42c09 1-17,50-56,87-96
+packages/client-ds/src/tabs/tabs.preview.ts
+  4b07a9f4099f4042 9,13-24,29,66-68,75-76,81-82
+  ec044f73bbb42c09 1-8,10-12,30-33,58-65,69-70,89-110,116-121
+  02a4ded1bb320161 34-57,71-74,77-80,83-88,111-115
+  b66376d20b31d91a 25-28
+packages/client-ds/src/toast/toast.preview.ts
+  b66376d20b31d91a 60-64,102-105,112-117,130-134
+  ec044f73bbb42c09 1-59,65-101,106-111,118-129,135-157
+packages/client-ds/src/select/select.view.ts
+  02a4ded1bb320161 43,45-77
+  a5da58bae2a34702 29,44
+  ec044f73bbb42c09 1-28,30-42,78-79
+packages/client-ds/src/card/index.ts
+  ec044f73bbb42c09 1-2
+packages/client-ds/src/textarea/textarea.view.ts
+  02a4ded1bb320161 40,42-60
+  ec044f73bbb42c09 1-23,25-39,61-62
+  a5da58bae2a34702 24,41
+packages/client-ds/src/rich-text-editor/rich-text-editor.schema.ts
+  27ca32cdfdd83826 1-2,6-7,13-33,35-49,67,76-77
+  s_27ca32cdfdd838::t_bb0cf45abc2010 9-12
+  s_27ca32cdfdd838::t_54b37cc0fae580 8,34
+  s_27ca32cdfdd838::t_47e4983a521b2e 3-5,50-66,68-75
+packages/client-ds/src/preview.css
+  dd0aec56cbd6f5f9 1-4
+packages/client-ds/preview.config.ts
+  dd0aec56cbd6f5f9 1-7
+packages/client-ds/src/rich-text-editor/rich-text-editor.view.ts
+  9e1316885087ec92 2-4,13,37,66-67,76,96,99-105,132-133,215,217-219
+  s_27ca32cdfdd838::t_71912713bfd41d 207
+  s_27ca32cdfdd838::t_d2e9358e91cdaf 8,56
+  7fbd1a38dd4744fd 10,25-36,38-55,57-65,77-81,84-88,90-95,97-98,106-112,131,135-137,141-145,158-160,167-168,175-178,190-203,210-211,216
+  s_27ca32cdfdd838::t_73aeffe0dc7e86 12,82,89,138,169
+  s_27ca32cdfdd838::t_ff1097a60a8ce4 5,14-15,146-150,155-157
+  s_27ca32cdfdd838::t_b2952037baa869 152
+  s_27ca32cdfdd838::t_08978571a00734 179-182
+  s_27ca32cdfdd838::t_be340436e5ec96 113-130,208-209
+  s_27ca32cdfdd838::t_1660a5d97eb677 83,139,161
+  s_27ca32cdfdd838::t_cafd0f41c9558f 153-154
+  27ca32cdfdd83826 1,6-7,9,11,16-24,134,140,162-166,183,212-214
+  s_27ca32cdfdd838::t_1cabd39aa2e73a 69-70,72-75
+  s_27ca32cdfdd838::t_ddba7c6f3aaa81 170-174
+  s_27ca32cdfdd838::t_db0c8c31e9d461 68,71,204-206
+  s_27ca32cdfdd838::t_a3e36958fb4adf 184-189
+  s_27ca32cdfdd838::t_ef5c2a0613bad4 151
+packages/client-ds/src/checkbox/checkbox.view.ts
+  02a4ded1bb320161 20-60
+packages/client-ds/src/button/button.preview.ts
+  ec044f73bbb42c09 2-11,25-26,31-43
+  02a4ded1bb320161 12-24
+  b7b6259f2ceebba6 28,48
+packages/client-ds/src/alert/alert.view.ts
+  a5da58bae2a34702 18-20
+  02a4ded1bb320161 26-29,35-38,44-47
+  ec044f73bbb42c09 1-17,21-25,30-34,39-43,48
+packages/client-ds/src/combobox/combobox.view.ts
+  ec044f73bbb42c09 1-30,33,35,37,39-42,46-55,78,108-114
+  ccc630b05d39a805 32,36,75
+  99b42312be2faea0 31
+  b66376d20b31d91a 43-45,56-74,76-77,79-107
+  a5da58bae2a34702 34,38
+packages/client-ds/src/rich-text-editor/rich-text-editor.registry.ts
+  s_27ca32cdfdd838::t_3f278dee16dab9 1-20
+packages/client-ds/src/fieldset/fieldset.preview.ts
+  ec044f73bbb42c09 1-25,63-69,106-109,116-121
+  02a4ded1bb320161 26-62,70-105,110-115
+packages/foldkit-preview/src/cli.ts
+  b66376d20b31d91a 8,10-11,13-18,54
+  27ca32cdfdd83826 12,21-25,30,44,46,48,57,60,79
+  b7b6259f2ceebba6 27-29,32-43,45,47,49-53,55,58-59,61-62,64,66-70,72-78,80,83-85,87-92
+  c7774a575d8fda74 63,81,86
+packages/client-ds/src/menu/menu.preview.ts
+  c37adacc45453e38 64-69,71-76,78
+  b66376d20b31d91a 1-8,10-11,16-17,20-35,38-39,51-54,58-59,62-63,79-86,90-95,98,100-102,105,107-125,127,129-134,138-142
+  4b07a9f4099f4042 9,12-15,18-19,36-37,40-50,55-57,60-61,87-89,96-97,99,103-104,106,126,128
+  4a4499fae7f8e02d 70,77,135-137
+packages/client-ds/src/badge/badge.view.ts
+  ec044f73bbb42c09 1-26
+packages/client-ds/src/example/form.preview.ts
+  4b1ec1957cdd4604 1-253
+packages/client-ds/src/switch/switch.view.ts
+  a5da58bae2a34702 21,24,37
+  ec044f73bbb42c09 1-20,22-23,25-35,67-73
+  02a4ded1bb320161 36,38-66
+packages/client-ds/src/combobox/combobox.preview.ts
+  ec044f73bbb42c09 1-8,10-11,16-17,20-37,44-47,59-61,65-66,71-73,76,78-79,88-97,101-110,116-125,131-151,157-165,170-176,183,186-191,194-201
+  4b07a9f4099f4042 9,12-15,18-19,38,48-58,62-64,67,74-75,77,98-100,111,126,184-185
+  b66376d20b31d91a 39-43,68-70,80-87,112-115,127-130,152-156,166-169,177-182,192-193
+packages/client-ds/src/card/card.view.ts
+  ec044f73bbb42c09 1-10,13-14,17-38
+  a5da58bae2a34702 11-12,15-16
+packages/client-ds/src/separator/separator.view.ts
+  ec044f73bbb42c09 1-16
+packages/client-ds/src/rich-text-editor/rich-text-editor.model.ts
+  s_27ca32cdfdd838::t_71381802d62fed 245-247,252-254,257-272
+  s_27ca32cdfdd838::t_0fc2501c363fae 290-291,293,295-296,302
+  s_27ca32cdfdd838::t_ee7de16e765d54 212,214,375-378
+  s_27ca32cdfdd838::t_f7b5e00c9bb763 215
+  27ca32cdfdd83826 1-11,14-30,34,36-62,64,67-68,70-73,75-131,134-157,159-164,166-188,190-201,213,216-237,240-244,248-250,255-256,273-281,283-286,313-323,329-367,370-371,374,379-406
+  s_27ca32cdfdd838::t_8dfdfbca2b6736 12-13,31-33,35,74,165,189,238-239,282
+  s_27ca32cdfdd838::t_bdd502b7e88967 132-133,287-289,292,294,297-301,308-312
+  s_27ca32cdfdd838::t_c151f77769a896 203-208,303,305,307,324,328
+  s_27ca32cdfdd838::t_5abc435893286e 368-369
+  s_27ca32cdfdd838::t_3f184408ede909 63,65-66,69,158,304,306,325-327
+  s_27ca32cdfdd838::t_67dd9e15c8b8ab 202,209-211,251,372-373
+packages/client-ds/package.json
+  dd0aec56cbd6f5f9 42-44
+  ec044f73bbb42c09 6,8-14,16,18-28,30
+  b66376d20b31d91a 15,17
+  9c0386e51461f193 7
+  9e1316885087ec92 29
+  s_27ca32cdfdd838::t_a76beda7a9db8f 33
+  b7b6259f2ceebba6 40-41
+  02a4ded1bb320161 4,39
+packages/client-ds/src/rich-text-editor/rich-text-editor.scene.test.ts
+  s_27ca32cdfdd838::t_68ca308896dd1e 79-93,226-241
+  s_27ca32cdfdd838::t_d804f5e2bea6b5 45-51
+  s_27ca32cdfdd838::t_1f203198a7922e 38-42,54,248
+  s_27ca32cdfdd838::t_fe7b3fec5941e9 21-22,94-105,155-166,168-179
+  s_27ca32cdfdd838::t_f497c87366e20d 61
+  s_27ca32cdfdd838::t_c0025705c0c420 16-18,23,127-154,167,180-183,201-211
+  s_27ca32cdfdd838::t_9260bb521ae99c 12,24-26,29-37,52-53,55-56,58-59,62,115-118,246-247,249-250,272,286-288
+  s_27ca32cdfdd838::t_69ae4ef911bacd 111,278
+  s_27ca32cdfdd838::t_bfb6a30564f2f0 43-44,57,60,251-267
+  s_27ca32cdfdd838::t_ebbdcbc79ebe52 184-200
+  s_27ca32cdfdd838::t_7a708ee0d3e836 66-78
+  s_27ca32cdfdd838::t_899f93df4dcbd2 1,10,13-15,19-20,63-65,106-110,112-114,268-271,273-277,279,284-285
+  s_27ca32cdfdd838::t_39f34cfd6f81ca 280-283
+  s_27ca32cdfdd838::t_0dc9ba19bfceca 119-126,212-215
+  s_27ca32cdfdd838::t_dcf7a52c0ebef0 2-9,11,27-28
+  s_27ca32cdfdd838::t_b04387cc9db806 216-225,242-245
+packages/client-ds/src/input/input.view.ts
+  ec044f73bbb42c09 1-23,25-39,61-62
+  02a4ded1bb320161 40,42-60
+  a5da58bae2a34702 24,41
+packages/client-ds/src/slider/slider.view.ts
+  a5da58bae2a34702 26,43
+  b66376d20b31d91a 46-49,57-62
+  ec044f73bbb42c09 1-25,27-42,44-45,50-56,63-77
+packages/client-ds/src/app-shell/app-shell.view.ts
+  9c0386e51461f193 1-30,32-68
+  a5da58bae2a34702 31
+packages/client-ds/src/example/command-menu.preview.ts
+  7fbd1a38dd4744fd 33-44,72,86,97,156-214,216-219,221-240
+  8ae3cadadb67fefd 46
+  4b1ec1957cdd4604 1-32,45,47-71,73-85,87-96,98-155,241-254
+  ccc630b05d39a805 215,220
+packages/client-ds/src/checkbox/checkbox.preview.ts
+  02a4ded1bb320161 44-47,50-53,56-59,62-66,69-74,97-99
+  4b07a9f4099f4042 9-28,33,39-41,48-49,54-55,60-61,67-68
+  b66376d20b31d91a 29-32
+  b7b6259f2ceebba6 35,112
+  ec044f73bbb42c09 4,38,42-43,75,100-104
+packages/client-ds/src/disclosure/disclosure.view.ts
+  a5da58bae2a34702 22,24
+  02a4ded1bb320161 30-33
+  ec044f73bbb42c09 1-21,23,25-29,34-47
+packages/foldkit-preview/preview/src/vite-env.d.ts
+  c7774a575d8fda74 5
+packages/client-ds/src/disclosure/disclosure.preview.ts
+  ec044f73bbb42c09 1-8,10-12,32-36,40-41,72-102
+  4b07a9f4099f4042 9,13-26,31,37-39,46-47,55-56,64-65
+  b66376d20b31d91a 27-30
+  02a4ded1bb320161 42-45,48-54,57-63,66-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "4e169b6ac6b02ea2ce02fffc5b692ae36e0ca51a",
+  "prompts": {
+    "02a4ded1bb320161": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20f01f625ffe11lCI6j4ia2dMS",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 11568,
+      "total_deletions": 2727,
+      "accepted_lines": 9037,
+      "overriden_lines": 16
+    },
+    "077ae8368f49c14a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20cb023f7ffeKLR0AnS6T6TP01",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 365,
+      "total_deletions": 412,
+      "accepted_lines": 274,
+      "overriden_lines": 0
+    },
+    "1b0411302bd55623": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20a664f17ffeWLRCOJufHnzcDX",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 3,
+      "total_deletions": 3,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    },
+    "27ca32cdfdd83826": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_207ae16b8ffeB0jCZfRojCj5sd",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 1327,
+      "total_deletions": 937,
+      "accepted_lines": 690,
+      "overriden_lines": 0
+    },
+    "39622c23f9f356c8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_219adfc6bffecoJG2pqNVXWN0C",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 572,
+      "total_deletions": 351,
+      "accepted_lines": 30,
+      "overriden_lines": 0
+    },
+    "466e82bee7058654": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_216d5c4a4ffe8ALC8rugH9YTP8",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 979,
+      "total_deletions": 517,
+      "accepted_lines": 132,
+      "overriden_lines": 0
+    },
+    "4a4499fae7f8e02d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20cd795dbffeiNoml2TT5afUtE",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 642,
+      "total_deletions": 314,
+      "accepted_lines": 533,
+      "overriden_lines": 0
+    },
+    "4b07a9f4099f4042": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20cee6b28ffeITOl8fUKviuA18",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 399,
+      "total_deletions": 139,
+      "accepted_lines": 341,
+      "overriden_lines": 0
+    },
+    "4b1ec1957cdd4604": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20ace303affeXNlE01ZE7spNxK",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 1871,
+      "total_deletions": 547,
+      "accepted_lines": 1502,
+      "overriden_lines": 0
+    },
+    "4c6af105639c7cb6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20ad4bb23ffeJlhDXGDsMiQtnG",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 134,
+      "total_deletions": 10,
+      "accepted_lines": 127,
+      "overriden_lines": 0
+    },
+    "4ffade188163ec48": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20ac0ba1cffeFqdqyjXbhOxIlW",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 191,
+      "total_deletions": 33,
+      "accepted_lines": 188,
+      "overriden_lines": 0
+    },
+    "53d56ee35d36bfda": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_204026922ffeyCl7YXrkOYGDIR",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 4,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    },
+    "7fbd1a38dd4744fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_208db42d3ffelOaaOlhCbjQjI4",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 942,
+      "total_deletions": 517,
+      "accepted_lines": 226,
+      "overriden_lines": 0
+    },
+    "8ae3cadadb67fefd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_209b3ca06ffeTi0ZDS835B4lxT",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 33,
+      "total_deletions": 32,
+      "accepted_lines": 11,
+      "overriden_lines": 0
+    },
+    "969a33c732371274": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_209e668dfffeg4IjSCX7QOkQBQ",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 144,
+      "total_deletions": 11,
+      "accepted_lines": 142,
+      "overriden_lines": 0
+    },
+    "99b42312be2faea0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20a68ffe5ffe3uP6ccDc7J5iCx",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "9c0386e51461f193": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20cae9cefffeBvLpDz6KYmQL40",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 1172,
+      "total_deletions": 251,
+      "accepted_lines": 346,
+      "overriden_lines": 0
+    },
+    "9e1316885087ec92": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_208cced50ffepK7O283kG3Cz5J",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 460,
+      "total_deletions": 113,
+      "accepted_lines": 152,
+      "overriden_lines": 0
+    },
+    "a242fcad617b611e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_214d1b4acffeUcBaczWM1fN140",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 16,
+      "total_deletions": 5,
+      "accepted_lines": 14,
+      "overriden_lines": 0
+    },
+    "a5da58bae2a34702": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20acfdf25ffe7D1AVQiSpOlUwX",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 226,
+      "total_deletions": 157,
+      "accepted_lines": 147,
+      "overriden_lines": 0
+    },
+    "b66376d20b31d91a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20cd95fa7ffeMQdCK6mRFG85P4",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 671,
+      "total_deletions": 148,
+      "accepted_lines": 520,
+      "overriden_lines": 0
+    },
+    "b7b6259f2ceebba6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_211efce8cffew1WlaGCAkBmmS6",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 526,
+      "total_deletions": 413,
+      "accepted_lines": 101,
+      "overriden_lines": 0
+    },
+    "c37adacc45453e38": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_209e7c1e4ffew8PCn4qq8YRpb3",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 13,
+      "total_deletions": 3,
+      "accepted_lines": 13,
+      "overriden_lines": 0
+    },
+    "c7774a575d8fda74": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_21bfca37cffesdwilIdBbFFC3D",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 1192,
+      "total_deletions": 489,
+      "accepted_lines": 429,
+      "overriden_lines": 1
+    },
+    "cc980f6a97702ccf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2210cd3abffe03quctr1AEmioJ",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 51,
+      "total_deletions": 56,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    },
+    "ccacbb632c7bd270": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20a8aad7fffebjssk0Oikeb7AN",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 401,
+      "total_deletions": 108,
+      "accepted_lines": 225,
+      "overriden_lines": 0
+    },
+    "ccc630b05d39a805": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_208ddceceffewVlLOu0EpHygsp",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 6,
+      "total_deletions": 6,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    },
+    "dd0aec56cbd6f5f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2187b44b0ffedHxjmqty36bYRi",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 217,
+      "total_deletions": 56,
+      "accepted_lines": 47,
+      "overriden_lines": 0
+    },
+    "ec044f73bbb42c09": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20db77d5bffef0v78YrcRIi8i3",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 3179,
+      "total_deletions": 598,
+      "accepted_lines": 2147,
+      "overriden_lines": 1
+    },
+    "f06750fc620434af": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20a684b21ffeNMFg3MMOROf62U",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 494,
+      "total_deletions": 260,
+      "accepted_lines": 455,
+      "overriden_lines": 0
+    },
+    "fb96f60aa7fd8412": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20c98c1a6ffe7p8PHSqIpK3Xjc",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 114,
+      "total_deletions": 29,
+      "accepted_lines": 75,
+      "overriden_lines": 0
+    }
+  },
+  "sessions": {
+    "s_27ca32cdfdd838": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_207ae16b8ffeB0jCZfRojCj5sd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    }
+  }
+}
