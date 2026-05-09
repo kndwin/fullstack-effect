@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "foldkit-devtools": {
+      "command": "bunx",
+      "args": [
+        "@foldkit/devtools-mcp"
+      ],
+      "env": {
+        "FOLDKIT_DEVTOOLS_MCP_PORT": "9987"
+      }
+    }
+  }
+}

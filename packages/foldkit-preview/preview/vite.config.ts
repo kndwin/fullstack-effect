@@ -9,13 +9,14 @@ import type { PreviewConfig } from "../src/config";
 const virtualModuleId = "virtual:foldkit-preview";
 const resolvedVirtualModuleId = `\0${virtualModuleId}`;
 
-const asArray = (value: string | ReadonlyArray<string> | undefined, fallback: ReadonlyArray<string>): ReadonlyArray<string> =>
-  value === undefined ? fallback : typeof value === "string" ? [value] : value;
+const asArray = (
+  value: string | ReadonlyArray<string> | undefined,
+  fallback: ReadonlyArray<string>,
+): ReadonlyArray<string> => (value === undefined ? fallback : typeof value === "string" ? [value] : value);
 
 const escapeString = (value: string): string => JSON.stringify(value);
 
-const toConsumerPath = (root: string, path: string): string =>
-  path.startsWith("/") ? path : resolve(root, path);
+const toConsumerPath = (root: string, path: string): string => (path.startsWith("/") ? path : resolve(root, path));
 
 const toFsImportPath = (path: string): string => `/@fs${path}`;
 
@@ -36,8 +37,9 @@ const previewFilesForPattern = (root: string, pattern: string): ReadonlyArray<st
   const recursiveSuffix = "/**/*.preview.ts";
 
   if (normalized.endsWith(recursiveSuffix)) {
-    return walkFiles(resolve(root, normalized.slice(0, -recursiveSuffix.length)))
-      .filter((path) => path.endsWith(".preview.ts"));
+    return walkFiles(resolve(root, normalized.slice(0, -recursiveSuffix.length))).filter((path) =>
+      path.endsWith(".preview.ts"),
+    );
   }
 
   const path = toConsumerPath(root, pattern);
@@ -45,8 +47,7 @@ const previewFilesForPattern = (root: string, pattern: string): ReadonlyArray<st
 };
 
 const previewFilesForPatterns = (root: string, patterns: ReadonlyArray<string>): ReadonlyArray<string> =>
-  [...new Set(patterns.flatMap((pattern) => previewFilesForPattern(root, pattern)))]
-    .sort((a, b) => a.localeCompare(b));
+  [...new Set(patterns.flatMap((pattern) => previewFilesForPattern(root, pattern)))].sort((a, b) => a.localeCompare(b));
 
 const previewPlugin = (config: PreviewConfig, root: string): Plugin => ({
   name: "foldkit-preview",
@@ -60,14 +61,14 @@ const previewPlugin = (config: PreviewConfig, root: string): Plugin => ({
 
     const previews = asArray(config.previews, ["src/**/*.preview.ts"]);
     const css = asArray(config.css, []);
-    const cssImports = css.map((path) => `import ${escapeString(toFsImportPath(toConsumerPath(root, path)))};`).join("\n");
+    const cssImports = css
+      .map((path) => `import ${escapeString(toFsImportPath(toConsumerPath(root, path)))};`)
+      .join("\n");
     const previewFiles = previewFilesForPatterns(root, previews);
     const previewImports = previewFiles
       .map((path, index) => `import * as preview${index} from ${escapeString(toFsImportPath(path))};`)
       .join("\n");
-    const previewEntries = previewFiles
-      .map((path, index) => `${escapeString(path)}: preview${index}`)
-      .join(",\n");
+    const previewEntries = previewFiles.map((path, index) => `${escapeString(path)}: preview${index}`).join(",\n");
 
     return `${cssImports}
 ${previewImports}
@@ -80,13 +81,8 @@ ${previewEntries}
 
 const previewRoot = process.env.FOLDKIT_PREVIEW_ROOT ?? process.cwd();
 const previewConfigPath = process.env.FOLDKIT_PREVIEW_CONFIG;
-
-if (!previewConfigPath) {
-  throw new Error("FOLDKIT_PREVIEW_CONFIG is required");
-}
-
-const previewConfigModule = await import(pathToFileURL(previewConfigPath).href);
-const previewConfig = (previewConfigModule.default ?? {}) as PreviewConfig;
+const previewConfigModule = previewConfigPath ? await import(pathToFileURL(previewConfigPath).href) : undefined;
+const previewConfig = (previewConfigModule?.default ?? {}) as PreviewConfig;
 
 export default defineConfig({
   root: new URL(".", import.meta.url).pathname,

@@ -1,0 +1,46 @@
+{
+  "name": "@qaveai/client-ds",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./alert": "./src/alert/alert.view.ts",
+    "./app-shell": "./src/app-shell/app-shell.view.ts",
+    "./badge": "./src/badge/badge.view.ts",
+    "./theme.css": "./src/theme.css",
+    "./button": "./src/button/index.ts",
+    "./card": "./src/card/index.ts",
+    "./fieldset": "./src/fieldset/fieldset.view.ts",
+    "./input": "./src/input/input.view.ts",
+    "./combobox": "./src/combobox/combobox.view.ts",
+    "./dialog": "./src/dialog/dialog.view.ts",
+    "./listbox": "./src/listbox/listbox.view.ts",
+    "./menu": "./src/menu/menu.view.ts",
+    "./popover": "./src/popover/popover.view.ts",
+    "./tooltip": "./src/tooltip/tooltip.view.ts",
+    "./select": "./src/select/select.view.ts",
+    "./separator": "./src/separator/separator.view.ts",
+    "./slider": "./src/slider/slider.view.ts",
+    "./switch": "./src/switch/switch.view.ts",
+    "./textarea": "./src/textarea/textarea.view.ts",
+    "./checkbox": "./src/checkbox/index.ts",
+    "./disclosure": "./src/disclosure/disclosure.view.ts",
+    "./radio-group": "./src/radio-group/radio-group.view.ts",
+    "./tabs": "./src/tabs/tabs.view.ts",
+    "./rich-text-editor": "./src/rich-text-editor/rich-text-editor.view.ts",
+    "./toast": "./src/toast/toast.view.ts"
+  },
+  "scripts": {
+    "foldkit-devtools-mcp": "FOLDKIT_DEVTOOLS_MCP_PORT=9987 foldkit-devtools-mcp",
+    "preview": "foldkit-preview",
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@qaveai/foldkit-preview": "workspace:*",
+    "@radix-ui/colors": "^3.0.0",
+    "effect": "4.0.0-beta.59",
+    "foldkit": "0.82.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.0.0"
+  }
+}

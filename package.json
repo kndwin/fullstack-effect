@@ -1,21 +1,31 @@
 {
   "name": "qaveai",
-  "type": "module",
   "private": true,
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
+  "type": "module",
   "scripts": {
     "dev:client": "bun run --cwd apps/client-web dev",
     "preview:client": "bun run --cwd apps/client-web preview",
     "dev:server": "bun run --cwd apps/server-core dev",
+    "dev:emulate": "bunx emulate --service google",
+    "format": "oxfmt . --write",
+    "format:check": "oxfmt . --check",
+    "lint": "bun build tools/effect-oxlint.plugin.ts --target=node --outfile tools/effect-oxlint.plugin.mjs && bun run --cwd packages/oxlint-plugin-foldkit build && oxlint .",
+    "lint:fix": "bun build tools/effect-oxlint.plugin.ts --target=node --outfile tools/effect-oxlint.plugin.mjs && bun run --cwd packages/oxlint-plugin-foldkit build && oxlint . --fix",
+    "test": "bun test",
     "typecheck": "tsgo --noEmit",
     "typecheck:tsc": "tsc --noEmit"
   },
   "devDependencies": {
+    "@foldkit/devtools-mcp": "^0.3.0",
     "@types/bun": "latest",
     "@typescript/native-preview": "beta",
+    "effect-oxlint": "^0.2.0",
+    "oxfmt": "^0.47.0",
+    "oxlint": "^1.62.0",
     "typescript": "^6.0.3"
   }
 }

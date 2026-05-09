@@ -1,0 +1,39 @@
+import { Schema } from "effect";
+import type { Html } from "foldkit/html";
+import { html } from "foldkit/html";
+import type { RichTextBlockNode, RichTextHeadingLevel, RichTextTextNode } from "../rich-text-editor.schema";
+import { RichTextTextNodeSchema } from "./text.node";
+
+export const RichTextHeadingLevelSchema = Schema.Union([Schema.Literal(1), Schema.Literal(2), Schema.Literal(3)]);
+export const RichTextHeadingNodeSchema = Schema.Struct({
+  type: Schema.Literal("heading"),
+  level: RichTextHeadingLevelSchema,
+  children: Schema.Array(RichTextTextNodeSchema),
+});
+
+export const HeadingNode = {
+  kind: "heading",
+  slashCommands: [
+    { label: "Heading 1", value: "heading-1", description: "Format this block as a top-level heading.", level: 1 },
+    { label: "Heading 2", value: "heading-2", description: "Format this block as a section heading.", level: 2 },
+    { label: "Heading 3", value: "heading-3", description: "Format this block as a subsection heading.", level: 3 },
+  ] as const,
+  toolbarItems: [
+    { label: "H1", format: { type: "heading" as const, level: 1 as const } },
+    { label: "H2", format: { type: "heading" as const, level: 2 as const } },
+    { label: "H3", format: { type: "heading" as const, level: 3 as const } },
+  ] as const,
+  create: (level: RichTextHeadingLevel, children: ReadonlyArray<RichTextTextNode>): RichTextBlockNode => ({ type: "heading", level, children }),
+  className: (level: RichTextHeadingLevel): string =>
+    level === 1
+      ? "m-0 min-h-10 text-3xl font-semibold leading-10 tracking-tight text-foreground"
+      : level === 2
+        ? "m-0 min-h-9 text-2xl font-semibold leading-9 tracking-tight text-foreground"
+        : "m-0 min-h-8 text-xl font-semibold leading-8 tracking-tight text-foreground",
+  render: <Message>(level: RichTextHeadingLevel, children: ReadonlyArray<Html | string>): Html => {
+    const { h1, h2, h3, Class } = html<Message>();
+    if (level === 1) return h1([Class(HeadingNode.className(level))], children);
+    if (level === 2) return h2([Class(HeadingNode.className(level))], children);
+    return h3([Class(HeadingNode.className(level))], children);
+  },
+} as const;
