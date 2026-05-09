@@ -6,8 +6,11 @@ import {
   ClosedRichTextEditorSlashMenu,
   DeletedRichTextEditorBackward,
   InsertedRichTextEditorText,
+  FailedMountRichTextEditorHost,
+  MountedRichTextEditorHost,
   MovedRichTextEditorSlashMenuSelection,
   OpenedRichTextEditorSlashMenu,
+  PastedRichTextEditorMarkdown,
   RichTextEditor,
   RichTextEditorMessage,
   RestoredRichTextEditorSelection,
@@ -16,22 +19,25 @@ import {
   SetRichTextEditorBlockFormat,
   SplitRichTextEditorBlock,
   SyncedRichTextEditorPlainText,
-  ToggledRichTextEditorBold,
-  ToggledRichTextEditorHeading,
+  ToggledRichTextEditorMark,
   UpdatedRichTextEditorSlashMenuQuery,
   initRichTextEditor,
   richTextEditorPlainText,
+  richTextEditorSubscriptions,
   updateRichTextEditor,
   type RichTextEditorModel,
 } from "./rich-text-editor.view";
 
 const Message = Schema.Union([
   InsertedRichTextEditorText,
+  PastedRichTextEditorMarkdown,
   SyncedRichTextEditorPlainText,
   DeletedRichTextEditorBackward,
   SplitRichTextEditorBlock,
   SelectedRichTextEditorAll,
   RestoredRichTextEditorSelection,
+  MountedRichTextEditorHost,
+  FailedMountRichTextEditorHost,
   ChangedRichTextEditorSelection,
   OpenedRichTextEditorSlashMenu,
   ClosedRichTextEditorSlashMenu,
@@ -39,8 +45,7 @@ const Message = Schema.Union([
   MovedRichTextEditorSlashMenuSelection,
   SelectedRichTextEditorSlashCommand,
   SetRichTextEditorBlockFormat,
-  ToggledRichTextEditorBold,
-  ToggledRichTextEditorHeading,
+  ToggledRichTextEditorMark,
 ]);
 
 type Model = RichTextEditorModel;
@@ -58,8 +63,8 @@ const selectedModel = updateRichTextEditor(
   ChangedRichTextEditorSelection({ start: 10, end: 14 }),
 );
 
-const boldModel = updateRichTextEditor(selectedModel, ToggledRichTextEditorBold());
-const headingModel = updateRichTextEditor(initRichTextEditor("Editor roadmap"), ToggledRichTextEditorHeading());
+const boldModel = updateRichTextEditor(selectedModel, ToggledRichTextEditorMark({ type: "bold" }));
+const headingModel = updateRichTextEditor(initRichTextEditor("Editor roadmap"), SetRichTextEditorBlockFormat({ type: "heading", level: 1 }));
 
 const states = () => {
   const { div, Class } = html<Message>();
@@ -128,6 +133,12 @@ export const RichTextEditorPreview = Preview.module({
       },
       init: (): Model => initRichTextEditor(initialValue),
       update: updateRichTextEditor,
+      subscriptions: ({ model, controls }) =>
+        richTextEditorSubscriptions({
+          id: "preview-rich-text-editor-replay",
+          model,
+          isDisabled: Boolean(controls.isDisabled),
+        }),
       view: (model: Model, controls: PreviewControlValues) => {
         const { div, p, Class } = html<Message>();
 
@@ -153,7 +164,7 @@ export const RichTextEditorPreview = Preview.module({
           DeletedRichTextEditorBackward({}),
           ...insertTextMessages("Add channel mentions later"),
           ChangedRichTextEditorSelection({ start: 4, end: 20 }),
-          ToggledRichTextEditorBold(),
+          ToggledRichTextEditorMark({ type: "bold" }),
           ChangedRichTextEditorSelection({ start: 26, end: 26 }),
           ...insertTextMessages(" today"),
         ]),
@@ -162,7 +173,7 @@ export const RichTextEditorPreview = Preview.module({
           DeletedRichTextEditorBackward({}),
           ...insertTextMessages("Bold wordx"),
           ChangedRichTextEditorSelection({ start: 0, end: 9 }),
-          ToggledRichTextEditorBold(),
+          ToggledRichTextEditorMark({ type: "bold" }),
           ChangedRichTextEditorSelection({ start: 9, end: 9 }),
           DeletedRichTextEditorBackward({}),
           ChangedRichTextEditorSelection({ start: 8, end: 8 }),

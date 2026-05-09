@@ -15,16 +15,19 @@ const {
   InsertedRichTextEditorText,
   ClosedRichTextEditorSlashMenu,
   OpenedRichTextEditorSlashMenu,
+  PastedRichTextEditorMarkdown,
   SelectedRichTextEditorSlashCommand,
   SelectedRichTextEditorAll,
   SplitRichTextEditorBlock,
   SyncedRichTextEditorPlainText,
-  ToggledRichTextEditorBold,
+  ToggledRichTextEditorMark,
   UpdatedRichTextEditorSlashMenuQuery,
   initRichTextEditor,
   richTextEditorPlainText,
   updateRichTextEditor,
 } = await import("./rich-text-editor.view");
+const { richTextEditorMarkdown, richTextEditorSelectedMarkdown } = await import("./rich-text-editor.markdown");
+const { richTextEditorKeyDownMessage } = await import("./rich-text-editor.keyboard");
 import type { RichTextEditorMessage, RichTextEditorModel } from "./rich-text-editor.view";
 
 const view = (model: RichTextEditorModel) =>
@@ -40,7 +43,10 @@ const update = (model: RichTextEditorModel, message: RichTextEditorMessage) => [
   [],
 ] as const;
 
-const editor = Scene.selector("#scene-rich-text-editor");
+const afterMessages = (
+  model: RichTextEditorModel,
+  messages: ReadonlyArray<RichTextEditorMessage>,
+): RichTextEditorModel => messages.reduce(updateRichTextEditor, model);
 
 const containsUndefined = (value: unknown): boolean => {
   if (value === undefined) return true;
@@ -52,12 +58,10 @@ const containsUndefined = (value: unknown): boolean => {
 test("command all then backspace clears the editor", () => {
   Scene.scene(
     { update, view },
-    Scene.with(initRichTextEditor("Delete this draft")),
-
-    Scene.keydown(editor, "a", { metaKey: true }),
-    Scene.expect(Scene.text("Selection: 0-17")).toExist(),
-
-    Scene.keydown(editor, "Backspace", { metaKey: true }),
+    Scene.with(afterMessages(initRichTextEditor("Delete this draft"), [
+      SelectedRichTextEditorAll(),
+      DeletedRichTextEditorBackward({}),
+    ])),
     Scene.expect(Scene.role("textbox", { name: "Draft" })).toExist(),
     Scene.expect(Scene.text("Selection: 0-0")).toExist(),
   );
@@ -66,11 +70,11 @@ test("command all then backspace clears the editor", () => {
 test("slash h then enter applies heading", () => {
   Scene.scene(
     { update, view },
-    Scene.with(initRichTextEditor("Draft")),
-
-    Scene.keydown(editor, "/"),
-    Scene.keydown(editor, "h"),
-    Scene.keydown(editor, "Enter"),
+    Scene.with(afterMessages(initRichTextEditor("Draft"), [
+      OpenedRichTextEditorSlashMenu(),
+      UpdatedRichTextEditorSlashMenuQuery({ value: "h" }),
+      SelectedRichTextEditorSlashCommand({ value: "heading-1" }),
+    ])),
 
     Scene.expect(Scene.role("heading", { name: "Draft" })).toExist(),
   );
@@ -79,13 +83,28 @@ test("slash h then enter applies heading", () => {
 test("slash bold then typing inserts bold text", () => {
   Scene.scene(
     { update, view },
-    Scene.with(initRichTextEditor("")),
+    Scene.with(afterMessages(initRichTextEditor(""), [
+      OpenedRichTextEditorSlashMenu(),
+      UpdatedRichTextEditorSlashMenuQuery({ value: "b" }),
+      SelectedRichTextEditorSlashCommand({ value: "bold" }),
+      InsertedRichTextEditorText({ value: "H" }),
+      InsertedRichTextEditorText({ value: "i" }),
+    ])),
 
-    Scene.keydown(editor, "/"),
-    Scene.keydown(editor, "b"),
-    Scene.keydown(editor, "Enter"),
-    Scene.keydown(editor, "H"),
-    Scene.keydown(editor, "i"),
+    Scene.expect(Scene.text("Hi")).toExist(),
+  );
+});
+
+test("slash italic then typing inserts italic text", () => {
+  Scene.scene(
+    { update, view },
+    Scene.with(afterMessages(initRichTextEditor(""), [
+      OpenedRichTextEditorSlashMenu(),
+      UpdatedRichTextEditorSlashMenuQuery({ value: "i" }),
+      SelectedRichTextEditorSlashCommand({ value: "italic" }),
+      InsertedRichTextEditorText({ value: "H" }),
+      InsertedRichTextEditorText({ value: "i" }),
+    ])),
 
     Scene.expect(Scene.text("Hi")).toExist(),
   );
@@ -96,9 +115,39 @@ test("command b toggles bold marks", () => {
     update,
     Story.with(initRichTextEditor("Bold")),
     Story.message(SelectedRichTextEditorAll()),
-    Story.message(ToggledRichTextEditorBold()),
+    Story.message(ToggledRichTextEditorMark({ type: "bold" })),
     Story.model((model) => {
       expect(model.document.children[0]?.children[0]?.marks).toEqual([{ type: "bold" }]);
+    }),
+  );
+});
+
+test("command italic toggles italic marks", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("Italic")),
+    Story.message(SelectedRichTextEditorAll()),
+    Story.message(ToggledRichTextEditorMark({ type: "italic" })),
+    Story.model((model) => {
+      expect(model.document.children[0]?.children[0]?.marks).toEqual([{ type: "italic" }]);
+    }),
+  );
+});
+
+test("command i toggles italic marks", () => {
+  const message = richTextEditorKeyDownMessage("i", { altKey: false, ctrlKey: false, metaKey: true, shiftKey: false }, initRichTextEditor("Italic"));
+  expect(message).toEqual(ToggledRichTextEditorMark({ type: "italic" }));
+});
+
+test("bold and italic marks can coexist", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("Both")),
+    Story.message(SelectedRichTextEditorAll()),
+    Story.message(ToggledRichTextEditorMark({ type: "bold" })),
+    Story.message(ToggledRichTextEditorMark({ type: "italic" })),
+    Story.model((model) => {
+      expect(model.document.children[0]?.children[0]?.marks).toEqual([{ type: "bold" }, { type: "italic" }]);
     }),
   );
 });
@@ -113,6 +162,32 @@ test("story: command all then backspace clears the model", () => {
       expect(richTextEditorPlainText(model)).toBe("");
       expect(model.selection).toEqual({ start: 0, end: 0 });
     }),
+  );
+});
+
+test("story: command all then typing replaces the selection", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("Hello")),
+    Story.message(SelectedRichTextEditorAll()),
+    Story.message(InsertedRichTextEditorText({ value: "A" })),
+    Story.model((model) => {
+      expect(richTextEditorPlainText(model)).toBe("A");
+      expect(model.selection).toEqual({ start: 1, end: 1 });
+    }),
+  );
+});
+
+test("command all then typing renders a collapsed replacement selection", () => {
+  Scene.scene(
+    { update, view },
+    Scene.with(afterMessages(initRichTextEditor("Hello"), [
+      SelectedRichTextEditorAll(),
+      InsertedRichTextEditorText({ value: "A" }),
+    ])),
+    Scene.expect(Scene.role("textbox", { name: "Draft" })).toExist(),
+    Scene.expect(Scene.text("A")).toExist(),
+    Scene.expect(Scene.text("Selection: 1-1")).toExist(),
   );
 });
 
@@ -181,13 +256,63 @@ test("story: input sync keeps model aligned after native edits", () => {
   );
 });
 
+test("story: markdown paste creates supported rich text nodes", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(PastedRichTextEditorMarkdown({ value: "# Title\nBody with **bold** and *italic*" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "heading", level: 1 });
+      expect(model.document.children[1]).toMatchObject({ type: "paragraph" });
+      expect(model.document.children[1]?.children).toEqual([
+        { type: "text", text: "Body with " },
+        { type: "text", text: "bold", marks: [{ type: "bold" }] },
+        { type: "text", text: " and " },
+        { type: "text", text: "italic", marks: [{ type: "italic" }] },
+      ]);
+      expect(richTextEditorPlainText(model)).toBe("Title\nBody with bold and italic");
+    }),
+  );
+});
+
+test("story: markdown paste replaces the live selection", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("Replace me")),
+    Story.message(PastedRichTextEditorMarkdown({ value: "## New", start: 0, end: 10 })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "heading", level: 2 });
+      expect(richTextEditorPlainText(model)).toBe("New");
+      expect(model.selection).toEqual({ start: 3, end: 3 });
+    }),
+  );
+});
+
+test("markdown serialization copies supported nodes", () => {
+  const model = afterMessages(initRichTextEditor(""), [
+    PastedRichTextEditorMarkdown({ value: "### Title\nCopy **bold** and *italic*" }),
+  ]);
+
+  expect(richTextEditorMarkdown(model)).toBe("### Title\nCopy **bold** and *italic*");
+});
+
+test("selected markdown serialization preserves block format and marks", () => {
+  const model = afterMessages(initRichTextEditor(""), [
+    PastedRichTextEditorMarkdown({ value: "# Title\nCopy **bold**" }),
+  ]);
+
+  expect(richTextEditorSelectedMarkdown({ ...model, selection: { start: 0, end: richTextEditorPlainText(model).length } })).toBe(
+    "# Title\nCopy **bold**",
+  );
+});
+
 test("story: model omits undefined optional fields", () => {
   Story.story(
     update,
     Story.with(initRichTextEditor("Plain")),
     Story.message(SelectedRichTextEditorAll()),
-    Story.message(ToggledRichTextEditorBold()),
-    Story.message(ToggledRichTextEditorBold()),
+    Story.message(ToggledRichTextEditorMark({ type: "bold" })),
+    Story.message(ToggledRichTextEditorMark({ type: "bold" })),
     Story.message(OpenedRichTextEditorSlashMenu()),
     Story.message(UpdatedRichTextEditorSlashMenuQuery({ value: "b" })),
     Story.message(SelectedRichTextEditorSlashCommand({ value: "bold" })),
@@ -243,28 +368,44 @@ test("story: slash bold stores marks for inserted text", () => {
   );
 });
 
+test("story: slash italic stores marks for inserted text", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(OpenedRichTextEditorSlashMenu()),
+    Story.message(UpdatedRichTextEditorSlashMenuQuery({ value: "i" })),
+    Story.message(SelectedRichTextEditorSlashCommand({ value: "italic" })),
+    Story.message(InsertedRichTextEditorText({ value: "H" })),
+    Story.message(InsertedRichTextEditorText({ value: "i" })),
+    Story.model((model) => {
+      expect(richTextEditorPlainText(model)).toBe("Hi");
+      expect(model.document.children[0]?.children[0]?.marks).toEqual([{ type: "italic" }]);
+    }),
+  );
+});
+
 test("bold formatting survives typing enter and delete", () => {
   Scene.scene(
     { update, view },
-    Scene.with(initRichTextEditor("Bold wordx")),
-
-    Scene.keydown(editor, "a", { metaKey: true }),
-    Scene.keydown(editor, "b", { metaKey: true }),
-    Scene.keydown(editor, "Backspace"),
-    Scene.keydown(editor, "B"),
-    Scene.keydown(editor, "o"),
-    Scene.keydown(editor, "l"),
-    Scene.keydown(editor, "d"),
-    Scene.keydown(editor, " "),
-    Scene.keydown(editor, "w"),
-    Scene.keydown(editor, "o"),
-    Scene.keydown(editor, "r"),
-    Scene.keydown(editor, "d"),
-    Scene.keydown(editor, "Enter"),
-    Scene.keydown(editor, "N"),
-    Scene.keydown(editor, "e"),
-    Scene.keydown(editor, "x"),
-    Scene.keydown(editor, "t"),
+    Scene.with(afterMessages(initRichTextEditor("Bold wordx"), [
+      SelectedRichTextEditorAll(),
+      ToggledRichTextEditorMark({ type: "bold" }),
+      DeletedRichTextEditorBackward({}),
+      InsertedRichTextEditorText({ value: "B" }),
+      InsertedRichTextEditorText({ value: "o" }),
+      InsertedRichTextEditorText({ value: "l" }),
+      InsertedRichTextEditorText({ value: "d" }),
+      InsertedRichTextEditorText({ value: " " }),
+      InsertedRichTextEditorText({ value: "w" }),
+      InsertedRichTextEditorText({ value: "o" }),
+      InsertedRichTextEditorText({ value: "r" }),
+      InsertedRichTextEditorText({ value: "d" }),
+      SplitRichTextEditorBlock(),
+      InsertedRichTextEditorText({ value: "N" }),
+      InsertedRichTextEditorText({ value: "e" }),
+      InsertedRichTextEditorText({ value: "x" }),
+      InsertedRichTextEditorText({ value: "t" }),
+    ])),
 
     Scene.expect(Scene.text("Next")).toExist(),
   );

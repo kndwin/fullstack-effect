@@ -1,12 +1,5 @@
-import { Schema } from "effect";
 import type { RichTextMark, RichTextTextNode } from "../rich-text-editor.schema";
-
-export const RichTextBoldMark = Schema.Struct({ type: Schema.Literal("bold") });
-export const RichTextTextNodeSchema = Schema.Struct({
-  type: Schema.Literal("text"),
-  text: Schema.String,
-  marks: Schema.optional(Schema.Array(RichTextBoldMark)),
-});
+export { RichTextTextNodeSchema } from "./text.schema";
 
 export const TextNode = {
   kind: "text",
@@ -19,8 +12,8 @@ export const TextNode = {
   },
   clean: (node: RichTextTextNode): RichTextTextNode => TextNode.of(node.text, node.marks),
   sameMarks: (left?: ReadonlyArray<RichTextMark>, right?: ReadonlyArray<RichTextMark>): boolean => {
-    const leftMarks = left ?? [];
-    const rightMarks = right ?? [];
+    const leftMarks = [...(left ?? [])].toSorted((a, b) => a.type.localeCompare(b.type));
+    const rightMarks = [...(right ?? [])].toSorted((a, b) => a.type.localeCompare(b.type));
     return leftMarks.length === rightMarks.length && leftMarks.every((mark, index) => mark.type === rightMarks[index]?.type);
   },
   inserted: (text: string, marks?: ReadonlyArray<RichTextMark>): ReadonlyArray<RichTextTextNode> =>

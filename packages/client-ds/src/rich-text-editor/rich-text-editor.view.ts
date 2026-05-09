@@ -1,27 +1,71 @@
-import { Effect, Option } from "effect";
+import { Effect, Function } from "effect";
+import { Mount } from "foldkit";
 import { html } from "foldkit/html";
-import type { Attribute, Html } from "foldkit/html";
+import type { Attribute, Html, MountResult } from "foldkit/html";
 import { Button } from "../button/button.view";
-import { richTextSelectionMessageFromDom, restoreRichTextDomSelection, selectRichTextEditorDomAll } from "./rich-text-editor.dom";
-import { richTextEditorKeyDownMessage, richTextEditorKeyUpMessage } from "./rich-text-editor.keyboard";
-import { blockText, richTextEditorPlainText } from "./rich-text-editor.model";
-import { BoldNode, HeadingNode, ParagraphNode, richTextBlockToolbarItems, richTextMarkToolbarItems } from "./rich-text-editor.registry";
+import { blockText } from "./rich-text-editor.document";
+import { restoreRichTextDomSelection } from "./rich-text-editor.dom";
+import { initRichTextEditor, richTextEditorPlainText } from "./rich-text-editor.model";
 import {
-  RestoredRichTextEditorSelection,
-  SetRichTextEditorBlockFormat,
-  SyncedRichTextEditorPlainText,
-  ToggledRichTextEditorBold,
+  ParagraphNode,
+  richTextBlockToolbarItems,
+  richTextMarkClassNameForMarks,
+  richTextMarkToolbarItems,
+  richTextRenderBlock,
+} from "./rich-text-editor.registry";
+import {
+  ChangedRichTextEditorSelection,
+  ClosedRichTextEditorSlashMenu,
   DeletedRichTextEditorBackward,
+  FailedMountRichTextEditorHost,
+  InsertedRichTextEditorText,
+  MountedRichTextEditorHost,
+  MovedRichTextEditorSlashMenuSelection,
+  OpenedRichTextEditorSlashMenu,
+  PastedRichTextEditorMarkdown,
+  RestoredRichTextEditorSelection,
+  RichTextEditorMessage,
+  SetRichTextEditorBlockFormat,
+  SplitRichTextEditorBlock,
+  SyncedRichTextEditorPlainText,
   SelectedRichTextEditorAll,
-  type RichTextEditorMessage,
+  SelectedRichTextEditorSlashCommand,
+  ToggledRichTextEditorMark,
+  UpdatedRichTextEditorSlashMenuQuery,
   type RichTextEditorModel,
+  type RichTextBlockNode,
   type RichTextSelection,
-  type RichTextTextNode,
 } from "./rich-text-editor.schema";
+import type { RichTextMarkType } from "./nodes/mark.schema";
 import { RichTextEditorSlashMenu } from "./rich-text-editor.slash-menu.view";
+import { richTextEditorSubscriptions, type RichTextEditorSubscriptionOptions } from "./rich-text-editor.subscriptions";
+import { updateRichTextEditor } from "./rich-text-editor.update";
 
-export * from "./rich-text-editor.schema";
-export * from "./rich-text-editor.model";
+export {
+  ChangedRichTextEditorSelection,
+  ClosedRichTextEditorSlashMenu,
+  DeletedRichTextEditorBackward,
+  FailedMountRichTextEditorHost,
+  InsertedRichTextEditorText,
+  MountedRichTextEditorHost,
+  MovedRichTextEditorSlashMenuSelection,
+  OpenedRichTextEditorSlashMenu,
+  PastedRichTextEditorMarkdown,
+  RestoredRichTextEditorSelection,
+  RichTextEditorMessage,
+  SelectedRichTextEditorAll,
+  SelectedRichTextEditorSlashCommand,
+  SetRichTextEditorBlockFormat,
+  SplitRichTextEditorBlock,
+  SyncedRichTextEditorPlainText,
+  ToggledRichTextEditorMark,
+  UpdatedRichTextEditorSlashMenuQuery,
+  initRichTextEditor,
+  richTextEditorPlainText,
+  richTextEditorSubscriptions,
+  updateRichTextEditor,
+};
+export type { RichTextEditorModel, RichTextEditorSubscriptionOptions };
 
 export type RichTextEditorProps<Message> = Readonly<{
   id: string;
@@ -35,43 +79,143 @@ export type RichTextEditorProps<Message> = Readonly<{
   attributes?: ReadonlyArray<Attribute<Message>>;
 }>;
 
-const renderTextNode = <Message,>(
-  node: RichTextTextNode,
-  index: number,
-  start: number,
-  selection: RichTextSelection,
-): ReadonlyArray<Html | string> => {
-  const { strong, span, Class, DataAttribute } = html<Message>();
-  const text = node.text || (index === 0 ? " " : "");
-  const end = start + text.length;
-  const selectedStart = Math.max(start, selection.start);
-  const selectedEnd = Math.min(end, selection.end);
-  const ranges = selectedStart < selectedEnd
-    ? [
-        { text: text.slice(0, selectedStart - start), selected: false, start },
-        { text: text.slice(selectedStart - start, selectedEnd - start), selected: true, start: selectedStart },
-        { text: text.slice(selectedEnd - start), selected: false, start: selectedEnd },
-      ].filter((range) => range.text.length > 0)
-    : [{ text, selected: false, start }];
-  const isBold = BoldNode.has(node.marks);
+const MountRichTextEditorHost = Mount.define(
+  "MountRichTextEditorHost",
+  MountedRichTextEditorHost,
+  FailedMountRichTextEditorHost,
+);
 
-  return ranges.map((range) => {
-    const attrs = [
-      Class(`${isBold ? "font-semibold" : range.selected ? "" : "contents"} ${range.selected ? "rounded-sm bg-primary/20 text-foreground" : ""}`),
-      DataAttribute("rte-start", String(range.start)),
-      DataAttribute("rte-end", String(range.start + range.text.length)),
-    ];
-    return isBold ? strong(attrs, [range.text]) : span(attrs, [range.text]);
+const mountRichTextEditorHost = <Message,>({
+  id,
+  selection,
+  toParentMessage,
+}: Readonly<{
+  id: string;
+  selection: RichTextSelection;
+  toParentMessage: (message: RichTextEditorMessage) => Message;
+}>) => {
+  const mount = MountRichTextEditorHost(
+    (element: Element) =>
+      Effect.sync(() => {
+        if (!(element instanceof HTMLElement)) {
+          return {
+            message: FailedMountRichTextEditorHost({ reason: "Rich text editor host is not an HTMLElement." }),
+            cleanup: Function.constVoid,
+          };
+        }
+
+        Object.defineProperty(element, "value", {
+          configurable: true,
+          get: () => element.innerText,
+        });
+
+        requestAnimationFrame(() => {
+          restoreRichTextDomSelection(element, selection);
+        });
+
+        return {
+          message: MountedRichTextEditorHost({ id }),
+          cleanup: () => {
+            delete (element as { value?: string }).value;
+          },
+        };
+      }),
+  );
+
+  return {
+    name: mount.name,
+    f: (element: Element): Effect.Effect<MountResult<Message>> =>
+      mount.f(element).pipe(
+        Effect.map(({ message, cleanup }) => ({
+          message: toParentMessage(message),
+          cleanup,
+        })),
+      ),
+  };
+};
+
+const blockStartOffset = ({
+  blocks,
+  blockIndex,
+}: Readonly<{ blocks: ReadonlyArray<RichTextBlockNode>; blockIndex: number }>): number =>
+  blocks
+    .slice(0, blockIndex)
+    .reduce((offset, previousBlock) => offset + blockText(previousBlock).length + 1, 0);
+
+const renderBlockInlineContent = <Message,>({
+  block,
+  blockStart,
+  selection,
+}: Readonly<{
+  block: RichTextBlockNode;
+  blockStart: number;
+  selection: RichTextSelection;
+}>): ReadonlyArray<Html | string> => {
+  let textOffset = blockStart;
+
+  return block.children.flatMap((node, inlineIndex) => {
+    const rendered = ParagraphNode.renderTextNode<Message>({
+      node,
+      index: inlineIndex,
+      start: textOffset,
+      selection,
+      markClassNameForMarks: richTextMarkClassNameForMarks,
+    });
+    textOffset += node.text.length;
+    return rendered;
   });
 };
 
-const renderPlaceholder = <Message,>(placeholder: string, start: number, className = ""): Html => {
-  const { span, Class, DataAttribute } = html<Message>();
-  return span(
-    [Class(className), DataAttribute("rte-start", String(start)), DataAttribute("rte-end", String(start + 1))],
-    [placeholder],
-  );
+const renderEmptyBlockFallback = <Message,>({
+  blockIndex,
+  blockStart,
+  placeholder,
+}: Readonly<{
+  blockIndex: number;
+  blockStart: number;
+  placeholder: string;
+}>): Html => {
+  if (blockIndex === 0) {
+    return ParagraphNode.renderPlaceholder<Message>({ placeholder, start: blockStart, className: "text-muted-foreground/55" });
+  }
+  return ParagraphNode.renderPlaceholder<Message>({ placeholder: " ", start: blockStart, className: "whitespace-pre" });
 };
+
+const renderBlockNode = <Message,>({
+  block,
+  blockIndex,
+  blocks,
+  selection,
+  placeholder,
+}: Readonly<{
+  block: RichTextBlockNode;
+  blockIndex: number;
+  blocks: ReadonlyArray<RichTextBlockNode>;
+  selection: RichTextSelection;
+  placeholder: string;
+}>): Html => {
+  const blockStart = blockStartOffset({ blocks, blockIndex });
+  const blockContent = blockText(block).length > 0
+    ? renderBlockInlineContent<Message>({ block, blockStart, selection })
+    : [renderEmptyBlockFallback<Message>({ blockIndex, blockStart, placeholder })];
+
+  return richTextRenderBlock<Message>(block, blockContent);
+};
+
+const renderDocument = <Message,>({
+  blocks,
+  selection,
+  placeholder,
+}: Readonly<{
+  blocks: ReadonlyArray<RichTextBlockNode>;
+  selection: RichTextSelection;
+  placeholder: string;
+}>): ReadonlyArray<Html> =>
+  blocks.map((block, blockIndex) =>
+    renderBlockNode<Message>({ block, blockIndex, blocks, selection, placeholder })
+  );
+
+const markToolbarMessage = (type: RichTextMarkType): RichTextEditorMessage => ToggledRichTextEditorMark({ type });
 
 export const RichTextEditor = <Message>(props: RichTextEditorProps<Message>): Html => {
   const {
@@ -84,11 +228,7 @@ export const RichTextEditor = <Message>(props: RichTextEditorProps<Message>): Ht
     Contenteditable,
     Id,
     Key,
-    OnKeyDownPreventDefault,
-    OnKeyUpPreventDefault,
-    OnInput,
     OnMount,
-    OnPointerUp,
     Role,
     Spellcheck,
     Tabindex,
@@ -124,7 +264,7 @@ export const RichTextEditor = <Message>(props: RichTextEditorProps<Message>): Ht
                 size: "sm",
                 variant: "outline",
                 isDisabled: props.isDisabled,
-                onClick: props.toParentMessage(ToggledRichTextEditorBold()),
+                onClick: props.toParentMessage(markToolbarMessage(item.value)),
                 children: [item.label],
               })
             ),
@@ -135,78 +275,20 @@ export const RichTextEditor = <Message>(props: RichTextEditorProps<Message>): Ht
         div(
           [
             Id(props.id),
+            Key(`${plainText}:${props.model.selection.start}:${props.model.selection.end}`),
             AriaLabel(props.label ?? "Rich text editor"),
             Attribute("aria-multiline", "true"),
-            Key(`${plainText}:${props.model.selection.start}:${props.model.selection.end}:${props.model.slashMenu.isOpen}:${props.model.slashMenu.query}:${props.model.slashMenu.activeIndex}`),
             Contenteditable(props.isDisabled ? "false" : "true"),
             Role("textbox"),
             Spellcheck(true),
             Tabindex(props.isDisabled ? -1 : 0),
-            OnKeyDownPreventDefault((key, modifiers) => {
-              if (props.isDisabled) return Option.none();
-              if ((modifiers.metaKey || modifiers.ctrlKey) && key.toLowerCase() === "a") {
-                selectRichTextEditorDomAll(props.id);
-                return Option.some(props.toParentMessage(SelectedRichTextEditorAll()));
-              }
-              if (key === "Backspace" && !props.model.slashMenu.isOpen) {
-                const selection = typeof window === "undefined" || typeof window.getSelection !== "function"
-                  ? props.model.selection
-                  : richTextSelectionMessageFromDom(plainText.length);
-                return Option.some(props.toParentMessage(DeletedRichTextEditorBackward({ start: selection.start, end: selection.end })));
-              }
-              const message = richTextEditorKeyDownMessage(key, modifiers, props.model);
-              return message ? Option.some(props.toParentMessage(message)) : Option.none();
-            }),
-            OnKeyUpPreventDefault((key, modifiers) => {
-              if (props.isDisabled) return Option.none();
-              const message = richTextEditorKeyUpMessage(
-                key,
-                modifiers,
-                () => richTextSelectionMessageFromDom(plainText.length),
-              );
-              return message ? Option.some(props.toParentMessage(message)) : Option.none();
-            }),
-            OnInput((value) => props.toParentMessage(SyncedRichTextEditorPlainText({ value }))),
-            OnPointerUp(() =>
-              props.isDisabled
-                ? Option.none()
-                : Option.some(props.toParentMessage(richTextSelectionMessageFromDom(plainText.length)))
-            ),
-            OnMount({
-              name: "restore-rich-text-editor-selection",
-              f: (element) =>
-                Effect.sync(() => {
-                  Object.defineProperty(element, "value", {
-                    configurable: true,
-                    get: () => element instanceof HTMLElement ? element.innerText : "",
-                  });
-                  requestAnimationFrame(() => restoreRichTextDomSelection(element, props.model.selection));
-                  return {
-                    message: props.toParentMessage(RestoredRichTextEditorSelection()),
-                    cleanup: () => {
-                      delete (element as { value?: string }).value;
-                    },
-                  };
-                }),
-            }),
+            OnMount(mountRichTextEditorHost({ id: props.id, selection: props.model.selection, toParentMessage: props.toParentMessage })),
             Class(editorClassName),
           ],
-          props.model.document.children.map((block, blockIndex) => {
-            const blockStart = props.model.document.children
-              .slice(0, blockIndex)
-              .reduce((offset, previousBlock) => offset + blockText(previousBlock).length + 1, 0);
-            let textOffset = blockStart;
-            const children = block.children.flatMap((node, inlineIndex) => {
-              const rendered = renderTextNode<Message>(node, inlineIndex, textOffset, props.model.selection);
-              textOffset += node.text.length;
-              return rendered;
-            });
-            const fallback = blockIndex === 0
-              ? renderPlaceholder<Message>(props.placeholder ?? "Start writing...", blockStart, "text-muted-foreground/55")
-              : renderPlaceholder<Message>(" ", blockStart, "whitespace-pre");
-            const content = blockText(block).length > 0 ? children : [fallback];
-            if (block.type === "paragraph") return ParagraphNode.render<Message>(content);
-            return HeadingNode.render<Message>(block.level, content);
+          renderDocument<Message>({
+            blocks: props.model.document.children,
+            selection: props.model.selection,
+            placeholder: props.placeholder ?? "Start writing...",
           }),
         ),
         ...(props.model.slashMenu.isOpen

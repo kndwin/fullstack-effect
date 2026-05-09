@@ -1,5 +1,7 @@
 import type { KeyboardModifiers } from "foldkit/html";
-import { activeSlashCommandValue, blockBoundaryForOffset, richTextEditorPlainText } from "./rich-text-editor.model";
+import { activeSlashCommandValue } from "./rich-text-editor.commands";
+import { blockBoundaryForOffset } from "./rich-text-editor.document";
+import { richTextMarkTypeForKeyboardShortcut } from "./rich-text-editor.registry";
 import {
   ChangedRichTextEditorSelection,
   ClosedRichTextEditorSlashMenu,
@@ -10,7 +12,7 @@ import {
   SelectedRichTextEditorAll,
   SelectedRichTextEditorSlashCommand,
   SplitRichTextEditorBlock,
-  ToggledRichTextEditorBold,
+  ToggledRichTextEditorMark,
   UpdatedRichTextEditorSlashMenuQuery,
   type RichTextEditorMessage,
   type RichTextEditorModel,
@@ -41,7 +43,8 @@ export const richTextEditorKeyDownMessage = (
   }
 
   if ((modifiers.metaKey || modifiers.ctrlKey) && key.toLowerCase() === "a") return SelectedRichTextEditorAll();
-  if ((modifiers.metaKey || modifiers.ctrlKey) && key.toLowerCase() === "b") return ToggledRichTextEditorBold();
+  const markType = richTextMarkTypeForKeyboardShortcut(key, modifiers);
+  if (markType) return ToggledRichTextEditorMark({ type: markType });
   if ((modifiers.metaKey || modifiers.ctrlKey) && key === "ArrowLeft") {
     const lineStart = blockBoundaryForOffset(model, model.selection.end, "start");
     return ChangedRichTextEditorSelection({ start: modifiers.shiftKey ? model.selection.start : lineStart, end: lineStart });
@@ -68,5 +71,3 @@ export const richTextEditorKeyUpMessage = (
   if (key === "Backspace" || key === "Enter" || key.length === 1) return undefined;
   return selectionMessageFromDom();
 };
-
-export const richTextEditorTextLength = richTextEditorPlainText;

@@ -2,7 +2,7 @@ import { Schema } from "effect";
 import type { Html } from "foldkit/html";
 import { html } from "foldkit/html";
 import type { RichTextBlockNode, RichTextHeadingLevel, RichTextTextNode } from "../rich-text-editor.schema";
-import { RichTextTextNodeSchema } from "./text.node";
+import { RichTextTextNodeSchema } from "./text.schema";
 
 export const RichTextHeadingLevelSchema = Schema.Union([Schema.Literal(1), Schema.Literal(2), Schema.Literal(3)]);
 export const RichTextHeadingNodeSchema = Schema.Struct({
@@ -24,6 +24,19 @@ export const HeadingNode = {
     { label: "H3", format: { type: "heading" as const, level: 3 as const } },
   ] as const,
   create: (level: RichTextHeadingLevel, children: ReadonlyArray<RichTextTextNode>): RichTextBlockNode => ({ type: "heading", level, children }),
+  formatForSlashCommand: (value: string): Readonly<{ type: "heading"; level: RichTextHeadingLevel }> | undefined => {
+    const command = HeadingNode.slashCommands.find((item) => item.value === value);
+    return command ? { type: "heading", level: command.level } : undefined;
+  },
+  markdown: {
+    matchLine: (line: string): Readonly<{ level: RichTextHeadingLevel; content: string }> | undefined => {
+      const match = /^(#{1,3})\s+(.*)$/.exec(line);
+      const marker = match?.[1];
+      return marker ? { level: marker.length as RichTextHeadingLevel, content: match[2] ?? "" } : undefined;
+    },
+    serialize: (block: RichTextBlockNode, content: string): string =>
+      block.type === "heading" ? `${"#".repeat(block.level)} ${content}` : content,
+  },
   className: (level: RichTextHeadingLevel): string =>
     level === 1
       ? "m-0 min-h-10 text-3xl font-semibold leading-10 tracking-tight text-foreground"

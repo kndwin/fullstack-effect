@@ -1,15 +1,14 @@
 import { Array } from "effect";
+import type { RichTextEditorModel } from "./rich-text-editor.schema";
 import { richTextSlashCommandDefinitions } from "./rich-text-editor.registry";
 
-export const richTextSlashCommands = richTextSlashCommandDefinitions;
-
-export type RichTextSlashCommand = typeof richTextSlashCommands[number];
+export type RichTextSlashCommand = typeof richTextSlashCommandDefinitions[number];
 
 export const filteredRichTextSlashCommands = (query: string): ReadonlyArray<RichTextSlashCommand> => {
   const normalized = query.trim().toLowerCase();
-  if (normalized === "") return richTextSlashCommands;
+  if (normalized === "") return richTextSlashCommandDefinitions;
 
-  return Array.map(richTextSlashCommands, (command) => {
+  return Array.map(richTextSlashCommandDefinitions, (command) => {
     const label = command.label.toLowerCase();
     const value = command.value.toLowerCase();
     const description = command.description.toLowerCase();
@@ -35,4 +34,9 @@ export const normalizeRichTextSlashMenuIndex = (query: string, activeIndex: numb
   const commands = filteredRichTextSlashCommands(query);
   if (commands.length === 0) return 0;
   return ((activeIndex % commands.length) + commands.length) % commands.length;
+};
+
+export const activeSlashCommandValue = (model: RichTextEditorModel): string | undefined => {
+  const commands = filteredRichTextSlashCommands(model.slashMenu.query);
+  return commands[normalizeRichTextSlashMenuIndex(model.slashMenu.query, model.slashMenu.activeIndex)]?.value;
 };
