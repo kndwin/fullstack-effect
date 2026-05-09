@@ -28,11 +28,18 @@ export const MarkNode = {
   define: (definition: RichTextMarkDefinition): RichTextMarkDefinition => definition,
   has: (marks: ReadonlyArray<RichTextMark> | undefined, type: RichTextMarkType): boolean =>
     marks?.some((mark) => mark.type === type) ?? false,
-  toggle: (marks: ReadonlyArray<RichTextMark> | undefined, type: RichTextMarkType): ReadonlyArray<RichTextMark> | undefined => {
+  toggle: (
+    marks: ReadonlyArray<RichTextMark> | undefined,
+    type: RichTextMarkType,
+  ): ReadonlyArray<RichTextMark> | undefined => {
     const current = marks ?? [];
     return MarkNode.has(current, type) ? current.filter((mark) => mark.type !== type) : [...current, { type }];
   },
-  insertStoredMark: (node: RichTextTextNode, offset: number, type: RichTextMarkType): ReadonlyArray<RichTextTextNode> => {
+  insertStoredMark: (
+    node: RichTextTextNode,
+    offset: number,
+    type: RichTextMarkType,
+  ): ReadonlyArray<RichTextTextNode> => {
     const splitOffset = Math.max(0, Math.min(offset, node.text.length));
     const before = node.text.slice(0, splitOffset);
     const after = node.text.slice(splitOffset);
@@ -44,7 +51,12 @@ export const MarkNode = {
 
     return nodes;
   },
-  toggleRange: (node: RichTextTextNode, start: number, end: number, type: RichTextMarkType): ReadonlyArray<RichTextTextNode> => {
+  toggleRange: (
+    node: RichTextTextNode,
+    start: number,
+    end: number,
+    type: RichTextMarkType,
+  ): ReadonlyArray<RichTextTextNode> => {
     const localStart = Math.max(0, Math.min(start, node.text.length));
     const localEnd = Math.max(localStart, Math.min(end, node.text.length));
     const before = node.text.slice(0, localStart);

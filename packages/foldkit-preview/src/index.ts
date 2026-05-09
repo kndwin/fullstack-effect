@@ -63,6 +63,7 @@ export type Preview<Model = unknown, Message = unknown> = Readonly<{
   init?: (controls: PreviewControlValues) => Model;
   update?: (model: Model, message: Message) => Model | readonly [Model, ReadonlyArray<unknown>];
   view: ((controls: PreviewControlValues) => Html) | ((model: Model, controls: PreviewControlValues) => Html);
+  subscriptions?: (context: Readonly<{ model: Model; controls: PreviewControlValues }>) => Stream.Stream<Message>;
   routing?: Readonly<{
     onUrlRequest?: (request: typeof Runtime.UrlRequest.Type) => Message;
   }>;
@@ -511,6 +512,12 @@ const SubscriptionDeps = Schema.Struct({
   rightPanelResize: Schema.Struct({ active: Schema.Boolean }),
   historyMessageListEvents: Ui.VirtualList.SubscriptionDeps.fields.containerEvents,
   scenarioMessageListEvents: Ui.VirtualList.SubscriptionDeps.fields.containerEvents,
+  selectedPreviewEvents: Schema.Struct({
+    moduleIndex: Schema.Number,
+    previewIndex: Schema.Number,
+    model: Schema.Any,
+    controls: Schema.Any,
+  }),
 });
 
 const emptySliderDragDeps = {
@@ -734,6 +741,16 @@ const themePlaygroundStyle = (model: Model): Record<string, string> => {
     "--space-shell": `${0.75 * spacing}rem`,
     "--space-list-item-x": `${0.5 * spacing}rem`,
     "--space-list-item-y": `${0.25 * spacing}rem`,
+    "--font-size-xs": `${0.75 * scale}rem`,
+    "--font-size-sm": `${0.875 * scale}rem`,
+    "--font-size-xl": `${1.25 * scale}rem`,
+    "--font-size-2xl": `${1.5 * scale}rem`,
+    "--font-size-3xl": `${1.875 * scale}rem`,
+    "--line-height-xs": `${1 * scale}rem`,
+    "--line-height-sm": `${1.5 * scale}rem`,
+    "--line-height-xl": `${1.75 * scale}rem`,
+    "--line-height-2xl": `${2 * scale}rem`,
+    "--line-height-3xl": `${2.25 * scale}rem`,
     "--size-control-md": `${2 * scale}rem`,
   };
 };
@@ -1430,6 +1447,28 @@ export const runPreviewApp = (config: PreviewAppConfig): void => {
         Ui.VirtualList.subscriptions.containerEvents
           .dependenciesToStream(dependencies, readDependencies)
           .pipe(Stream.map((message) => GotScenarioMessageListMessage({ message }))),
+    },
+    selectedPreviewEvents: {
+      modelToDependencies: (model) => {
+        const selectedModule = config.modules[model.selectedModuleIndex] ?? config.modules[0];
+        const selectedPreview = selectedModule?.previews[model.selectedPreviewIndex] ?? selectedModule?.previews[0];
+        const controls = selectedPreview ? controlValuesForPreview(model, selectedPreview) : {};
+
+        return {
+          moduleIndex: model.selectedModuleIndex,
+          previewIndex: model.selectedPreviewIndex,
+          model: selectedPreview ? getPreviewModel(model, selectedPreview, controls) : undefined,
+          controls,
+        };
+      },
+      dependenciesToStream: ({ moduleIndex, previewIndex, model, controls }) => {
+        const selectedModule = config.modules[moduleIndex] ?? config.modules[0];
+        const selectedPreview = selectedModule?.previews[previewIndex] ?? selectedModule?.previews[0];
+
+        return selectedPreview?.subscriptions
+          ? selectedPreview.subscriptions({ model, controls: controls as PreviewControlValues })
+          : Stream.empty;
+      },
     },
   });
 

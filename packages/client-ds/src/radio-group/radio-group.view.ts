@@ -40,7 +40,8 @@ export const RadioGroup = <Message>(props: RadioGroupProps<Message>): Html => {
     name: props.name,
     isOptionDisabled: (value) => optionByValue.get(value)?.isDisabled ?? false,
     className:
-      props.className ?? (props.orientation === "Horizontal" ? "grid gap-[var(--space-3)] sm:grid-cols-3" : "grid gap-[var(--space-3)]"),
+      props.className ??
+      (props.orientation === "Horizontal" ? "grid gap-[var(--space-3)] sm:grid-cols-3" : "grid gap-[var(--space-3)]"),
     attributes: props.attributes,
     optionToConfig: (value) => {
       const option = optionByValue.get(value) ?? { label: value, value };

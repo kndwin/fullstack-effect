@@ -1,22 +1,20 @@
 {
   "name": "@qaveai/client-web",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
+  "type": "module",
+  "module": "index.ts",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "preview": "foldkit-preview dev",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@effect/platform": "^0.96.1",
-    "@effect/platform-browser": "^0.74.0",
-    "@effect/rpc": "^0.75.1",
-    "@foldkit/vite-plugin": "^0.3.1",
+    "@foldkit/vite-plugin": "0.4.0",
+    "@qaveai/client-ds": "workspace:*",
     "@qaveai/foldkit-preview": "workspace:*",
     "@qaveai/shared": "workspace:*",
-    "effect": "^3.21.2",
-    "foldkit": "^0.79.0"
+    "effect": "4.0.0-beta.59",
+    "foldkit": "0.82.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",

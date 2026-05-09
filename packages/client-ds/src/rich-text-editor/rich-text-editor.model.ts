@@ -1,5 +1,5 @@
 import { Option } from "effect";
-import { blockText, paragraph } from "./rich-text-editor.document";
+import { blockText, collapsedSelection, paragraph } from "./rich-text-editor.document";
 import type { RichTextEditorModel, RichTextSelection, RichTextSlashMenu } from "./rich-text-editor.schema";
 
 const closedSlashMenu = (selection: RichTextSelection): RichTextSlashMenu => ({
@@ -11,8 +11,8 @@ const closedSlashMenu = (selection: RichTextSelection): RichTextSlashMenu => ({
 
 export const initRichTextEditor = (value = ""): RichTextEditorModel => ({
   document: { type: "doc", children: [paragraph(value)] },
-  selection: { start: value.length, end: value.length },
-  slashMenu: closedSlashMenu({ start: value.length, end: value.length }),
+  selection: collapsedSelection(value.length),
+  slashMenu: closedSlashMenu(collapsedSelection(value.length)),
   maybeMountedHostId: Option.none(),
 });
 

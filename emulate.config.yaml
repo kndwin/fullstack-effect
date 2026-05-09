@@ -1,0 +1,9 @@
+google:
+  users:
+    - email: testuser@example.com
+      name: Test User
+  oauth_clients:
+    - client_id: qaveai-client.apps.googleusercontent.com
+      client_secret: GOCSPX-qaveai-secret
+      redirect_uris:
+        - http://127.0.0.1:3010/auth/google/callback

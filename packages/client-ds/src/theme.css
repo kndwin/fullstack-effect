@@ -175,6 +175,19 @@
   --transition-slow: 220ms ease-out;
 }
 
+.rte-placeholder-caret {
+  caret-color: var(--foreground);
+  display: inline-block;
+  position: relative;
+  color: transparent;
+}
+
+@keyframes rte-caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 :root,
 .light,
 .light-theme,

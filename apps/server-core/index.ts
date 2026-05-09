@@ -1,25 +1,27 @@
-import { HttpRouter } from "@effect/platform";
-import { BunHttpServer, BunRuntime } from "@effect/platform-bun";
-import { RpcSerialization, RpcServer } from "@effect/rpc";
-import { TodoRpcs } from "@qaveai/shared/rpc";
+import { AppRpcs } from "@qaveai/shared/platform/rpc";
 import { Effect, Layer } from "effect";
-import { TodoHandlersLive } from "./src/todos.rpc";
-import { renderedTodoQueries } from "./src/todos.sql";
+import { HttpEffect } from "effect/unstable/http";
+import { RpcSerialization, RpcServer } from "effect/unstable/rpc";
+import { handleAuthRequest } from "./src/module/auth/auth.http";
+import { AuthRpcLive } from "./src/module/auth/auth.rpc.impl";
+import { OrgRpcLive } from "./src/module/org/org.rpc.impl";
+import { ProjectRpcLive } from "./src/module/project/project.rpc.impl";
+import { TodoRpcLive } from "./src/module/todo/todo.rpc.impl";
 
-const RpcLayer = RpcServer.layer(TodoRpcs).pipe(Layer.provide(TodoHandlersLive));
+const RpcLive = Layer.mergeAll(
+  TodoRpcLive,
+  ProjectRpcLive,
+  OrgRpcLive,
+  AuthRpcLive,
+  RpcSerialization.layerNdjson,
+) as never;
 
-const HttpProtocol = RpcServer.layerProtocolHttp({
-  path: "/rpc",
-}).pipe(Layer.provide(RpcSerialization.layerNdjson));
+const rpc = HttpEffect.toWebHandlerLayer(Effect.flatten(RpcServer.toHttpEffect(AppRpcs)), RpcLive);
 
-const Server = HttpRouter.Default.serve().pipe(
-  Layer.provide(RpcLayer),
-  Layer.provide(HttpProtocol),
-  Layer.provide(BunHttpServer.layer({ hostname: "127.0.0.1", port: 3010 })),
-);
+const server = Bun.serve({
+  hostname: "127.0.0.1",
+  port: 3010,
+  fetch: async (request) => (await handleAuthRequest(request)) ?? rpc.handler(request),
+});
 
-Effect.runSync(
-  Effect.logInfo("effect-qb rendered todo SQL", renderedTodoQueries),
-);
-
-BunRuntime.runMain(Layer.launch(Server));
+console.log(`Server listening on http://${server.hostname}:${server.port}`);

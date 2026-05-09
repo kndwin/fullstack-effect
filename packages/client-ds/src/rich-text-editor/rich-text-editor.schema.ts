@@ -1,5 +1,6 @@
 import { Schema } from "effect";
 import { m } from "foldkit/message";
+import { RichTextBlockquoteNodeSchema } from "./nodes/blockquote.node";
 import { RichTextHeadingLevelSchema, RichTextHeadingNodeSchema } from "./nodes/heading.node";
 import { RichTextMarkSchema } from "./nodes/mark.schema";
 import { RichTextParagraphNodeSchema } from "./nodes/paragraph.node";
@@ -15,26 +16,29 @@ export const SyncedRichTextEditorPlainText = m("SyncedRichTextEditorPlainText", 
 export const DeletedRichTextEditorBackward = m("DeletedRichTextEditorBackward", {
   start: Schema.optional(Schema.Number),
   end: Schema.optional(Schema.Number),
+  unit: Schema.optional(Schema.Union([Schema.Literal("character"), Schema.Literal("word")])),
 });
 export const SplitRichTextEditorBlock = m("SplitRichTextEditorBlock");
 export const SelectedRichTextEditorAll = m("SelectedRichTextEditorAll");
 export const RestoredRichTextEditorSelection = m("RestoredRichTextEditorSelection");
 export const MountedRichTextEditorHost = m("MountedRichTextEditorHost", { id: Schema.String });
 export const FailedMountRichTextEditorHost = m("FailedMountRichTextEditorHost", { reason: Schema.String });
-export const ChangedRichTextEditorSelection = m("ChangedRichTextEditorSelection", {
+export const UpdatedRichTextEditorSelection = m("UpdatedRichTextEditorSelection", {
   start: Schema.Number,
   end: Schema.Number,
 });
 export const OpenedRichTextEditorSlashMenu = m("OpenedRichTextEditorSlashMenu");
 export const ClosedRichTextEditorSlashMenu = m("ClosedRichTextEditorSlashMenu");
 export const UpdatedRichTextEditorSlashMenuQuery = m("UpdatedRichTextEditorSlashMenuQuery", { value: Schema.String });
-export const MovedRichTextEditorSlashMenuSelection = m("MovedRichTextEditorSlashMenuSelection", { delta: Schema.Number });
+export const MovedRichTextEditorSlashMenuSelection = m("MovedRichTextEditorSlashMenuSelection", {
+  delta: Schema.Number,
+});
 export const SelectedRichTextEditorSlashCommand = m("SelectedRichTextEditorSlashCommand", { value: Schema.String });
-export const SetRichTextEditorBlockFormat = m("SetRichTextEditorBlockFormat", {
-  type: Schema.Union([Schema.Literal("paragraph"), Schema.Literal("heading")]),
+export const SelectedRichTextEditorBlockFormat = m("SelectedRichTextEditorBlockFormat", {
+  type: Schema.Union([Schema.Literal("paragraph"), Schema.Literal("heading"), Schema.Literal("blockquote")]),
   level: Schema.optional(Schema.Union([Schema.Literal(1), Schema.Literal(2), Schema.Literal(3)])),
 });
-export const ToggledRichTextEditorMark = m("ToggledRichTextEditorMark", {
+export const ClickedRichTextEditorMark = m("ClickedRichTextEditorMark", {
   type: Schema.Union([Schema.Literal("bold"), Schema.Literal("italic")]),
 });
 
@@ -48,22 +52,29 @@ export const RichTextEditorMessage = Schema.Union([
   RestoredRichTextEditorSelection,
   MountedRichTextEditorHost,
   FailedMountRichTextEditorHost,
-  ChangedRichTextEditorSelection,
+  UpdatedRichTextEditorSelection,
   OpenedRichTextEditorSlashMenu,
   ClosedRichTextEditorSlashMenu,
   UpdatedRichTextEditorSlashMenuQuery,
   MovedRichTextEditorSlashMenuSelection,
   SelectedRichTextEditorSlashCommand,
-  SetRichTextEditorBlockFormat,
-  ToggledRichTextEditorMark,
+  SelectedRichTextEditorBlockFormat,
+  ClickedRichTextEditorMark,
 ]);
 
 export const RichTextMark = RichTextMarkSchema;
 export const RichTextTextNode = RichTextTextNodeSchema;
 export const RichTextHeadingLevel = RichTextHeadingLevelSchema;
-export const RichTextBlockNode = Schema.Union([RichTextParagraphNodeSchema, RichTextHeadingNodeSchema]);
-export const RichTextDocument = Schema.Struct({ type: Schema.Literal("doc"), children: Schema.Array(RichTextBlockNode) });
-export const RichTextSelection = Schema.Struct({ start: Schema.Number, end: Schema.Number });
+export const RichTextBlockNode = Schema.Union([
+  RichTextParagraphNodeSchema,
+  RichTextHeadingNodeSchema,
+  RichTextBlockquoteNodeSchema,
+]);
+export const RichTextDocument = Schema.Struct({
+  type: Schema.Literal("doc"),
+  children: Schema.Array(RichTextBlockNode),
+});
+export const RichTextSelection = Schema.Struct({ anchor: Schema.Number, focus: Schema.Number });
 export const RichTextSlashMenu = Schema.Struct({
   isOpen: Schema.Boolean,
   anchorSelection: RichTextSelection,

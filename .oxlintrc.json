@@ -1,0 +1,62 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "plugins": ["typescript", "react", "jsx-a11y", "unicorn", "oxc", "import"],
+  "jsPlugins": [
+    { "name": "effect-local", "specifier": "./tools/effect-oxlint.plugin.mjs" },
+    { "name": "foldkit", "specifier": "./packages/oxlint-plugin-foldkit/dist/index.mjs" }
+  ],
+  "rules": {
+    "effect-local/no-shared-barrel-import": "error",
+    "effect-local/no-json-parse": "warn",
+    "effect-local/no-math-random": "warn",
+    "effect-local/no-new-date": "warn",
+    "effect-local/no-throw": "warn",
+    "effect-local/no-effect-run-in-module": "warn",
+    "effect-local/no-export-const-identifier-alias": "error",
+    "foldkit/got-submodel-message-name": "warn",
+    "foldkit/no-noop-message": "warn",
+    "foldkit/no-side-effects-in-update-view": "warn",
+    "foldkit/object-params-only": "warn",
+    "foldkit/util-files-have-tests": "warn",
+    "eslint/no-console": "warn",
+    "eslint/no-extra-boolean-cast": "warn",
+    "eslint/prefer-const": "error",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "unicorn/filename-case": "off",
+    "unicorn/no-useless-spread": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "**/*.preview.ts", "**/*.preview.tsx"],
+      "rules": {
+        "eslint/no-console": "off"
+      }
+    },
+    {
+      "files": ["apps/server-core/index.ts"],
+      "rules": {
+        "eslint/no-console": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "apps/server-core/drizzle/**",
+    "tools/*.plugin.mjs"
+  ]
+}

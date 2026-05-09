@@ -10,7 +10,7 @@ Object.assign(globalThis, {
 const { Scene, Story } = await import("foldkit");
 const {
   RichTextEditor,
-  ChangedRichTextEditorSelection,
+  UpdatedRichTextEditorSelection,
   DeletedRichTextEditorBackward,
   InsertedRichTextEditorText,
   ClosedRichTextEditorSlashMenu,
@@ -20,7 +20,7 @@ const {
   SelectedRichTextEditorAll,
   SplitRichTextEditorBlock,
   SyncedRichTextEditorPlainText,
-  ToggledRichTextEditorMark,
+  ClickedRichTextEditorMark,
   UpdatedRichTextEditorSlashMenuQuery,
   initRichTextEditor,
   richTextEditorPlainText,
@@ -35,13 +35,12 @@ const view = (model: RichTextEditorModel) =>
     id: "scene-rich-text-editor",
     model,
     label: "Draft",
+    isDebugSelectionVisible: true,
     toParentMessage: (message) => message,
   });
 
-const update = (model: RichTextEditorModel, message: RichTextEditorMessage) => [
-  updateRichTextEditor(model, message),
-  [],
-] as const;
+const update = (model: RichTextEditorModel, message: RichTextEditorMessage) =>
+  [updateRichTextEditor(model, message), []] as const;
 
 const afterMessages = (
   model: RichTextEditorModel,
@@ -58,10 +57,12 @@ const containsUndefined = (value: unknown): boolean => {
 test("command all then backspace clears the editor", () => {
   Scene.scene(
     { update, view },
-    Scene.with(afterMessages(initRichTextEditor("Delete this draft"), [
-      SelectedRichTextEditorAll(),
-      DeletedRichTextEditorBackward({}),
-    ])),
+    Scene.with(
+      afterMessages(initRichTextEditor("Delete this draft"), [
+        SelectedRichTextEditorAll(),
+        DeletedRichTextEditorBackward({}),
+      ]),
+    ),
     Scene.expect(Scene.role("textbox", { name: "Draft" })).toExist(),
     Scene.expect(Scene.text("Selection: 0-0")).toExist(),
   );
@@ -70,26 +71,142 @@ test("command all then backspace clears the editor", () => {
 test("slash h then enter applies heading", () => {
   Scene.scene(
     { update, view },
-    Scene.with(afterMessages(initRichTextEditor("Draft"), [
-      OpenedRichTextEditorSlashMenu(),
-      UpdatedRichTextEditorSlashMenuQuery({ value: "h" }),
-      SelectedRichTextEditorSlashCommand({ value: "heading-1" }),
-    ])),
+    Scene.with(
+      afterMessages(initRichTextEditor("Draft"), [
+        OpenedRichTextEditorSlashMenu(),
+        UpdatedRichTextEditorSlashMenuQuery({ value: "h" }),
+        SelectedRichTextEditorSlashCommand({ value: "heading-1" }),
+      ]),
+    ),
 
     Scene.expect(Scene.role("heading", { name: "Draft" })).toExist(),
+  );
+});
+
+test("slash blockquote applies quote formatting", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("Quoted")),
+    Story.message(OpenedRichTextEditorSlashMenu()),
+    Story.message(UpdatedRichTextEditorSlashMenuQuery({ value: "quote" })),
+    Story.message(SelectedRichTextEditorSlashCommand({ value: "blockquote" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "blockquote" });
+      expect(richTextEditorPlainText(model)).toBe("Quoted");
+    }),
+  );
+});
+
+test("typing blockquote marker and space formats an empty block", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(InsertedRichTextEditorText({ value: ">" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "paragraph" });
+      expect(richTextEditorPlainText(model)).toBe(">");
+    }),
+    Story.message(InsertedRichTextEditorText({ value: " " })),
+    Story.message(InsertedRichTextEditorText({ value: "Q" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "blockquote" });
+      expect(richTextEditorPlainText(model)).toBe("Q");
+    }),
+  );
+});
+
+test("typing heading markers and space formats empty blocks", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(InsertedRichTextEditorText({ value: "#" })),
+    Story.message(InsertedRichTextEditorText({ value: " " })),
+    Story.message(InsertedRichTextEditorText({ value: "H" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "heading", level: 1 });
+      expect(richTextEditorPlainText(model)).toBe("H");
+    }),
+  );
+
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(InsertedRichTextEditorText({ value: "#" })),
+    Story.message(InsertedRichTextEditorText({ value: "#" })),
+    Story.message(InsertedRichTextEditorText({ value: " " })),
+    Story.message(InsertedRichTextEditorText({ value: "H" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "heading", level: 2 });
+      expect(richTextEditorPlainText(model)).toBe("H");
+    }),
+  );
+
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(InsertedRichTextEditorText({ value: "#" })),
+    Story.message(InsertedRichTextEditorText({ value: "#" })),
+    Story.message(InsertedRichTextEditorText({ value: "#" })),
+    Story.message(InsertedRichTextEditorText({ value: " " })),
+    Story.message(InsertedRichTextEditorText({ value: "H" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "heading", level: 3 });
+      expect(richTextEditorPlainText(model)).toBe("H");
+    }),
+  );
+});
+
+test("backspace on an empty formatted block resets to paragraph", () => {
+  Story.story(
+    update,
+    Story.with(
+      afterMessages(initRichTextEditor(""), [
+        InsertedRichTextEditorText({ value: ">" }),
+        InsertedRichTextEditorText({ value: " " }),
+      ]),
+    ),
+    Story.message(DeletedRichTextEditorBackward({})),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "paragraph" });
+      expect(richTextEditorPlainText(model)).toBe("");
+    }),
+  );
+});
+
+test("select all and backspace resets blockquote to empty paragraph", () => {
+  Story.story(
+    update,
+    Story.with(
+      afterMessages(initRichTextEditor(""), [
+        InsertedRichTextEditorText({ value: ">" }),
+        InsertedRichTextEditorText({ value: " " }),
+        InsertedRichTextEditorText({ value: "a" }),
+        InsertedRichTextEditorText({ value: "b" }),
+        InsertedRichTextEditorText({ value: "c" }),
+      ]),
+    ),
+    Story.message(SelectedRichTextEditorAll()),
+    Story.message(DeletedRichTextEditorBackward({})),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "paragraph" });
+      expect(richTextEditorPlainText(model)).toBe("");
+      expect(model.selection).toEqual({ anchor: 0, focus: 0 });
+    }),
   );
 });
 
 test("slash bold then typing inserts bold text", () => {
   Scene.scene(
     { update, view },
-    Scene.with(afterMessages(initRichTextEditor(""), [
-      OpenedRichTextEditorSlashMenu(),
-      UpdatedRichTextEditorSlashMenuQuery({ value: "b" }),
-      SelectedRichTextEditorSlashCommand({ value: "bold" }),
-      InsertedRichTextEditorText({ value: "H" }),
-      InsertedRichTextEditorText({ value: "i" }),
-    ])),
+    Scene.with(
+      afterMessages(initRichTextEditor(""), [
+        OpenedRichTextEditorSlashMenu(),
+        UpdatedRichTextEditorSlashMenuQuery({ value: "b" }),
+        SelectedRichTextEditorSlashCommand({ value: "bold" }),
+        InsertedRichTextEditorText({ value: "H" }),
+        InsertedRichTextEditorText({ value: "i" }),
+      ]),
+    ),
 
     Scene.expect(Scene.text("Hi")).toExist(),
   );
@@ -98,13 +215,15 @@ test("slash bold then typing inserts bold text", () => {
 test("slash italic then typing inserts italic text", () => {
   Scene.scene(
     { update, view },
-    Scene.with(afterMessages(initRichTextEditor(""), [
-      OpenedRichTextEditorSlashMenu(),
-      UpdatedRichTextEditorSlashMenuQuery({ value: "i" }),
-      SelectedRichTextEditorSlashCommand({ value: "italic" }),
-      InsertedRichTextEditorText({ value: "H" }),
-      InsertedRichTextEditorText({ value: "i" }),
-    ])),
+    Scene.with(
+      afterMessages(initRichTextEditor(""), [
+        OpenedRichTextEditorSlashMenu(),
+        UpdatedRichTextEditorSlashMenuQuery({ value: "i" }),
+        SelectedRichTextEditorSlashCommand({ value: "italic" }),
+        InsertedRichTextEditorText({ value: "H" }),
+        InsertedRichTextEditorText({ value: "i" }),
+      ]),
+    ),
 
     Scene.expect(Scene.text("Hi")).toExist(),
   );
@@ -115,7 +234,7 @@ test("command b toggles bold marks", () => {
     update,
     Story.with(initRichTextEditor("Bold")),
     Story.message(SelectedRichTextEditorAll()),
-    Story.message(ToggledRichTextEditorMark({ type: "bold" })),
+    Story.message(ClickedRichTextEditorMark({ type: "bold" })),
     Story.model((model) => {
       expect(model.document.children[0]?.children[0]?.marks).toEqual([{ type: "bold" }]);
     }),
@@ -127,7 +246,7 @@ test("command italic toggles italic marks", () => {
     update,
     Story.with(initRichTextEditor("Italic")),
     Story.message(SelectedRichTextEditorAll()),
-    Story.message(ToggledRichTextEditorMark({ type: "italic" })),
+    Story.message(ClickedRichTextEditorMark({ type: "italic" })),
     Story.model((model) => {
       expect(model.document.children[0]?.children[0]?.marks).toEqual([{ type: "italic" }]);
     }),
@@ -135,8 +254,57 @@ test("command italic toggles italic marks", () => {
 });
 
 test("command i toggles italic marks", () => {
-  const message = richTextEditorKeyDownMessage("i", { altKey: false, ctrlKey: false, metaKey: true, shiftKey: false }, initRichTextEditor("Italic"));
-  expect(message).toEqual(ToggledRichTextEditorMark({ type: "italic" }));
+  const message = richTextEditorKeyDownMessage(
+    "i",
+    { altKey: false, ctrlKey: false, metaKey: true, shiftKey: false },
+    initRichTextEditor("Italic"),
+  );
+  expect(message).toEqual(ClickedRichTextEditorMark({ type: "italic" }));
+});
+
+test("shift arrow keys move focus while preserving anchor", () => {
+  const model = initRichTextEditor("Text");
+  expect(
+    richTextEditorKeyDownMessage("ArrowRight", { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true }, model),
+  ).toEqual(UpdatedRichTextEditorSelection({ start: 4, end: 4 }));
+
+  expect(
+    richTextEditorKeyDownMessage(
+      "ArrowRight",
+      { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true },
+      { ...model, selection: { anchor: 0, focus: 0 } },
+    ),
+  ).toEqual(UpdatedRichTextEditorSelection({ start: 0, end: 1 }));
+
+  expect(
+    richTextEditorKeyDownMessage("ArrowLeft", { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true }, model),
+  ).toEqual(UpdatedRichTextEditorSelection({ start: 4, end: 3 }));
+
+  expect(
+    richTextEditorKeyDownMessage(
+      "ArrowRight",
+      { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true },
+      { ...model, selection: { anchor: 4, focus: 1 } },
+    ),
+  ).toEqual(UpdatedRichTextEditorSelection({ start: 4, end: 2 }));
+});
+
+test("story: shift right shrinks a backward selection", () => {
+  const selectedBackward = afterMessages(initRichTextEditor("Text"), [
+    UpdatedRichTextEditorSelection({ start: 4, end: 3 }),
+    UpdatedRichTextEditorSelection({ start: 4, end: 2 }),
+    UpdatedRichTextEditorSelection({ start: 4, end: 1 }),
+  ]);
+
+  expect(selectedBackward.selection).toEqual({ anchor: 4, focus: 1 });
+  const message = richTextEditorKeyDownMessage(
+    "ArrowRight",
+    { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true },
+    selectedBackward,
+  );
+  expect(message).toEqual(UpdatedRichTextEditorSelection({ start: 4, end: 2 }));
+  if (!message) throw new Error("Expected shift ArrowRight to produce a selection message.");
+  expect(updateRichTextEditor(selectedBackward, message)).toMatchObject({ selection: { anchor: 4, focus: 2 } });
 });
 
 test("bold and italic marks can coexist", () => {
@@ -144,8 +312,8 @@ test("bold and italic marks can coexist", () => {
     update,
     Story.with(initRichTextEditor("Both")),
     Story.message(SelectedRichTextEditorAll()),
-    Story.message(ToggledRichTextEditorMark({ type: "bold" })),
-    Story.message(ToggledRichTextEditorMark({ type: "italic" })),
+    Story.message(ClickedRichTextEditorMark({ type: "bold" })),
+    Story.message(ClickedRichTextEditorMark({ type: "italic" })),
     Story.model((model) => {
       expect(model.document.children[0]?.children[0]?.marks).toEqual([{ type: "bold" }, { type: "italic" }]);
     }),
@@ -160,7 +328,7 @@ test("story: command all then backspace clears the model", () => {
     Story.message(DeletedRichTextEditorBackward({})),
     Story.model((model) => {
       expect(richTextEditorPlainText(model)).toBe("");
-      expect(model.selection).toEqual({ start: 0, end: 0 });
+      expect(model.selection).toEqual({ anchor: 0, focus: 0 });
     }),
   );
 });
@@ -173,7 +341,7 @@ test("story: command all then typing replaces the selection", () => {
     Story.message(InsertedRichTextEditorText({ value: "A" })),
     Story.model((model) => {
       expect(richTextEditorPlainText(model)).toBe("A");
-      expect(model.selection).toEqual({ start: 1, end: 1 });
+      expect(model.selection).toEqual({ anchor: 1, focus: 1 });
     }),
   );
 });
@@ -181,10 +349,12 @@ test("story: command all then typing replaces the selection", () => {
 test("command all then typing renders a collapsed replacement selection", () => {
   Scene.scene(
     { update, view },
-    Scene.with(afterMessages(initRichTextEditor("Hello"), [
-      SelectedRichTextEditorAll(),
-      InsertedRichTextEditorText({ value: "A" }),
-    ])),
+    Scene.with(
+      afterMessages(initRichTextEditor("Hello"), [
+        SelectedRichTextEditorAll(),
+        InsertedRichTextEditorText({ value: "A" }),
+      ]),
+    ),
     Scene.expect(Scene.role("textbox", { name: "Draft" })).toExist(),
     Scene.expect(Scene.text("A")).toExist(),
     Scene.expect(Scene.text("Selection: 1-1")).toExist(),
@@ -198,7 +368,7 @@ test("story: backspace uses live DOM selection over stale model selection", () =
     Story.message(DeletedRichTextEditorBackward({ start: 0, end: 17 })),
     Story.model((model) => {
       expect(richTextEditorPlainText(model)).toBe("");
-      expect(model.selection).toEqual({ start: 0, end: 0 });
+      expect(model.selection).toEqual({ anchor: 0, focus: 0 });
     }),
   );
 });
@@ -212,7 +382,7 @@ test("story: slash query remains visible while typing", () => {
     Story.model((model) => {
       expect(richTextEditorPlainText(model)).toBe("Draft/h");
       expect(model.slashMenu).toMatchObject({ isOpen: true, query: "h" });
-      expect(model.selection).toEqual({ start: 7, end: 7 });
+      expect(model.selection).toEqual({ anchor: 7, focus: 7 });
     }),
   );
 });
@@ -227,7 +397,7 @@ test("story: closing slash menu removes transient slash text", () => {
     Story.model((model) => {
       expect(richTextEditorPlainText(model)).toBe("Draft");
       expect(model.slashMenu.isOpen).toBe(false);
-      expect(model.selection).toEqual({ start: 5, end: 5 });
+      expect(model.selection).toEqual({ anchor: 5, focus: 5 });
     }),
   );
 });
@@ -239,7 +409,7 @@ test("story: closing slash menu is idempotent", () => {
     Story.message(ClosedRichTextEditorSlashMenu()),
     Story.model((model) => {
       expect(richTextEditorPlainText(model)).toBe("Draft");
-      expect(model.selection).toEqual({ start: 5, end: 5 });
+      expect(model.selection).toEqual({ anchor: 5, focus: 5 });
     }),
   );
 });
@@ -251,7 +421,7 @@ test("story: input sync keeps model aligned after native edits", () => {
     Story.message(SyncedRichTextEditorPlainText({ value: "Pasted text" })),
     Story.model((model) => {
       expect(richTextEditorPlainText(model)).toBe("Pasted text");
-      expect(model.selection).toEqual({ start: 11, end: 11 });
+      expect(model.selection).toEqual({ anchor: 11, focus: 11 });
     }),
   );
 });
@@ -275,6 +445,21 @@ test("story: markdown paste creates supported rich text nodes", () => {
   );
 });
 
+test("story: markdown paste creates blockquote nodes", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(PastedRichTextEditorMarkdown({ value: "> Quoted **bold**" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "blockquote" });
+      expect(model.document.children[0]?.children).toEqual([
+        { type: "text", text: "Quoted " },
+        { type: "text", text: "bold", marks: [{ type: "bold" }] },
+      ]);
+    }),
+  );
+});
+
 test("story: markdown paste replaces the live selection", () => {
   Story.story(
     update,
@@ -283,7 +468,7 @@ test("story: markdown paste replaces the live selection", () => {
     Story.model((model) => {
       expect(model.document.children[0]).toMatchObject({ type: "heading", level: 2 });
       expect(richTextEditorPlainText(model)).toBe("New");
-      expect(model.selection).toEqual({ start: 3, end: 3 });
+      expect(model.selection).toEqual({ anchor: 3, focus: 3 });
     }),
   );
 });
@@ -296,14 +481,53 @@ test("markdown serialization copies supported nodes", () => {
   expect(richTextEditorMarkdown(model)).toBe("### Title\nCopy **bold** and *italic*");
 });
 
+test("markdown serialization copies blockquote nodes", () => {
+  const model = afterMessages(initRichTextEditor(""), [
+    PastedRichTextEditorMarkdown({ value: "> Copy **bold** quote" }),
+  ]);
+
+  expect(richTextEditorMarkdown(model)).toBe("> Copy **bold** quote");
+});
+
+test("sample markdown round-trips supported formatting", () => {
+  const markdown = [
+    "# Product Notes",
+    "",
+    "This paragraph has **bold text**, *italic text*, and ***bold italic text***.",
+    "",
+    "## Next Steps",
+    "",
+    "Copy this into the editor to test Markdown paste.",
+    "",
+    "### Details",
+    "",
+    "Unsupported Markdown like lists or links will paste as plain paragraph text for now.",
+  ].join("\n");
+  const model = afterMessages(initRichTextEditor(""), [PastedRichTextEditorMarkdown({ value: markdown })]);
+
+  expect(model.document.children[0]).toMatchObject({ type: "heading", level: 1 });
+  expect(model.document.children[4]).toMatchObject({ type: "heading", level: 2 });
+  expect(model.document.children[8]).toMatchObject({ type: "heading", level: 3 });
+  expect(model.document.children[2]?.children).toEqual([
+    { type: "text", text: "This paragraph has " },
+    { type: "text", text: "bold text", marks: [{ type: "bold" }] },
+    { type: "text", text: ", " },
+    { type: "text", text: "italic text", marks: [{ type: "italic" }] },
+    { type: "text", text: ", and " },
+    { type: "text", text: "bold italic text", marks: [{ type: "bold" }, { type: "italic" }] },
+    { type: "text", text: "." },
+  ]);
+  expect(richTextEditorMarkdown(model)).toBe(markdown);
+});
+
 test("selected markdown serialization preserves block format and marks", () => {
   const model = afterMessages(initRichTextEditor(""), [
     PastedRichTextEditorMarkdown({ value: "# Title\nCopy **bold**" }),
   ]);
 
-  expect(richTextEditorSelectedMarkdown({ ...model, selection: { start: 0, end: richTextEditorPlainText(model).length } })).toBe(
-    "# Title\nCopy **bold**",
-  );
+  expect(
+    richTextEditorSelectedMarkdown({ ...model, selection: { anchor: 0, focus: richTextEditorPlainText(model).length } }),
+  ).toBe("# Title\nCopy **bold**");
 });
 
 test("story: model omits undefined optional fields", () => {
@@ -311,8 +535,8 @@ test("story: model omits undefined optional fields", () => {
     update,
     Story.with(initRichTextEditor("Plain")),
     Story.message(SelectedRichTextEditorAll()),
-    Story.message(ToggledRichTextEditorMark({ type: "bold" })),
-    Story.message(ToggledRichTextEditorMark({ type: "bold" })),
+    Story.message(ClickedRichTextEditorMark({ type: "bold" })),
+    Story.message(ClickedRichTextEditorMark({ type: "bold" })),
     Story.message(OpenedRichTextEditorSlashMenu()),
     Story.message(UpdatedRichTextEditorSlashMenuQuery({ value: "b" })),
     Story.message(SelectedRichTextEditorSlashCommand({ value: "bold" })),
@@ -333,7 +557,7 @@ test("story: selecting slash command removes query before applying command", () 
     Story.model((model) => {
       expect(richTextEditorPlainText(model)).toBe("Draft");
       expect(model.document.children[0]).toMatchObject({ type: "heading", level: 2 });
-      expect(model.selection).toEqual({ start: 5, end: 5 });
+      expect(model.selection).toEqual({ anchor: 5, focus: 5 });
     }),
   );
 });
@@ -387,25 +611,27 @@ test("story: slash italic stores marks for inserted text", () => {
 test("bold formatting survives typing enter and delete", () => {
   Scene.scene(
     { update, view },
-    Scene.with(afterMessages(initRichTextEditor("Bold wordx"), [
-      SelectedRichTextEditorAll(),
-      ToggledRichTextEditorMark({ type: "bold" }),
-      DeletedRichTextEditorBackward({}),
-      InsertedRichTextEditorText({ value: "B" }),
-      InsertedRichTextEditorText({ value: "o" }),
-      InsertedRichTextEditorText({ value: "l" }),
-      InsertedRichTextEditorText({ value: "d" }),
-      InsertedRichTextEditorText({ value: " " }),
-      InsertedRichTextEditorText({ value: "w" }),
-      InsertedRichTextEditorText({ value: "o" }),
-      InsertedRichTextEditorText({ value: "r" }),
-      InsertedRichTextEditorText({ value: "d" }),
-      SplitRichTextEditorBlock(),
-      InsertedRichTextEditorText({ value: "N" }),
-      InsertedRichTextEditorText({ value: "e" }),
-      InsertedRichTextEditorText({ value: "x" }),
-      InsertedRichTextEditorText({ value: "t" }),
-    ])),
+    Scene.with(
+      afterMessages(initRichTextEditor("Bold wordx"), [
+        SelectedRichTextEditorAll(),
+        ClickedRichTextEditorMark({ type: "bold" }),
+        DeletedRichTextEditorBackward({}),
+        InsertedRichTextEditorText({ value: "B" }),
+        InsertedRichTextEditorText({ value: "o" }),
+        InsertedRichTextEditorText({ value: "l" }),
+        InsertedRichTextEditorText({ value: "d" }),
+        InsertedRichTextEditorText({ value: " " }),
+        InsertedRichTextEditorText({ value: "w" }),
+        InsertedRichTextEditorText({ value: "o" }),
+        InsertedRichTextEditorText({ value: "r" }),
+        InsertedRichTextEditorText({ value: "d" }),
+        SplitRichTextEditorBlock(),
+        InsertedRichTextEditorText({ value: "N" }),
+        InsertedRichTextEditorText({ value: "e" }),
+        InsertedRichTextEditorText({ value: "x" }),
+        InsertedRichTextEditorText({ value: "t" }),
+      ]),
+    ),
 
     Scene.expect(Scene.text("Next")).toExist(),
   );
@@ -415,7 +641,7 @@ test("story: typing enter and delete preserve document text", () => {
   Story.story(
     update,
     Story.with(initRichTextEditor("Bold wordx")),
-    Story.message(ChangedRichTextEditorSelection({ start: 9, end: 9 })),
+    Story.message(UpdatedRichTextEditorSelection({ start: 9, end: 9 })),
     Story.message(DeletedRichTextEditorBackward({})),
     Story.message(SplitRichTextEditorBlock()),
     Story.message(InsertedRichTextEditorText({ value: "N" })),
@@ -424,6 +650,37 @@ test("story: typing enter and delete preserve document text", () => {
     Story.message(InsertedRichTextEditorText({ value: "t" })),
     Story.model((model) => {
       expect(richTextEditorPlainText(model)).toBe("Bold wor\nNextx");
+    }),
+  );
+});
+
+test("option backspace deletes the previous word", () => {
+  const message = richTextEditorKeyDownMessage(
+    "Backspace",
+    { altKey: true, ctrlKey: false, metaKey: false, shiftKey: false },
+    initRichTextEditor("Delete word"),
+  );
+  expect(message).toEqual(DeletedRichTextEditorBackward({ unit: "word" }));
+
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("Delete word")),
+    Story.message(DeletedRichTextEditorBackward({ unit: "word" })),
+    Story.model((model) => {
+      expect(richTextEditorPlainText(model)).toBe("Delete ");
+      expect(model.selection).toEqual({ anchor: 7, focus: 7 });
+    }),
+  );
+});
+
+test("option backspace deletes trailing whitespace and previous word", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("Delete word   ")),
+    Story.message(DeletedRichTextEditorBackward({ unit: "word" })),
+    Story.model((model) => {
+      expect(richTextEditorPlainText(model)).toBe("Delete ");
+      expect(model.selection).toEqual({ anchor: 7, focus: 7 });
     }),
   );
 });

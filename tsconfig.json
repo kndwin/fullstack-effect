@@ -11,6 +11,8 @@
     "paths": {
       "@qaveai/foldkit-preview": ["./packages/foldkit-preview/src/index.ts"],
       "@qaveai/foldkit-preview/config": ["./packages/foldkit-preview/src/config.ts"],
+      "@qaveai/client-ds/button": ["./packages/client-design-system-ui/src/button/index.ts"],
+      "@qaveai/client-ds/checkbox": ["./packages/client-design-system-ui/src/checkbox/index.ts"],
       "@qaveai/shared": ["./packages/shared/src/index.ts"],
       "@qaveai/shared/rpc": ["./packages/shared/src/todos.contract.ts"]
     },

@@ -15,7 +15,8 @@ export type AlertTextProps<Message> = Readonly<{
 }>;
 
 const alertClassName = {
-  default: "relative w-full rounded-lg border border-border bg-card p-[var(--space-card)] text-card-foreground shadow-[var(--shadow-panel)]",
+  default:
+    "relative w-full rounded-lg border border-border bg-card p-[var(--space-card)] text-card-foreground shadow-[var(--shadow-panel)]",
   destructive:
     "relative w-full rounded-lg border border-danger-border bg-danger-surface p-[var(--space-card)] text-danger shadow-[var(--shadow-panel)]",
 };

@@ -2,7 +2,7 @@ import { Schema } from "effect";
 import { Preview, type PreviewControlValues } from "@qaveai/foldkit-preview";
 import { html } from "foldkit/html";
 import {
-  ChangedRichTextEditorSelection,
+  UpdatedRichTextEditorSelection,
   ClosedRichTextEditorSlashMenu,
   DeletedRichTextEditorBackward,
   InsertedRichTextEditorText,
@@ -16,10 +16,10 @@ import {
   RestoredRichTextEditorSelection,
   SelectedRichTextEditorAll,
   SelectedRichTextEditorSlashCommand,
-  SetRichTextEditorBlockFormat,
+  SelectedRichTextEditorBlockFormat,
   SplitRichTextEditorBlock,
   SyncedRichTextEditorPlainText,
-  ToggledRichTextEditorMark,
+  ClickedRichTextEditorMark,
   UpdatedRichTextEditorSlashMenuQuery,
   initRichTextEditor,
   richTextEditorPlainText,
@@ -38,14 +38,14 @@ const Message = Schema.Union([
   RestoredRichTextEditorSelection,
   MountedRichTextEditorHost,
   FailedMountRichTextEditorHost,
-  ChangedRichTextEditorSelection,
+  UpdatedRichTextEditorSelection,
   OpenedRichTextEditorSlashMenu,
   ClosedRichTextEditorSlashMenu,
   UpdatedRichTextEditorSlashMenuQuery,
   MovedRichTextEditorSlashMenuSelection,
   SelectedRichTextEditorSlashCommand,
-  SetRichTextEditorBlockFormat,
-  ToggledRichTextEditorMark,
+  SelectedRichTextEditorBlockFormat,
+  ClickedRichTextEditorMark,
 ]);
 
 type Model = RichTextEditorModel;
@@ -60,11 +60,15 @@ const UpdatedSlashMenuInput = (value: string) => UpdatedRichTextEditorSlashMenuQ
 
 const selectedModel = updateRichTextEditor(
   initRichTextEditor("Make this word bold"),
-  ChangedRichTextEditorSelection({ start: 10, end: 14 }),
+  UpdatedRichTextEditorSelection({ start: 10, end: 14 }),
 );
 
-const boldModel = updateRichTextEditor(selectedModel, ToggledRichTextEditorMark({ type: "bold" }));
-const headingModel = updateRichTextEditor(initRichTextEditor("Editor roadmap"), SetRichTextEditorBlockFormat({ type: "heading", level: 1 }));
+const boldModel = updateRichTextEditor(selectedModel, ClickedRichTextEditorMark({ type: "bold" }));
+const headingModel = updateRichTextEditor(
+  initRichTextEditor("Editor roadmap"),
+  SelectedRichTextEditorBlockFormat({ type: "heading", level: 1 }),
+);
+const slashOpenModel = updateRichTextEditor(initRichTextEditor(""), OpenedRichTextEditorSlashMenu());
 
 const states = () => {
   const { div, Class } = html<Message>();
@@ -99,6 +103,14 @@ const states = () => {
         description: "Heading is block-level, not a text wrapper.",
         toParentMessage: (message) => message,
       }),
+      RichTextEditor<Message>({
+        id: "preview-rich-text-editor-slash-open",
+        model: slashOpenModel,
+        label: "Slash menu open",
+        description: "Shows the transient slash token and open command menu state.",
+        isSlashMenuBackdropDisabled: true,
+        toParentMessage: (message) => message,
+      }),
     ],
   );
 };
@@ -109,13 +121,17 @@ const inspector = (model: Model) => {
   return div(
     [Class("grid gap-2 rounded-lg border border-border bg-muted p-3")],
     [
-      span([Class("text-xs font-medium uppercase tracking-[var(--letter-spacing-label)] text-muted-foreground")], [
-        "Serialized model",
-      ]),
-      pre([Class("m-0 max-h-64 overflow-auto whitespace-pre-wrap break-words text-xs leading-5 text-foreground")], [
-        // eslint-disable-next-line effect-local/no-json-parse -- preview-only model inspector output
-        JSON.stringify(model, null, 2),
-      ]),
+      span(
+        [Class("text-xs font-medium uppercase tracking-[var(--letter-spacing-label)] text-muted-foreground")],
+        ["Serialized model"],
+      ),
+      pre(
+        [Class("m-0 max-h-64 overflow-auto whitespace-pre-wrap break-words text-xs leading-5 text-foreground")],
+        [
+          // eslint-disable-next-line effect-local/no-json-parse -- preview-only model inspector output
+          JSON.stringify(model, null, 2),
+        ],
+      ),
     ],
   );
 };
@@ -160,70 +176,70 @@ export const RichTextEditorPreview = Preview.module({
       },
       scenarios: [
         Preview.scenario("Write and format draft", [
-          ChangedRichTextEditorSelection({ start: 0, end: 27 }),
+          UpdatedRichTextEditorSelection({ start: 0, end: 27 }),
           DeletedRichTextEditorBackward({}),
           ...insertTextMessages("Add channel mentions later"),
-          ChangedRichTextEditorSelection({ start: 4, end: 20 }),
-          ToggledRichTextEditorMark({ type: "bold" }),
-          ChangedRichTextEditorSelection({ start: 26, end: 26 }),
+          UpdatedRichTextEditorSelection({ start: 4, end: 20 }),
+          ClickedRichTextEditorMark({ type: "bold" }),
+          UpdatedRichTextEditorSelection({ start: 26, end: 26 }),
           ...insertTextMessages(" today"),
         ]),
         Preview.scenario("Bold survives enter and delete", [
-          ChangedRichTextEditorSelection({ start: 0, end: 27 }),
+          UpdatedRichTextEditorSelection({ start: 0, end: 27 }),
           DeletedRichTextEditorBackward({}),
           ...insertTextMessages("Bold wordx"),
-          ChangedRichTextEditorSelection({ start: 0, end: 9 }),
-          ToggledRichTextEditorMark({ type: "bold" }),
-          ChangedRichTextEditorSelection({ start: 9, end: 9 }),
+          UpdatedRichTextEditorSelection({ start: 0, end: 9 }),
+          ClickedRichTextEditorMark({ type: "bold" }),
+          UpdatedRichTextEditorSelection({ start: 9, end: 9 }),
           DeletedRichTextEditorBackward({}),
-          ChangedRichTextEditorSelection({ start: 8, end: 8 }),
+          UpdatedRichTextEditorSelection({ start: 8, end: 8 }),
           SplitRichTextEditorBlock(),
           ...insertTextMessages("Next line"),
         ]),
         Preview.scenario("Slash menu search and escape", [
-          ChangedRichTextEditorSelection({ start: 27, end: 27 }),
+          UpdatedRichTextEditorSelection({ start: 27, end: 27 }),
           OpenedRichTextEditorSlashMenu(),
           UpdatedSlashMenuInput("hea"),
           ClosedRichTextEditorSlashMenu(),
         ]),
         Preview.scenario("Slash menu keyboard bold", [
-          ChangedRichTextEditorSelection({ start: 0, end: 7 }),
+          UpdatedRichTextEditorSelection({ start: 0, end: 7 }),
           OpenedRichTextEditorSlashMenu(),
           UpdatedSlashMenuInput("bo"),
           SelectedRichTextEditorSlashCommand({ value: "bold" }),
         ]),
         Preview.scenario("Toolbar heading levels", [
-          ChangedRichTextEditorSelection({ start: 0, end: 27 }),
+          UpdatedRichTextEditorSelection({ start: 0, end: 27 }),
           DeletedRichTextEditorBackward({}),
           ...insertTextMessages("Title"),
-          SetRichTextEditorBlockFormat({ type: "heading", level: 1 }),
+          SelectedRichTextEditorBlockFormat({ type: "heading", level: 1 }),
           SplitRichTextEditorBlock(),
           ...insertTextMessages("Section"),
-          ChangedRichTextEditorSelection({ start: 6, end: 13 }),
-          SetRichTextEditorBlockFormat({ type: "heading", level: 2 }),
+          UpdatedRichTextEditorSelection({ start: 6, end: 13 }),
+          SelectedRichTextEditorBlockFormat({ type: "heading", level: 2 }),
           SplitRichTextEditorBlock(),
           ...insertTextMessages("Subsection"),
-          ChangedRichTextEditorSelection({ start: 14, end: 24 }),
-          SetRichTextEditorBlockFormat({ type: "heading", level: 3 }),
+          UpdatedRichTextEditorSelection({ start: 14, end: 24 }),
+          SelectedRichTextEditorBlockFormat({ type: "heading", level: 3 }),
         ]),
         Preview.scenario("Slash paragraph from heading", [
-          ChangedRichTextEditorSelection({ start: 0, end: 27 }),
+          UpdatedRichTextEditorSelection({ start: 0, end: 27 }),
           DeletedRichTextEditorBackward({}),
           ...insertTextMessages("Temporary heading"),
-          SetRichTextEditorBlockFormat({ type: "heading", level: 2 }),
+          SelectedRichTextEditorBlockFormat({ type: "heading", level: 2 }),
           OpenedRichTextEditorSlashMenu(),
           UpdatedSlashMenuInput("para"),
           SelectedRichTextEditorSlashCommand({ value: "paragraph" }),
         ]),
         Preview.scenario("Slash H2 on third line", [
-          ChangedRichTextEditorSelection({ start: 0, end: 27 }),
+          UpdatedRichTextEditorSelection({ start: 0, end: 27 }),
           DeletedRichTextEditorBackward({}),
           ...insertTextMessages("Title"),
           SplitRichTextEditorBlock(),
           ...insertTextMessages("Second"),
           SplitRichTextEditorBlock(),
           ...insertTextMessages("Third"),
-          ChangedRichTextEditorSelection({ start: 18, end: 18 }),
+          UpdatedRichTextEditorSelection({ start: 18, end: 18 }),
           OpenedRichTextEditorSlashMenu(),
           UpdatedSlashMenuInput("heading 2"),
           SelectedRichTextEditorSlashCommand({ value: "heading-2" }),

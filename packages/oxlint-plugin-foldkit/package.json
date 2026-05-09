@@ -1,0 +1,29 @@
+{
+  "name": "oxlint-plugin-foldkit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Oxlint rules for Foldkit applications.",
+  "keywords": [
+    "effect",
+    "foldkit",
+    "lint",
+    "oxlint"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --target=node --outfile dist/index.mjs",
+    "typecheck": "tsgo --noEmit"
+  },
+  "devDependencies": {
+    "effect": "4.0.0-beta.59",
+    "effect-oxlint": "^0.2.0"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0-beta.59",
+    "effect-oxlint": "^0.2.0"
+  }
+}

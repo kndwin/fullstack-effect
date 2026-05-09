@@ -3,7 +3,7 @@ import { activeSlashCommandValue } from "./rich-text-editor.commands";
 import { blockBoundaryForOffset } from "./rich-text-editor.document";
 import { richTextMarkTypeForKeyboardShortcut } from "./rich-text-editor.registry";
 import {
-  ChangedRichTextEditorSelection,
+  UpdatedRichTextEditorSelection,
   ClosedRichTextEditorSlashMenu,
   DeletedRichTextEditorBackward,
   InsertedRichTextEditorText,
@@ -12,11 +12,12 @@ import {
   SelectedRichTextEditorAll,
   SelectedRichTextEditorSlashCommand,
   SplitRichTextEditorBlock,
-  ToggledRichTextEditorMark,
+  ClickedRichTextEditorMark,
   UpdatedRichTextEditorSlashMenuQuery,
   type RichTextEditorMessage,
   type RichTextEditorModel,
 } from "./rich-text-editor.schema";
+import { richTextEditorPlainText } from "./rich-text-editor.model";
 
 export const richTextEditorKeyDownMessage = (
   key: string,
@@ -44,16 +45,35 @@ export const richTextEditorKeyDownMessage = (
 
   if ((modifiers.metaKey || modifiers.ctrlKey) && key.toLowerCase() === "a") return SelectedRichTextEditorAll();
   const markType = richTextMarkTypeForKeyboardShortcut(key, modifiers);
-  if (markType) return ToggledRichTextEditorMark({ type: markType });
+  if (markType) return ClickedRichTextEditorMark({ type: markType });
   if ((modifiers.metaKey || modifiers.ctrlKey) && key === "ArrowLeft") {
-    const lineStart = blockBoundaryForOffset(model, model.selection.end, "start");
-    return ChangedRichTextEditorSelection({ start: modifiers.shiftKey ? model.selection.start : lineStart, end: lineStart });
+    const lineStart = blockBoundaryForOffset(model, model.selection.focus, "start");
+    return UpdatedRichTextEditorSelection({
+      start: modifiers.shiftKey ? model.selection.anchor : lineStart,
+      end: lineStart,
+    });
   }
   if ((modifiers.metaKey || modifiers.ctrlKey) && key === "ArrowRight") {
-    const lineEnd = blockBoundaryForOffset(model, model.selection.end, "end");
-    return ChangedRichTextEditorSelection({ start: modifiers.shiftKey ? model.selection.start : lineEnd, end: lineEnd });
+    const lineEnd = blockBoundaryForOffset(model, model.selection.focus, "end");
+    return UpdatedRichTextEditorSelection({
+      start: modifiers.shiftKey ? model.selection.anchor : lineEnd,
+      end: lineEnd,
+    });
   }
-  if (key === "Backspace") return DeletedRichTextEditorBackward({});
+  if (modifiers.shiftKey && key === "ArrowLeft") {
+    return UpdatedRichTextEditorSelection({
+      start: model.selection.anchor,
+      end: Math.max(0, model.selection.focus - 1),
+    });
+  }
+  if (modifiers.shiftKey && key === "ArrowRight") {
+    const textLength = richTextEditorPlainText(model).length;
+    return UpdatedRichTextEditorSelection({
+      start: model.selection.anchor,
+      end: Math.min(textLength, model.selection.focus + 1),
+    });
+  }
+  if (key === "Backspace") return DeletedRichTextEditorBackward({ unit: modifiers.altKey ? "word" : "character" });
   if (modifiers.metaKey || modifiers.ctrlKey || modifiers.altKey) return undefined;
   if (key === "Enter") return SplitRichTextEditorBlock();
   if (key === "/") return OpenedRichTextEditorSlashMenu();

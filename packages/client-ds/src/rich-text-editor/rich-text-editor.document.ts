@@ -5,7 +5,7 @@ import type {
   RichTextSelection,
   RichTextTextNode,
 } from "./rich-text-editor.schema";
-import { HeadingNode, ParagraphNode } from "./rich-text-editor.registry";
+import { ParagraphNode, richTextCreateBlock } from "./rich-text-editor.registry";
 import { TextNode } from "./nodes/text.node";
 
 type TextSegment = Readonly<{
@@ -25,22 +25,29 @@ type BlockSegment = Readonly<{
 }>;
 
 const emptyTextNode = TextNode.empty;
-const heading = HeadingNode.create;
 
 export const paragraph = (text = ""): RichTextBlockNode => ParagraphNode.create([TextNode.of(text)]);
 
 export const blockWithChildren = (
   block: RichTextBlockNode,
   children: ReadonlyArray<RichTextTextNode>,
-): RichTextBlockNode => block.type === "heading" ? heading(block.level, children) : ParagraphNode.create(children);
+): RichTextBlockNode => richTextCreateBlock(block, children);
 
 export const blockText = (block: RichTextBlockNode): string => block.children.map((node) => node.text).join("");
 
 export const normalizeSelection = (selection: RichTextSelection, textLength: number): RichTextSelection => {
-  const start = Math.max(0, Math.min(selection.start, selection.end, textLength));
-  const end = Math.max(0, Math.min(Math.max(selection.start, selection.end), textLength));
-  return { start, end };
+  const anchor = Math.max(0, Math.min(selection.anchor, textLength));
+  const focus = Math.max(0, Math.min(selection.focus, textLength));
+  return { anchor, focus };
 };
+
+export const collapsedSelection = (offset: number): RichTextSelection => ({ anchor: offset, focus: offset });
+
+export const selectionStart = (selection: RichTextSelection): number => Math.min(selection.anchor, selection.focus);
+
+export const selectionEnd = (selection: RichTextSelection): number => Math.max(selection.anchor, selection.focus);
+
+export const isSelectionCollapsed = (selection: RichTextSelection): boolean => selection.anchor === selection.focus;
 
 export const normalizeBlock = (block: RichTextBlockNode): RichTextBlockNode => {
   const merged = block.children.reduce<Array<RichTextTextNode>>((nodes, node) => {
@@ -55,7 +62,7 @@ export const normalizeBlock = (block: RichTextBlockNode): RichTextBlockNode => {
   }, []);
 
   const children = merged.length > 0 ? merged : [emptyTextNode()];
-  return block.type === "heading" ? heading(block.level ?? 1, children) : ParagraphNode.create(children);
+  return richTextCreateBlock(block, children);
 };
 
 export const normalizeModel = (model: RichTextEditorModel): RichTextEditorModel => {
@@ -100,7 +107,10 @@ export const blockSegments = (model: RichTextEditorModel): ReadonlyArray<BlockSe
 
 export const blockSegmentAtOffset = (model: RichTextEditorModel, offset: number): BlockSegment => {
   const blocks = blockSegments(model);
-  return blocks.find((block) => offset >= block.start && offset <= block.end) ?? blocks.at(-1) ?? { block: paragraph(), index: 0, start: 0, end: 0 };
+  return (
+    blocks.find((block) => offset >= block.start && offset <= block.end) ??
+    blocks.at(-1) ?? { block: paragraph(), index: 0, start: 0, end: 0 }
+  );
 };
 
 export const blockBoundaryForOffset = (

@@ -1,5 +1,11 @@
-import { blockSegments, blockText, normalizeSelection, textNodesInRange } from "./rich-text-editor.document";
-import { HeadingNode, ParagraphNode, richTextMarkNodeForType, richTextMarkNodes } from "./rich-text-editor.registry";
+import { blockSegments, blockText, isSelectionCollapsed, normalizeSelection, selectionEnd, selectionStart, textNodesInRange } from "./rich-text-editor.document";
+import {
+  BlockquoteNode,
+  HeadingNode,
+  ParagraphNode,
+  richTextMarkNodeForType,
+  richTextMarkNodes,
+} from "./rich-text-editor.registry";
 import { TextNode } from "./nodes/text.node";
 import type {
   RichTextBlockNode,
@@ -13,11 +19,7 @@ import { richTextEditorPlainText } from "./rich-text-editor.model";
 const sameMarks = (left: ReadonlyArray<RichTextMark>, right: ReadonlyArray<RichTextMark>): boolean =>
   TextNode.sameMarks(left, right);
 
-const pushTextNode = (
-  nodes: Array<RichTextTextNode>,
-  text: string,
-  marks: ReadonlyArray<RichTextMark> = [],
-): void => {
+const pushTextNode = (nodes: Array<RichTextTextNode>, text: string, marks: ReadonlyArray<RichTextMark> = []): void => {
   if (!text) return;
   const previous = nodes.at(-1);
   if (previous && sameMarks(previous.marks ?? [], marks)) {
@@ -32,11 +34,12 @@ const parseInlineMarkdown = (value: string): ReadonlyArray<RichTextTextNode> => 
   let text = "";
   let index = 0;
   const activeMarks = new Set<RichTextMark["type"]>();
-  const markdownMarks = [...richTextMarkNodes].toSorted((left, right) => right.markdown.marker.length - left.markdown.marker.length);
+  const markdownMarks = [...richTextMarkNodes].toSorted(
+    (left, right) => right.markdown.marker.length - left.markdown.marker.length,
+  );
 
-  const marks = (): ReadonlyArray<RichTextMark> => [...richTextMarkNodes]
-    .filter((node) => activeMarks.has(node.kind))
-    .map((node) => ({ type: node.kind }));
+  const marks = (): ReadonlyArray<RichTextMark> =>
+    [...richTextMarkNodes].filter((node) => activeMarks.has(node.kind)).map((node) => ({ type: node.kind }));
   const flush = () => {
     pushTextNode(nodes, text, marks());
     text = "";
@@ -69,6 +72,8 @@ const markdownLineToBlock = (line: string): RichTextBlockNode => {
   if (match) {
     return HeadingNode.create(match.level, parseInlineMarkdown(match.content));
   }
+  const quoteMatch = BlockquoteNode.markdown.matchLine(line);
+  if (quoteMatch) return BlockquoteNode.create(parseInlineMarkdown(quoteMatch.content));
   return ParagraphNode.create(parseInlineMarkdown(ParagraphNode.markdown.matchLine(line).content));
 };
 
@@ -77,7 +82,7 @@ export const richTextDocumentFromMarkdown = (markdown: string): RichTextDocument
   return { type: "doc", children: lines.map(markdownLineToBlock) };
 };
 
-const escapeMarkdownText = (value: string): string => value.replace(/([\\*#])/g, "\\$1");
+const escapeMarkdownText = (value: string): string => value.replace(/([\\*#>])/g, "\\$1");
 
 const textNodeMarkdown = (node: RichTextTextNode): string => {
   const text = escapeMarkdownText(node.text);
@@ -91,23 +96,25 @@ const textNodeMarkdown = (node: RichTextTextNode): string => {
 const blockMarkdown = (block: RichTextBlockNode): string => {
   const content = block.children.map(textNodeMarkdown).join("");
   if (block.type === "heading") return HeadingNode.markdown.serialize(block, content);
+  if (block.type === "blockquote") return BlockquoteNode.markdown.serialize(block, content);
   return ParagraphNode.markdown.serialize(block, content);
 };
 
 export const richTextDocumentMarkdown = (document: RichTextDocument): string =>
   document.children.map(blockMarkdown).join("\n");
 
-export const richTextEditorMarkdown = (model: RichTextEditorModel): string =>
-  richTextDocumentMarkdown(model.document);
+export const richTextEditorMarkdown = (model: RichTextEditorModel): string => richTextDocumentMarkdown(model.document);
 
 export const richTextEditorSelectedMarkdown = (model: RichTextEditorModel): string => {
   const textLength = richTextEditorPlainText(model).length;
   const selection = normalizeSelection(model.selection, textLength);
-  if (selection.start === selection.end) return "";
+  if (isSelectionCollapsed(selection)) return "";
+  const start = selectionStart(selection);
+  const end = selectionEnd(selection);
 
   const blocks = blockSegments(model).flatMap((segment): ReadonlyArray<RichTextBlockNode> => {
-    if (selection.end <= segment.start || selection.start >= segment.end) return [];
-    const children = textNodesInRange(segment.block, segment.start, selection.start, selection.end);
+    if (end <= segment.start || start >= segment.end) return [];
+    const children = textNodesInRange(segment.block, segment.start, start, end);
     if (children.length === 0 && blockText(segment.block).length > 0) return [];
     return [{ ...segment.block, children: children.length > 0 ? children : [TextNode.empty()] }];
   });

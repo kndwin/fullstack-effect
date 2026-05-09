@@ -14,7 +14,9 @@ export const TextNode = {
   sameMarks: (left?: ReadonlyArray<RichTextMark>, right?: ReadonlyArray<RichTextMark>): boolean => {
     const leftMarks = [...(left ?? [])].toSorted((a, b) => a.type.localeCompare(b.type));
     const rightMarks = [...(right ?? [])].toSorted((a, b) => a.type.localeCompare(b.type));
-    return leftMarks.length === rightMarks.length && leftMarks.every((mark, index) => mark.type === rightMarks[index]?.type);
+    return (
+      leftMarks.length === rightMarks.length && leftMarks.every((mark, index) => mark.type === rightMarks[index]?.type)
+    );
   },
   inserted: (text: string, marks?: ReadonlyArray<RichTextMark>): ReadonlyArray<RichTextTextNode> =>
     text.length > 0 ? [TextNode.of(text, marks)] : [],

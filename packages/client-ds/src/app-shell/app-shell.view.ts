@@ -34,7 +34,11 @@ const classNames = {
 const mergeClassName = (defaultClassName: string, className?: string): string =>
   className ? `${defaultClassName} ${className}` : defaultClassName;
 
-const view = <Message>(tag: "aside" | "div" | "header" | "main", defaultClassName: string, props: AppShellProps<Message>): Html => {
+const view = <Message>(
+  tag: "aside" | "div" | "header" | "main",
+  defaultClassName: string,
+  props: AppShellProps<Message>,
+): Html => {
   const { aside, div, header, main, Class } = html<Message>();
   const attributes = [...(props.attributes ?? []), Class(mergeClassName(defaultClassName, props.className))];
 
@@ -54,7 +58,8 @@ export const AppShell = <Message>(props: AppShellRootProps<Message>): Html => vi
 export const AppShellRail = <Message>(props: AppShellProps<Message>): Html => view("aside", classNames.rail, props);
 export const AppShellSidebar = <Message>(props: AppShellSidebarProps<Message>): Html =>
   view("aside", `${classNames.sidebar} ${props.isCollapsed ? classNames.sidebarCollapsed : ""}`, props);
-export const AppShellHeader = <Message>(props: AppShellProps<Message>): Html => view("header", classNames.header, props);
+export const AppShellHeader = <Message>(props: AppShellProps<Message>): Html =>
+  view("header", classNames.header, props);
 export const AppShellMain = <Message>(props: AppShellProps<Message>): Html => view("main", classNames.main, props);
 export const AppShellAside = <Message>(props: AppShellProps<Message>): Html => view("aside", classNames.aside, props);
 

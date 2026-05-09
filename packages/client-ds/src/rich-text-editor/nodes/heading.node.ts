@@ -23,7 +23,11 @@ export const HeadingNode = {
     { label: "H2", format: { type: "heading" as const, level: 2 as const } },
     { label: "H3", format: { type: "heading" as const, level: 3 as const } },
   ] as const,
-  create: (level: RichTextHeadingLevel, children: ReadonlyArray<RichTextTextNode>): RichTextBlockNode => ({ type: "heading", level, children }),
+  create: (level: RichTextHeadingLevel, children: ReadonlyArray<RichTextTextNode>): RichTextBlockNode => ({
+    type: "heading",
+    level,
+    children,
+  }),
   formatForSlashCommand: (value: string): Readonly<{ type: "heading"; level: RichTextHeadingLevel }> | undefined => {
     const command = HeadingNode.slashCommands.find((item) => item.value === value);
     return command ? { type: "heading", level: command.level } : undefined;
@@ -39,10 +43,10 @@ export const HeadingNode = {
   },
   className: (level: RichTextHeadingLevel): string =>
     level === 1
-      ? "m-0 min-h-10 text-3xl font-semibold leading-10 tracking-tight text-foreground"
+      ? "m-0 min-h-[calc(var(--line-height-3xl)+var(--space-1))] text-[length:var(--font-size-3xl)] font-semibold leading-[var(--line-height-3xl)] tracking-tight text-foreground"
       : level === 2
-        ? "m-0 min-h-9 text-2xl font-semibold leading-9 tracking-tight text-foreground"
-        : "m-0 min-h-8 text-xl font-semibold leading-8 tracking-tight text-foreground",
+        ? "m-0 min-h-[calc(var(--line-height-2xl)+var(--space-1))] text-[length:var(--font-size-2xl)] font-semibold leading-[var(--line-height-2xl)] tracking-tight text-foreground"
+        : "m-0 min-h-[calc(var(--line-height-xl)+var(--space-1))] text-[length:var(--font-size-xl)] font-semibold leading-[var(--line-height-xl)] tracking-tight text-foreground",
   render: <Message>(level: RichTextHeadingLevel, children: ReadonlyArray<Html | string>): Html => {
     const { h1, h2, h3, Class } = html<Message>();
     if (level === 1) return h1([Class(HeadingNode.className(level))], children);

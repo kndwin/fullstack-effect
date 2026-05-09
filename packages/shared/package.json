@@ -1,17 +1,23 @@
 {
   "name": "@qaveai/shared",
-  "type": "module",
   "private": true,
-  "module": "src/index.ts",
+  "type": "module",
+  "module": "src/platform/rpc.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./rpc": "./src/todos.contract.ts"
+    "./platform/rpc": "./src/platform/rpc.ts",
+    "./module/auth/auth.schema": "./src/module/auth/auth.schema.ts",
+    "./module/auth/auth.rpc": "./src/module/auth/auth.rpc.ts",
+    "./module/org/org.schema": "./src/module/org/org.schema.ts",
+    "./module/org/org.rpc": "./src/module/org/org.rpc.ts",
+    "./module/project/project.schema": "./src/module/project/project.schema.ts",
+    "./module/project/project.rpc": "./src/module/project/project.rpc.ts",
+    "./module/todo/todo.schema": "./src/module/todo/todo.schema.ts",
+    "./module/todo/todo.rpc": "./src/module/todo/todo.rpc.ts"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@effect/rpc": "^0.75.1",
-    "effect": "^3.21.2"
+    "effect": "4.0.0-beta.59"
   }
 }

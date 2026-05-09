@@ -10,6 +10,7 @@ import {
   SyncedRichTextEditorPlainText,
   type RichTextEditorMessage,
   type RichTextEditorModel,
+  type RichTextSelection,
 } from "./rich-text-editor.schema";
 
 export type RichTextEditorSubscriptionOptions = Readonly<{
@@ -51,10 +52,18 @@ const handledKeyDownMessage = (
   }
 
   if (key === "Backspace" && !options.model.slashMenu.isOpen) {
-    const selection = typeof window === "undefined" || typeof window.getSelection !== "function"
-      ? options.model.selection
-      : richTextSelectionMessageFromDom(plainText.length);
-    return DeletedRichTextEditorBackward({ start: selection.start, end: selection.end });
+    const selection =
+      typeof window === "undefined" || typeof window.getSelection !== "function"
+        ? options.model.selection
+        : (() => {
+            const message = richTextSelectionMessageFromDom(plainText.length);
+            return { anchor: message.start, focus: message.end };
+          })();
+    return DeletedRichTextEditorBackward({
+      start: selection.anchor,
+      end: selection.focus,
+      unit: modifiers.altKey ? "word" : "character",
+    });
   }
 
   return richTextEditorKeyDownMessage(key, modifiers, options.model);
@@ -67,10 +76,8 @@ const handledKeyUpMessage = (
   if (options.isDisabled || !isRichTextEditorFocused(options.id)) return undefined;
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "a") return undefined;
 
-  return richTextEditorKeyUpMessage(
-    event.key,
-    keyboardModifiersFromEvent(event),
-    () => richTextSelectionMessageFromDom(richTextEditorPlainText(options.model).length),
+  return richTextEditorKeyUpMessage(event.key, keyboardModifiersFromEvent(event), () =>
+    richTextSelectionMessageFromDom(richTextEditorPlainText(options.model).length),
   );
 };
 
@@ -84,9 +91,10 @@ const offerMessage = (
   Queue.offerUnsafe(queue, message);
 };
 
-const currentDomSelection = (model: RichTextEditorModel): typeof model.selection => {
+const currentDomSelection = (model: RichTextEditorModel): RichTextSelection => {
   if (typeof window === "undefined" || typeof window.getSelection !== "function") return model.selection;
-  return richTextSelectionMessageFromDom(richTextEditorPlainText(model).length);
+  const message = richTextSelectionMessageFromDom(richTextEditorPlainText(model).length);
+  return { anchor: message.start, focus: message.end };
 };
 
 const modelWithDomSelection = (model: RichTextEditorModel): RichTextEditorModel => ({
@@ -118,14 +126,18 @@ const hostEventStream = (
           offerMessage(queue, handledKeyUpMessage(event, options), event);
         };
         const onInput = () => {
-          if (!options.isDisabled) Queue.offerUnsafe(queue, SyncedRichTextEditorPlainText({ value: element.innerText }));
+          if (!options.isDisabled)
+            Queue.offerUnsafe(queue, SyncedRichTextEditorPlainText({ value: element.innerText }));
         };
         const onPaste = (event: ClipboardEvent) => {
           const markdown = event.clipboardData?.getData("text/plain");
           if (options.isDisabled || !markdown) return;
           event.preventDefault();
           const selection = currentDomSelection(options.model);
-          Queue.offerUnsafe(queue, PastedRichTextEditorMarkdown({ value: markdown, start: selection.start, end: selection.end }));
+          Queue.offerUnsafe(
+            queue,
+            PastedRichTextEditorMarkdown({ value: markdown, start: selection.anchor, end: selection.focus }),
+          );
         };
         const onCopy = (event: ClipboardEvent) => {
           if (options.isDisabled || !writeMarkdownClipboard(event, options.model)) return;
@@ -135,7 +147,7 @@ const hostEventStream = (
           if (options.isDisabled || !writeMarkdownClipboard(event, options.model)) return;
           event.preventDefault();
           const selection = currentDomSelection(options.model);
-          Queue.offerUnsafe(queue, DeletedRichTextEditorBackward({ start: selection.start, end: selection.end }));
+          Queue.offerUnsafe(queue, DeletedRichTextEditorBackward({ start: selection.anchor, end: selection.focus }));
         };
         const onPointerUp = () => {
           if (!options.isDisabled) {

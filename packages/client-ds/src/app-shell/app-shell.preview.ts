@@ -125,7 +125,10 @@ const signedOutPanel = () => {
         [Class("grid gap-[var(--space-1)]")],
         [
           p([Class("m-0 text-sm font-semibold leading-none")], ["Signed out"]),
-          p([Class("m-0 text-sm leading-5 text-muted-foreground")], ["Authentication is mocked in this app shell example."]),
+          p(
+            [Class("m-0 text-sm leading-5 text-muted-foreground")],
+            ["Authentication is mocked in this app shell example."],
+          ),
         ],
       ),
       div(
@@ -136,7 +139,11 @@ const signedOutPanel = () => {
         ],
       ),
       div(
-        [Class("inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium text-muted-foreground shadow-[var(--shadow-control)]")],
+        [
+          Class(
+            "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium text-muted-foreground shadow-[var(--shadow-control)]",
+          ),
+        ],
         ["Sign in unavailable"],
       ),
     ],
@@ -149,16 +156,25 @@ const userPopover = (model: AppShellPreviewModel, isCollapsed: boolean) => {
   return Popover<AppShellPreviewMessage>({
     model: model.userPopover,
     toParentMessage: (message) => GotUserPopoverMessage({ message }),
-    buttonContent: span([Class("inline-flex items-center gap-[var(--space-2)]")], [
-      span([Class("inline-flex size-6 items-center justify-center rounded-md bg-foreground text-xs font-semibold text-background")], [
-        "D",
-      ]),
-      ...(isCollapsed ? [] : [span([Class("text-left")], ["Dev"])]),
-    ]),
+    buttonContent: span(
+      [Class("inline-flex items-center gap-[var(--space-2)]")],
+      [
+        span(
+          [
+            Class(
+              "inline-flex size-6 items-center justify-center rounded-md bg-foreground text-xs font-semibold text-background",
+            ),
+          ],
+          ["D"],
+        ),
+        ...(isCollapsed ? [] : [span([Class("text-left")], ["Dev"])]),
+      ],
+    ),
     panelContent: signedOutPanel(),
     className: isCollapsed ? "mx-auto" : "w-full",
     buttonClassName: `inline-flex h-10 items-center justify-center rounded-md border border-border bg-background px-2 text-sm font-medium shadow-[var(--shadow-control)] outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring ${isCollapsed ? "w-9" : "w-full justify-start"}`,
-    panelClassName: "z-50 w-72 rounded-lg border border-border bg-popover p-[var(--space-card)] text-popover-foreground shadow-[var(--shadow-popover)] outline-none",
+    panelClassName:
+      "z-50 w-72 rounded-lg border border-border bg-popover p-[var(--space-card)] text-popover-foreground shadow-[var(--shadow-popover)] outline-none",
   });
 };
 

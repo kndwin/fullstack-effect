@@ -19,7 +19,8 @@ const baseClassName =
 const variantClassName = {
   default: "bg-primary text-primary-foreground shadow-[var(--shadow-control)] hover:bg-primary-hover",
   secondary: "bg-secondary text-secondary-foreground shadow-[var(--shadow-control)] hover:bg-surface-active",
-  outline: "border border-input bg-background shadow-[var(--shadow-control)] hover:bg-accent hover:text-accent-foreground",
+  outline:
+    "border border-input bg-background shadow-[var(--shadow-control)] hover:bg-accent hover:text-accent-foreground",
   ghost: "hover:bg-accent hover:text-accent-foreground",
   destructive: "bg-destructive text-destructive-foreground shadow-[var(--shadow-control)] hover:bg-danger-hover",
   link: "text-primary underline-offset-4 hover:underline",

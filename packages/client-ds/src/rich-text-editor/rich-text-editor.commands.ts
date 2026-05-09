@@ -2,7 +2,7 @@ import { Array } from "effect";
 import type { RichTextEditorModel } from "./rich-text-editor.schema";
 import { richTextSlashCommandDefinitions } from "./rich-text-editor.registry";
 
-export type RichTextSlashCommand = typeof richTextSlashCommandDefinitions[number];
+export type RichTextSlashCommand = (typeof richTextSlashCommandDefinitions)[number];
 
 export const filteredRichTextSlashCommands = (query: string): ReadonlyArray<RichTextSlashCommand> => {
   const normalized = query.trim().toLowerCase();
@@ -24,7 +24,7 @@ export const filteredRichTextSlashCommands = (query: string): ReadonlyArray<Rich
               ? 4
               : undefined;
     return { command, score };
-    })
+  })
     .filter((match): match is { command: RichTextSlashCommand; score: number } => match.score !== undefined)
     .toSorted((left, right) => left.score - right.score)
     .map((match) => match.command);

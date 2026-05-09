@@ -1,15 +1,16 @@
-import { foldkit } from '@foldkit/vite-plugin'
-import tailwindcss from '@tailwindcss/vite'
-import { defineConfig } from 'vite'
+import { foldkit } from "@foldkit/vite-plugin";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [tailwindcss(), foldkit({ devToolsMcpPort: 9988 })],
   server: {
     proxy: {
-      '/rpc': 'http://127.0.0.1:3010',
+      "/rpc": "http://127.0.0.1:3010",
+      "/auth": "http://127.0.0.1:3010",
     },
   },
   optimizeDeps: {
-    entries: ['src/main.ts'],
+    entries: ["src/main.ts"],
   },
-})
+});
