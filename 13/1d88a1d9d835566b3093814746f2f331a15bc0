@@ -1,0 +1,156 @@
+packages/client-ds/src/rich-text-editor/rich-text-editor.preview.ts
+  s_90acadf480b4b9::t_87e533ac7feb95 13,33
+  s_71205cfef20ac7::t_dc0e440e7addd5 22,48,66-67,167,176
+  s_da7d276d270b57::t_51dfd53e1b0fab 26,136-141
+  s_a3ba6465b68b48::t_cf7af9f8546633 9-10,39-40
+packages/client-ds/src/rich-text-editor/nodes/italic.node.ts
+  s_607d06ef42cac9::t_f3143447a6e1e2 1-4,6-8,10
+  s_71205cfef20ac7::t_b285f356a5df9f 5,9
+packages/client-ds/src/rich-text-editor/nodes/text.node.ts
+  s_607d06ef42cac9::t_f3143447a6e1e2 2,15-16
+packages/client-ds/src/rich-text-editor/rich-text-editor.commands.ts
+  s_24c2f7c92bef14::t_919e8c45dee7aa 2,38-41
+  s_607d06ef42cac9::t_95b79ad446fad4 5,9,11
+packages/client-ds/src/rich-text-editor/nodes/mark.schema.ts
+  s_607d06ef42cac9::t_7cf73efe594c44 1-8
+packages/client-ds/src/rich-text-editor/rich-text-editor.keyboard.ts
+  s_24c2f7c92bef14::t_209cf2e3df726e 2-3
+  s_71205cfef20ac7::t_68247b17e3c6df 4,15,46-47
+packages/client-ds/src/rich-text-editor/rich-text-editor.document.ts
+  s_24c2f7c92bef14::t_fcd883d7eda0e4 1-145
+packages/client-ds/src/rich-text-editor/rich-text-editor.slash-menu.view.ts
+  s_607d06ef42cac9::t_a8a98c51f99074 3,13,20-55,59-103,105,107-108,114-119
+packages/client-ds/src/rich-text-editor/rich-text-editor.view.ts
+  s_da7d276d270b57::t_a682870362291e 178-181
+  s_90acadf480b4b9::t_e98f20453a0a32 25,53
+  s_607d06ef42cac9::t_ab05be856a4101 278
+  s_607d06ef42cac9::t_31611745b6cb1a 7,90,94,110-113,285
+  s_a3ba6465b68b48::t_774f2c515ae727 1-2,4,20,22,82-87,99-101,103-109,114-116,118-123,136
+  s_9e1316885087ec::t_b72ebd82ee4aef 36,141-144,154-156,164-165,198,201,203-204,217
+  s_24c2f7c92bef14::t_5cd5af75fe9901 6,8,17-19,21,23-24,27,29,32,34,41-42,44-52,54-60,62-67
+  s_24c2f7c92bef14::t_4d4a3d3966e9bd 68
+  s_607d06ef42cac9::t_16d81a3f1e2910 39,219,267
+  s_da7d276d270b57::t_169779ac864fd4 88-89,91-93,95-96,137-140,145-153,169-177,184-197,199-200,205-216,288-291
+  s_a3ba6465b68b48::t_a6a9dacbe6241f 97-98,102,117,124-135
+  s_71205cfef20ac7::t_96d666fb083e2e 10-16,33,61,157-163,202,218
+packages/client-ds/src/rich-text-editor/rich-text-editor.schema.ts
+  s_a3ba6465b68b48::t_b202de7d22abe2 22-23,49-50,77
+  s_90acadf480b4b9::t_484224d95c1115 9-13
+  s_90acadf480b4b9::t_91669c0518707e 43
+  s_607d06ef42cac9::t_63870d572b8e06 4,6,61
+  s_71205cfef20ac7::t_a41488dc13b509 37-39,58
+packages/client-ds/src/rich-text-editor/nodes/bold.node.ts
+  s_607d06ef42cac9::t_f3143447a6e1e2 1,3-4,7-8,10
+  s_71205cfef20ac7::t_b285f356a5df9f 5,9
+packages/client-ds/src/rich-text-editor/nodes/text.schema.ts
+  s_607d06ef42cac9::t_7cf73efe594c44 1-10
+packages/client-ds/src/rich-text-editor/rich-text-editor.registry.ts
+  s_607d06ef42cac9::t_63870d572b8e06 3,11,18,23,57
+  s_71205cfef20ac7::t_872a21ee152d07 5,7-10,28-51,53-55
+  s_71205cfef20ac7::t_a41488dc13b509 6,52
+packages/client-ds/src/rich-text-editor/rich-text-editor.scene.test.ts
+  s_607d06ef42cac9::t_a5e52441e3b49e 137,140-141
+  s_607d06ef42cac9::t_d761f7077b46fe 30,138
+  s_90acadf480b4b9::t_8679d3b6087f0b 18,29,259-305
+  s_da7d276d270b57::t_25588f242181d6 46-49,61-64,73-77,86-92,390-391,393-408
+  s_607d06ef42cac9::t_4f24ffbc584db2 98-107,125-129,131-132,142-146,149-154,371-382
+  s_607d06ef42cac9::t_53f190dd9c6b13 168-193
+  s_71205cfef20ac7::t_90f309b055ac53 23,118,130,139,147-148,314-315,392
+packages/client-ds/src/rich-text-editor/rich-text-editor.markdown.ts
+  s_71205cfef20ac7::t_a3db952c805aa3 2,34-39,51-52,54-56,68,70,72,84-88,93-94
+  s_90acadf480b4b9::t_cf82964180afbe 1,3-33,40-50,53,57-67,69,71,73-83,89-92,95-116
+packages/client-ds/src/rich-text-editor/rich-text-editor.update.ts
+  s_90acadf480b4b9::t_d43feb2ea84e8b 70,72,235-236
+  s_24c2f7c92bef14::t_49788408c3db04 2
+  s_90acadf480b4b9::t_b809f5110e3f44 15,71,73-101
+  s_24c2f7c92bef14::t_a5bb81c461153a 1,3-14,19-23,25-31,33-69,102-180,182-196,198-210,212-220,225-234,237-258,260-261
+  s_71205cfef20ac7::t_faf697656878f7 16,221-224,259
+  s_607d06ef42cac9::t_1b3a7dd2a17b81 17-18,181,197,211
+  s_24c2f7c92bef14::t_bab0ea26c4492c 24,32
+packages/client-ds/src/rich-text-editor/nodes/paragraph.node.ts
+  s_607d06ef42cac9::t_06766b70529393 5-6,40,56,60
+  s_71205cfef20ac7::t_b285f356a5df9f 13,39,52
+  s_71205cfef20ac7::t_872a21ee152d07 32-37
+  s_da7d276d270b57::t_69452b16f6a4bd 4,8-12,14-20,41-51,53-55,57-59,61-69
+packages/client-ds/src/rich-text-editor/nodes/mark.node.ts
+  s_71205cfef20ac7::t_b285f356a5df9f 7-10,21-24
+  s_607d06ef42cac9::t_06766b70529393 26
+  s_607d06ef42cac9::t_7cf73efe594c44 1-6,11-20,25,27-61
+packages/client-ds/src/rich-text-editor/rich-text-editor.model.ts
+  s_24c2f7c92bef14::t_cc7fc6aff68373 1-3,5,22,24
+  s_a3ba6465b68b48::t_b6a0f61fdf49ff 16
+packages/client-ds/src/rich-text-editor/nodes/heading.node.ts
+  s_71205cfef20ac7::t_b285f356a5df9f 27-33,36-39
+  s_607d06ef42cac9::t_06766b70529393 5
+  s_71205cfef20ac7::t_e7681b7aa9c0cf 34-35
+packages/client-ds/src/rich-text-editor/rich-text-editor.subscriptions.ts
+  s_a3ba6465b68b48::t_f482bf8fb6121f 1,10,36-38,68,75-84,104-106,108-109,111-121,139-148,152-157,161-162,164-165,172-173
+  s_da7d276d270b57::t_92eb1f01a4ac6d 2-4,6-8,11-35,39-67,69-74,85-86,107,110,163,166-171,174,176
+  s_90acadf480b4b9::t_bbff1516ad97f3 89,127-128
+  s_a3ba6465b68b48::t_b5dbffcacd5a07 175
+  s_90acadf480b4b9::t_ecd988c7a1b5a3 5,9,87-88,90-103,122-126,129-138,149-151,158-160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "131d88a1d9d835566b3093814746f2f331a15bc0",
+  "prompts": {},
+  "sessions": {
+    "s_24c2f7c92bef14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f59689cdffe2xOAx40lMSZO17",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_607d06ef42cac9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f58789dfffe59di009URR0sAW",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_71205cfef20ac7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f4200aabffeArotkarmk5ovto",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_90acadf480b4b9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f423189fffeEy2tNj6CmItpfr",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_9e1316885087ec": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_208cced50ffepK7O283kG3Cz5J",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_a3ba6465b68b48": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f5a46788ffeAc0mKPO1v6G8VQ",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_da7d276d270b57": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f5b3cd4affe1Z2zxo00Gxs3Q7",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    }
+  }
+}
