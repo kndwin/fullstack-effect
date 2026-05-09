@@ -1,0 +1,584 @@
+apps/server-core/src/module/todo/todo.service.ts
+  02a4ded1bb320161 1-17
+apps/client-web/src/platform/route.command.ts
+  02a4ded1bb320161 1-13
+packages/client-ds/src/rich-text-editor/nodes/paragraph.node.ts
+  s_71205cfef20ac7::t_9f2040c49ed9cf 80
+  s_9c7515669f7646::t_38307c3ef1623c 32-35,42-50,56-63,68-70
+  s_d7996d4e2d63ef::t_30920be5d63391 7,54-55
+  s_d7996d4e2d63ef::t_469deea0bd49d9 87
+  s_d7996d4e2d63ef::t_6d4587ddef90e8 89
+  s_d7996d4e2d63ef::t_6af647163ec3f8 82-86,88,90
+  s_71205cfef20ac7::t_3482719e2b0e3d 78
+  s_71205cfef20ac7::t_14272efa6237fd 81,91,97-99
+  s_71205cfef20ac7::t_fe3bc2c3fdce26 92-96
+apps/server-core/src/module/module.skill.md
+  02a4ded1bb320161 1-56
+apps/server-core/src/module/project/project.rpc.impl.ts
+  02a4ded1bb320161 1-14
+apps/client-web/src/platform/app.preview.ts
+  s_9c7515669f7646::t_38307c3ef1623c 216-219
+  9c0386e51461f193 53,109-112,114,116-118,158
+  969a33c732371274 2,54
+  4a4499fae7f8e02d 1,3-4,15,29-30,40,42-52,55-75,84-108,258-262
+  4ffade188163ec48 5-6,9,22,39,41,76-83,113,115,159-215,220-257
+  4c6af105639c7cb6 7-8,10-14,16-21,23-28,31-38,119-157
+apps/client-web/src/module/todo/todo.update.ts
+  02a4ded1bb320161 2,5,12-13,15-16,25-27,31-34,36-41,44-49,52-83
+  466e82bee7058654 1,3-4,6-11,14,17-24,28-30,35,42-43,50-51,84-87
+packages/shared/src/module/module.schema.skill.md
+  02a4ded1bb320161 1-50
+apps/server-core/src/module/module.util.skill.md
+  02a4ded1bb320161 1-27
+apps/server-core/src/module/todo/todo.repo.ts
+  b7b6259f2ceebba6 6,12,48
+  02a4ded1bb320161 1-5,7-11,13-47,49
+packages/client-ds/src/app-shell/app-shell.preview.ts
+  s_9c7515669f7646::t_38307c3ef1623c 128-131,142-146,159-172,176-177
+apps/server-core/drizzle.config.ts
+  02a4ded1bb320161 1-10
+apps/client-web/src/platform/app.message.ts
+  02a4ded1bb320161 1,3-13,16-18,21-26
+  9c0386e51461f193 14,19
+  969a33c732371274 2,15,20
+test-results/.last-run.json
+  53d56ee35d36bfda 1-3
+  s_9c7515669f7646::t_38307c3ef1623c 4
+apps/client-web/src/module/org/org.message.ts
+  02a4ded1bb320161 1-22
+apps/client-web/src/module/project/project.update.ts
+  02a4ded1bb320161 1-66
+packages/oxlint-plugin-foldkit/src/index.ts
+  s_d7996d4e2d63ef::t_c625d0aa661ed2 224,230,236
+  s_d7996d4e2d63ef::t_4ec201e2bb5a5c 3,26-27,74-75,77-82,195-210,220-223,225-229,231-235,237-249,251-261,275-276
+  s_d7996d4e2d63ef::t_4032cf63c91cf6 76,250
+  02a4ded1bb320161 1-2,4-25,28-73,83-194,262-274,277-278
+  s_d7996d4e2d63ef::t_65b43040996d8f 211-219
+apps/server-core/src/module/todo/todo.rpc.impl.ts
+  b7b6259f2ceebba6 2,4,6,8,14-15
+  02a4ded1bb320161 1,3,5,7,9-13,16
+packages/client-ds/src/rich-text-editor/rich-text-editor.dom.ts
+  s_d7996d4e2d63ef::t_be685d5adf761b 111-114
+  s_d7996d4e2d63ef::t_48506a3802b2e0 40-42,45,49,57,60-61,101-103,107-110,115-116,125
+  s_d7996d4e2d63ef::t_bfda55bababa62 96
+  s_9c7515669f7646::t_38307c3ef1623c 1,11,16-19,26-28,31-33,48,52-56,66-67,81-88
+  s_71205cfef20ac7::t_10f27579ac7d74 134-135,137
+  s_d7996d4e2d63ef::t_8a655eb00e83f7 8-9,15,95
+  s_9c7515669f7646::t_9d8166d74a2611 43,59
+packages/client-ds/src/rich-text-editor/rich-text-editor.registry.ts
+  s_9c7515669f7646::t_38307c3ef1623c 11-14,34,52-60
+  s_71205cfef20ac7::t_9b2279f352f94f 2,15-16,22,30,61-64,71,75
+apps/server-core/src/module/auth/provider.ts
+  02a4ded1bb320161 1-64
+packages/shared/src/platform/rpc.ts
+  02a4ded1bb320161 1-11
+apps/client-web/src/module/todo/todo.model.ts
+  02a4ded1bb320161 1-2,4-16,19
+  466e82bee7058654 3,17-18,20-26
+apps/client-web/package.json
+  02a4ded1bb320161 4-5
+  b7b6259f2ceebba6 12,16-17
+  dd0aec56cbd6f5f9 13
+packages/client-ds/src/rich-text-editor/rich-text-editor.update.ts
+  s_9c7515669f7646::t_38307c3ef1623c 20-26,39-40,55-68,70-84,103-104,107-109,111-113,115,121,123-125,127,133-137,150,160-163,165-166,171-174,176-177,198,200-202,204,209-212,215-218,227,260,263,304,331,358
+  s_71205cfef20ac7::t_f96a4110807620 203,205-207
+  s_9c7515669f7646::t_9d8166d74a2611 349,359
+  s_d7996d4e2d63ef::t_fce21fb0c8939b 7-8,13-14,42,47-53,90-91,97-98,100,105,114,118,126,140-145,159,164,175,194-197,199,208,213-214,229-230,236,250,261-262,265,286-290,312-314,337,340,344,351
+  s_71205cfef20ac7::t_457ee2c4aec3b6 180-184,187-191,339
+  s_71205cfef20ac7::t_b4eae8c5ae2eeb 101-102,106,110,116-117
+  s_71205cfef20ac7::t_3482719e2b0e3d 87
+  s_71205cfef20ac7::t_44c92614080d64 237
+  s_71205cfef20ac7::t_ff62e5a997411d 94-96,99,119-120,122,130-131
+apps/client-web/src/platform/app.view.ts
+  969a33c732371274 11,27,62-69,74-83,89-97,112-114,117-118,131,165
+  9c0386e51461f193 2,22-26,28-30,34-43,60-61,119,123,132,136,168-170
+  02a4ded1bb320161 1,12-21,31,33,166,289
+  4b1ec1957cdd4604 3-10,32,44-59,120-122,124-130,133-135,137-164,167,171-288
+  s_9c7515669f7646::t_38307c3ef1623c 70-73,84-88,98-111,115-116
+apps/server-core/index.ts
+  02a4ded1bb320161 1,5-9,11-17,19,24
+  b7b6259f2ceebba6 3-4,21-23,25,27
+packages/client-ds/src/rich-text-editor/rich-text-editor.markdown.ts
+  s_9c7515669f7646::t_38307c3ef1623c 2-8,22,37-39,41-42,106
+  s_d7996d4e2d63ef::t_68ea6f3556ed91 1,111-113,116-117
+  s_71205cfef20ac7::t_44c92614080d64 75-76,85,99
+apps/server-core/src/module/org/org.service.ts
+  02a4ded1bb320161 1-20
+apps/client-web/src/module/org/org.view.ts
+  ec044f73bbb42c09 2,9
+  02a4ded1bb320161 1,3-8,10-44
+apps/server-core/src/module/auth/auth.rpc.impl.ts
+  02a4ded1bb320161 1-11
+packages/shared/src/module/org/org.rpc.ts
+  02a4ded1bb320161 1-8
+apps/client-web/src/module/auth/auth.command.ts
+  02a4ded1bb320161 1-22
+apps/server-core/src/platform/db.ts
+  02a4ded1bb320161 1-26
+packages/client-ds/src/radio-group/radio-group.view.ts
+  s_9c7515669f7646::t_38307c3ef1623c 43-44
+apps/server-core/src/module/project/project.repo.ts
+  02a4ded1bb320161 1-38
+package.json
+  s_607d06ef42cac9::t_1a11a14f78d435 26
+packages/shared/src/module/project/project.schema.ts
+  02a4ded1bb320161 1-11
+apps/client-web/src/module/project/project.route.ts
+  02a4ded1bb320161 1-21
+packages/shared/package.json
+  02a4ded1bb320161 4-5,7-15
+  b7b6259f2ceebba6 21
+apps/server-core/src/module/module.repo.skill.md
+  02a4ded1bb320161 1-60
+apps/server-core/src/module/org/org.rpc.impl.ts
+  02a4ded1bb320161 1-17
+apps/client-web/src/module/project/project.command.ts
+  02a4ded1bb320161 1-24
+apps/server-core/src/module/auth/provider.test.ts
+  02a4ded1bb320161 1-14
+packages/client-ds/src/rich-text-editor/rich-text-editor.scene.test.ts
+  s_90acadf480b4b9::t_95ec5779237e73 492-522
+  s_9c7515669f7646::t_0c8b460917836b 38
+  s_71205cfef20ac7::t_efe736c6309b1c 101-104,110-113,172-175
+  s_d7996d4e2d63ef::t_10c271b7ff5643 292-305,307
+  s_71205cfef20ac7::t_e4ca9a5653551d 657,660,676
+  s_71205cfef20ac7::t_8dd7d2a4b69297 86-99,448-458,484-489
+  s_d7996d4e2d63ef::t_2a1b82d551edce 306
+  s_71205cfef20ac7::t_d3cb0440f3e1ab 100,105-109,114-117,159-161,168-171
+  s_d7996d4e2d63ef::t_f76c5772fe5e2f 193,265,275,282-289,331,344,371,385,400,412,424,471,529,560,671,683
+  s_71205cfef20ac7::t_96ffa51cf778f6 118-158
+  s_d7996d4e2d63ef::t_2bc9d5e9cefe0d 266-274,276-280,290-291
+  s_71205cfef20ac7::t_5ca632a35403e9 656,658-659,661-670,672-675,677-682,684-686
+  s_71205cfef20ac7::t_3f1637a64994d2 176-178,188-192,194-197
+  s_9c7515669f7646::t_4ae3201596e713 13,23,237,249,262,315-316,538-539,644
+  s_9c7515669f7646::t_38307c3ef1623c 42-43,60-65,74-80,162-167,179-187,201-209,218-226,257-261,352-357,528,530,614-634
+  s_d7996d4e2d63ef::t_7d584f7ce9000a 281
+apps/server-core/src/module/auth/session.test.ts
+  02a4ded1bb320161 1-14
+apps/client-web/src/style.css
+  dd0aec56cbd6f5f9 2
+apps/server-core/src/module/auth/auth.table.ts
+  02a4ded1bb320161 1-8
+apps/client-web/src/module/org/org.preview.ts
+  4a4499fae7f8e02d 1-79,92-104
+  4c6af105639c7cb6 80-91
+apps/server-core/src/module/module.rpc.skill.md
+  02a4ded1bb320161 1-49
+apps/client-web/src/rpc.ts
+  02a4ded1bb320161 1-5,14,16-17,20-24,27,29,33-61
+  b7b6259f2ceebba6 6-8,10-11
+packages/client-ds/src/button/button.view.ts
+  s_9c7515669f7646::t_38307c3ef1623c 22-23
+apps/client-web/src/module/project/project.view.ts
+  02a4ded1bb320161 1,4-17,19-85,87-129,131-181
+  ec044f73bbb42c09 2-3,18,86,130
+packages/client-ds/src/rich-text-editor/rich-text-editor.subscriptions.ts
+  s_71205cfef20ac7::t_62e7866cd47adb 62,66
+  s_71205cfef20ac7::t_e4ca9a5653551d 65
+  s_9c7515669f7646::t_38307c3ef1623c 55-57,79-80,129-130,137-138,140
+  s_d7996d4e2d63ef::t_9d9d39b734ec8f 13,94,96-97,139,150
+  s_d7996d4e2d63ef::t_d103750425c9fc 58-61,63-64
+packages/shared/src/module/todo/todo.schema.ts
+  02a4ded1bb320161 1-12
+apps/client-web/src/module/org/org.model.ts
+  02a4ded1bb320161 1-16
+packages/client-ds/src/rich-text-editor/nodes/blockquote.node.ts
+  s_71205cfef20ac7::t_9b2279f352f94f 1-25,28-32
+  s_9c7515669f7646::t_38307c3ef1623c 26-27
+apps/server-core/src/module/org/org.table.ts
+  02a4ded1bb320161 1-21
+packages/foldkit-preview/src/index.ts
+  s_71205cfef20ac7::t_7e9837adc52a22 744-753
+  s_da7d276d270b57::t_5cd713fa1e152d 1451-1472
+  s_da7d276d270b57::t_01df20f4d8e7ad 66,515-520
+apps/client-web/vite.config.ts
+  02a4ded1bb320161 1-3,9-10,14,16
+apps/server-core/src/module/org/org.repo.ts
+  02a4ded1bb320161 1-67
+packages/client-ds/src/rich-text-editor/rich-text-editor.view.ts
+  s_d7996d4e2d63ef::t_bcba59f61bdc4b 6,272,366,406
+  s_9c7515669f7646::t_38307c3ef1623c 97,106-111,113-118,120-122,124-130,145,148-150,152-155,157-168,183,207,217-221,226,239-242,247,269-271,273,301-303,308-345,348,350-357,360-365,367-388,390-399,403-405,407-408
+  s_9c7515669f7646::t_31571b3b646f98 229,235
+  s_9c7515669f7646::t_0f3f9c6d2cb01a 255-262
+  s_71205cfef20ac7::t_22ba7bed4518c3 80
+  s_90acadf480b4b9::t_d5e3a59fc99ee1 8,91-96,112,131-143,146-147,286,295,389
+  s_d7996d4e2d63ef::t_18dcb29461a7a5 297
+  s_9c7515669f7646::t_6340f4b4e1968a 81,266-268,274,283,402,409
+  s_9c7515669f7646::t_576fd5c0c0f1fc 18,29,34,46,59,62,264
+apps/server-core/package.json
+  02a4ded1bb320161 4,8-9,13-14,16-18
+packages/client-ds/src/rich-text-editor/rich-text-editor.model.ts
+  s_d7996d4e2d63ef::t_e8b41e5b303d35 2,14-15
+packages/client-ds/src/rich-text-editor/nodes/mark.node.ts
+  s_9c7515669f7646::t_38307c3ef1623c 31-34,38-42,54-59
+.oxfmtrc.json
+  02a4ded1bb320161 1-16
+apps/server-core/src/module/auth/auth.http.ts
+  02a4ded1bb320161 1-78
+.mcp.json
+  s_9c7515669f7646::t_38307c3ef1623c 5
+packages/shared/src/module/org/org.schema.ts
+  02a4ded1bb320161 1-18
+apps/client-web/src/platform/route.message.ts
+  02a4ded1bb320161 1-11
+packages/shared/src/module/module.rpc.skill.md
+  02a4ded1bb320161 1-50
+apps/client-web/src/module/project/project.model.ts
+  02a4ded1bb320161 1-22
+packages/client-ds/src/rich-text-editor/rich-text-editor.schema.ts
+  s_9c7515669f7646::t_9d8166d74a2611 26,37,41,55,61-62
+  s_71205cfef20ac7::t_d83952c2e493f1 19
+  s_71205cfef20ac7::t_9b2279f352f94f 3,38
+  s_9c7515669f7646::t_38307c3ef1623c 33-35,68-76
+  s_d7996d4e2d63ef::t_6989340566c465 77
+packages/client-ds/src/rich-text-editor/rich-text-editor.preview.ts
+  s_71205cfef20ac7::t_af7ff548660738 71,106-110
+  s_71205cfef20ac7::t_22ba7bed4518c3 111
+  s_9c7515669f7646::t_4ae3201596e713 179,182-184,188,191-193,195,200,206,212,215,218-219,222-223,226,229,235,242
+  s_9c7515669f7646::t_38307c3ef1623c 67-70,124-134
+  s_9c7515669f7646::t_576fd5c0c0f1fc 5,19,22,41,47-48,63,66
+packages/client-ds/src/rich-text-editor/nodes/heading.node.ts
+  s_71205cfef20ac7::t_7e9837adc52a22 46,48-49
+  s_9c7515669f7646::t_38307c3ef1623c 26-30
+packages/shared/src/module/auth/auth.rpc.ts
+  02a4ded1bb320161 1-8
+apps/client-web/src/module/project/project.message.ts
+  02a4ded1bb320161 1-22
+apps/client-web/src/module/todo/todo.command.ts
+  b7b6259f2ceebba6 1
+  02a4ded1bb320161 5,7-10,12,14-15,19-23,28,30-31,36,38-39
+  466e82bee7058654 2-4,6,11,13,16-18,24-27,29,32-35,37,40-41
+packages/client-ds/src/rich-text-editor/rich-text-editor.keyboard.ts
+  s_d7996d4e2d63ef::t_b297697e0d5a79 50,52,57,59,65-66,72-73
+  s_9c7515669f7646::t_9d8166d74a2611 6,15,48
+  s_d7996d4e2d63ef::t_c7466512499cc0 20,61,63-64,67-71
+  s_9c7515669f7646::t_38307c3ef1623c 51,53-54,58,60,74
+  s_71205cfef20ac7::t_e4ca9a5653551d 76
+packages/client-ds/src/app-shell/app-shell.view.ts
+  s_9c7515669f7646::t_38307c3ef1623c 37-41,61-62
+apps/client-web/src/module/todo/todo.route.ts
+  02a4ded1bb320161 1,3
+  466e82bee7058654 2,4-7
+apps/client-web/src/platform/route.ts
+  02a4ded1bb320161 1-9,11-21,23
+  s_607d06ef42cac9::t_95b79ad446fad4 10,22
+.gitignore
+  02a4ded1bb320161 7
+apps/client-web/src/platform/app.model.ts
+  02a4ded1bb320161 1,3-10,13-18
+  969a33c732371274 2,12
+  9c0386e51461f193 11
+apps/client-web/src/main.ts
+  466e82bee7058654 1-3,17-20
+  02a4ded1bb320161 4-8,12,21
+apps/client-web/src/module/org/org.update.ts
+  02a4ded1bb320161 1-53
+packages/client-ds/src/theme.css
+  s_d7996d4e2d63ef::t_a5292d654cab6b 179
+  s_d7996d4e2d63ef::t_271ab12d86221d 182
+  s_d7996d4e2d63ef::t_e4d7f115115b57 178,180-181,183-190
+apps/client-web/src/module/auth/auth.update.ts
+  02a4ded1bb320161 1-22
+apps/client-web/src/module/org/org.command.ts
+  02a4ded1bb320161 1-23
+apps/client-web/preview.config.ts
+  cc980f6a97702ccf 4
+packages/shared/src/module/project/project.rpc.ts
+  02a4ded1bb320161 1-8
+apps/server-core/src/module/module.table.skill.md
+  02a4ded1bb320161 1-42
+apps/server-core/src/module/project/project.service.ts
+  02a4ded1bb320161 1-18
+.oxlintrc.json
+  s_607d06ef42cac9::t_a0efbb77124d3d 20
+  s_d7996d4e2d63ef::t_77d4849d3722ce 24-25
+  02a4ded1bb320161 1-19,21-23,26-62
+packages/shared/src/module/auth/auth.schema.ts
+  02a4ded1bb320161 1-31
+apps/server-core/src/module/project/project.table.ts
+  02a4ded1bb320161 1-10
+apps/client-web/src/module/auth/auth.preview.ts
+  4c6af105639c7cb6 139-150
+  4a4499fae7f8e02d 1-138,151-170
+apps/client-web/src/module/auth/auth.message.ts
+  02a4ded1bb320161 1-12
+packages/client-ds/src/alert/alert.view.ts
+  s_9c7515669f7646::t_38307c3ef1623c 18-19
+apps/client-web/src/module/auth/auth.view.ts
+  ec044f73bbb42c09 2,9
+  02a4ded1bb320161 1,3-8,10-56
+apps/client-web/src/module/todo/todo.preview.ts
+  02a4ded1bb320161 19,32
+  4a4499fae7f8e02d 1-12,14-17,21-29,31,34,37-67,70-71,73-95,120-142,146-147
+  466e82bee7058654 18,20,30,33,35-36,68-69,72,143-145
+  4c6af105639c7cb6 13,96-119
+apps/server-core/src/module/todo/todo.table.ts
+  02a4ded1bb320161 1-11
+apps/client-web/src/module/project/project.preview.ts
+  4c6af105639c7cb6 99-110
+  4a4499fae7f8e02d 1-17,20-27,29-30,33-35,37-38,43,46-69,72-78,80-98,111-121,125-126
+  02a4ded1bb320161 18-19,28,31-32,36,39-42,44-45,70-71,79,122-124
+tools/effect-oxlint.plugin.ts
+  s_607d06ef42cac9::t_5dc3d1d6ee2c66 2,28
+  s_9c7515669f7646::t_38307c3ef1623c 11-12
+  s_607d06ef42cac9::t_a0efbb77124d3d 1,6-10,13-27,29-39,63
+  02a4ded1bb320161 3-5,40-62,64-69
+packages/oxlint-plugin-foldkit/package.json
+  02a4ded1bb320161 1-29
+packages/oxlint-plugin-foldkit/tsconfig.json
+  02a4ded1bb320161 1-7
+packages/shared/src/module/todo/todo.rpc.ts
+  02a4ded1bb320161 1-10
+packages/oxlint-plugin-foldkit/README.md
+  02a4ded1bb320161 1-32
+packages/client-ds/src/rich-text-editor/rich-text-editor.commands.ts
+  s_9c7515669f7646::t_38307c3ef1623c 5,27
+apps/server-core/src/module/module.service.skill.md
+  02a4ded1bb320161 1-56
+apps/server-core/src/module/auth/session.ts
+  s_607d06ef42cac9::t_95b79ad446fad4 6-7,77,82
+  02a4ded1bb320161 1-5,8-76,78-81,83-84
+apps/client-web/src/module/auth/auth.model.ts
+  02a4ded1bb320161 1-9
+packages/client-ds/src/rich-text-editor/rich-text-editor.document.ts
+  s_71205cfef20ac7::t_44c92614080d64 8,34,65
+  s_9c7515669f7646::t_38307c3ef1623c 110-113
+  s_d7996d4e2d63ef::t_d9f89bf6e5681f 39-41,44-50
+tsconfig.json
+  dd0aec56cbd6f5f9 14-15
+apps/client-web/src/module/todo/todo.message.ts
+  b7b6259f2ceebba6 16,27
+  02a4ded1bb320161 1-2,5-14,17-26
+  466e82bee7058654 3-4,15,28
+packages/client-ds/src/rich-text-editor/rich-text-editor.slash-menu.view.ts
+  s_9c7515669f7646::t_38307c3ef1623c 22,36,41-44,49,51-58,61,84-87,92,94-101,104,115-119,122,128,137-141
+  s_71205cfef20ac7::t_22ba7bed4518c3 19,155
+  s_9c7515669f7646::t_b8fa8f412f1778 4,37-40,45-46,70,74-76,113
+  s_71205cfef20ac7::t_7e9837adc52a22 78
+  s_71205cfef20ac7::t_dc2dd3af15844b 134
+apps/client-web/src/platform/app.update.ts
+  9c0386e51461f193 131
+  02a4ded1bb320161 1,3-17,26-93,103-130,139-148
+  969a33c732371274 2,18-25,94-102,132-138
+emulate.config.yaml
+  02a4ded1bb320161 1-9
+packages/client-ds/src/rich-text-editor/nodes/text.node.ts
+  s_9c7515669f7646::t_38307c3ef1623c 17-19
+apps/client-web/src/module/todo/todo.view.ts
+  ec044f73bbb42c09 2,21
+  02a4ded1bb320161 1,4,6-13,15-20,24-85
+  466e82bee7058654 3,5,14,22-23,86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "9bcb33cbed9467a29b9bc00b2254115ec7b473b8",
+  "prompts": {
+    "02a4ded1bb320161": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20f01f625ffe11lCI6j4ia2dMS",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7674,
+      "overriden_lines": 0
+    },
+    "466e82bee7058654": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_216d5c4a4ffe8ALC8rugH9YTP8",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 96,
+      "overriden_lines": 0
+    },
+    "4a4499fae7f8e02d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20cd795dbffeiNoml2TT5afUtE",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 523,
+      "overriden_lines": 0
+    },
+    "4b1ec1957cdd4604": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20ace303affeXNlE01ZE7spNxK",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 185,
+      "overriden_lines": 0
+    },
+    "4c6af105639c7cb6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20ad4bb23ffeJlhDXGDsMiQtnG",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 127,
+      "overriden_lines": 0
+    },
+    "4ffade188163ec48": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20ac0ba1cffeFqdqyjXbhOxIlW",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 111,
+      "overriden_lines": 0
+    },
+    "53d56ee35d36bfda": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_204026922ffeyCl7YXrkOYGDIR",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    },
+    "969a33c732371274": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_209e668dfffeg4IjSCX7QOkQBQ",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 68,
+      "overriden_lines": 0
+    },
+    "9c0386e51461f193": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20cae9cefffeBvLpDz6KYmQL40",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 42,
+      "overriden_lines": 0
+    },
+    "b7b6259f2ceebba6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_211efce8cffew1WlaGCAkBmmS6",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 37,
+      "overriden_lines": 0
+    },
+    "cc980f6a97702ccf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2210cd3abffe03quctr1AEmioJ",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "dd0aec56cbd6f5f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2187b44b0ffedHxjmqty36bYRi",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    },
+    "ec044f73bbb42c09": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_20db77d5bffef0v78YrcRIi8i3",
+        "model": "openai/gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>",
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 11,
+      "overriden_lines": 0
+    }
+  },
+  "sessions": {
+    "s_607d06ef42cac9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f58789dfffe59di009URR0sAW",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_71205cfef20ac7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f4200aabffeArotkarmk5ovto",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_90acadf480b4b9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f423189fffeEy2tNj6CmItpfr",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_9c7515669f7646": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f58837cdffeD7ZlY4k0AJyAL4",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_d7996d4e2d63ef": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f5b5651cffeUGe3MdX6L3itGg",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_da7d276d270b57": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f5b3cd4affe1Z2zxo00Gxs3Q7",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    }
+  }
+}
