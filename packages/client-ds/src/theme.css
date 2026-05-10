@@ -182,6 +182,16 @@
   color: transparent;
 }
 
+.rte-code-token {
+  color: var(--rte-code-token-light, var(--foreground));
+}
+
+.dark .rte-code-token,
+.dark-theme .rte-code-token,
+[data-theme="dark"] .rte-code-token {
+  color: var(--rte-code-token-dark, var(--foreground));
+}
+
 @keyframes rte-caret-blink {
   50% {
     opacity: 0;

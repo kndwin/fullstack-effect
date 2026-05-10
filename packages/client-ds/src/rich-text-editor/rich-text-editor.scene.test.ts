@@ -8,10 +8,12 @@ Object.assign(globalThis, {
 });
 
 const { Scene, Story } = await import("foldkit");
+const { Effect, Stream } = await import("effect");
 const {
   RichTextEditor,
   UpdatedRichTextEditorSelection,
   DeletedRichTextEditorBackward,
+  ExitedRichTextEditorCodeBlock,
   InsertedRichTextEditorText,
   ClosedRichTextEditorSlashMenu,
   OpenedRichTextEditorSlashMenu,
@@ -21,10 +23,14 @@ const {
   SplitRichTextEditorBlock,
   SyncedRichTextEditorPlainText,
   ClickedRichTextEditorMark,
+  ChangedRichTextCodeBlockLanguage,
+  HighlightedRichTextCodeBlocks,
   UpdatedRichTextEditorSlashMenuQuery,
   initRichTextEditor,
   richTextEditorPlainText,
+  richTextEditorSubscriptions,
   updateRichTextEditor,
+  updateRichTextEditorWithCommands,
 } = await import("./rich-text-editor.view");
 const { richTextEditorMarkdown, richTextEditorSelectedMarkdown } = await import("./rich-text-editor.markdown");
 const { richTextEditorKeyDownMessage } = await import("./rich-text-editor.keyboard");
@@ -93,6 +99,224 @@ test("slash blockquote applies quote formatting", () => {
     Story.model((model) => {
       expect(model.document.children[0]).toMatchObject({ type: "blockquote" });
       expect(richTextEditorPlainText(model)).toBe("Quoted");
+    }),
+  );
+});
+
+test("slash code applies code block formatting", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("const value = 1")),
+    Story.message(OpenedRichTextEditorSlashMenu()),
+    Story.message(UpdatedRichTextEditorSlashMenuQuery({ value: "code" })),
+    Story.message(SelectedRichTextEditorSlashCommand({ value: "code-block" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "codeBlock" });
+      expect(richTextEditorPlainText(model)).toBe("const value = 1");
+    }),
+  );
+});
+
+test("slash code language commands apply code block language", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("console.log('typed')")),
+    Story.message(SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "codeBlock", language: "typescript" });
+      expect(richTextEditorMarkdown(model)).toBe("```typescript\nconsole.log('typed')\n```");
+    }),
+  );
+});
+
+test("code block language selector updates the block language", () => {
+  Story.story(
+    update,
+    Story.with(
+      afterMessages(initRichTextEditor("print('hello')"), [
+        SelectedRichTextEditorSlashCommand({ value: "code-block" }),
+      ]),
+    ),
+    Story.message(ChangedRichTextCodeBlockLanguage({ blockIndex: 0, language: "python" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "codeBlock", language: "python" });
+      expect(richTextEditorMarkdown(model)).toBe("```python\nprint('hello')\n```");
+    }),
+  );
+});
+
+test("code block language selector can clear the block language", () => {
+  Story.story(
+    update,
+    Story.with(
+      afterMessages(initRichTextEditor("const value = 1"), [
+        SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" }),
+      ]),
+    ),
+    Story.message(ChangedRichTextCodeBlockLanguage({ blockIndex: 0 })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toEqual({
+        type: "codeBlock",
+        children: [{ type: "text", text: "const value = 1" }],
+      });
+      expect(richTextEditorMarkdown(model)).toBe("```\nconst value = 1\n```");
+    }),
+  );
+});
+
+test("code block slash inserts text instead of opening slash menu", () => {
+  const model = afterMessages(initRichTextEditor("const value = 1"), [
+    SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" }),
+  ]);
+
+  expect(
+    richTextEditorKeyDownMessage("/", { altKey: false, ctrlKey: false, metaKey: false, shiftKey: false }, model),
+  ).toEqual(InsertedRichTextEditorText({ value: "/" }));
+});
+
+test("code block enter inserts a newline inside the code block", () => {
+  const model = afterMessages(initRichTextEditor("const value = 1"), [
+    SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" }),
+  ]);
+
+  expect(
+    richTextEditorKeyDownMessage("Enter", { altKey: false, ctrlKey: false, metaKey: false, shiftKey: false }, model),
+  ).toEqual(InsertedRichTextEditorText({ value: "\n" }));
+  expect(
+    richTextEditorKeyDownMessage("Enter", { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true }, model),
+  ).toEqual(InsertedRichTextEditorText({ value: "\n" }));
+
+  const nextModel = updateRichTextEditor(model, InsertedRichTextEditorText({ value: "\n" }));
+  expect(nextModel.document.children).toHaveLength(1);
+  expect(nextModel.document.children[0]).toMatchObject({ type: "codeBlock" });
+  expect(richTextEditorPlainText(nextModel)).toBe("const value = 1\n");
+});
+
+test("command enter exits a code block", () => {
+  const model = afterMessages(initRichTextEditor("const value = 1"), [
+    SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" }),
+  ]);
+
+  expect(
+    richTextEditorKeyDownMessage("Enter", { altKey: false, ctrlKey: false, metaKey: true, shiftKey: false }, model),
+  ).toEqual(ExitedRichTextEditorCodeBlock());
+
+  const nextModel = updateRichTextEditor(model, ExitedRichTextEditorCodeBlock());
+  expect(nextModel.document.children).toHaveLength(2);
+  expect(nextModel.document.children[0]).toMatchObject({ type: "codeBlock" });
+  expect(nextModel.document.children[1]).toMatchObject({ type: "paragraph" });
+  expect(nextModel.selection).toEqual({ anchor: 16, focus: 16 });
+});
+
+test("code block renders a language selector", () => {
+  Scene.scene(
+    { update, view },
+    Scene.with(
+      afterMessages(initRichTextEditor("echo hello"), [
+        SelectedRichTextEditorSlashCommand({ value: "code-block-bash" }),
+      ]),
+    ),
+    Scene.expect(Scene.role("combobox")).toExist(),
+  );
+});
+
+test("code block language subscription highlights supported code with shiki tokens", async () => {
+  const [model, commands] = updateRichTextEditorWithCommands(
+    initRichTextEditor("const value = 1"),
+    SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" }),
+  );
+  expect(model.document.children[0]).toMatchObject({ type: "codeBlock", language: "typescript" });
+  expect(commands).toHaveLength(0);
+
+  const messages = await Effect.runPromise(
+    richTextEditorSubscriptions({ id: "scene-rich-text-editor", model }).pipe(Stream.take(1), Stream.runCollect),
+  );
+  const message = messages[0]!;
+  const highlightedModel = updateRichTextEditor(model, message);
+  expect(highlightedModel.codeBlockHighlights[0]).toMatchObject({
+    blockIndex: 0,
+    text: "const value = 1",
+    language: "typescript",
+  });
+  expect(highlightedModel.codeBlockHighlights[0]?.lines.flat()).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ content: "const", lightColor: expect.any(String), darkColor: expect.any(String) }),
+    ]),
+  );
+});
+
+test("highlighted code tokens keep rich text selection offsets", () => {
+  const model = updateRichTextEditor(
+    {
+      ...afterMessages(initRichTextEditor("const value = 1"), [
+        SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" }),
+      ]),
+      selection: { anchor: 6, focus: 11 },
+    },
+    HighlightedRichTextCodeBlocks({
+      highlights: [
+        {
+          blockIndex: 0,
+          text: "const value = 1",
+          language: "typescript",
+          lines: [
+            [
+              { content: "const", lightColor: "#ff0000", darkColor: "#880000" },
+              { content: " " },
+              { content: "value", lightColor: "#00ff00", darkColor: "#008800" },
+              { content: " = 1" },
+            ],
+          ],
+        },
+      ],
+    }),
+  );
+
+  Scene.scene(
+    { update, view },
+    Scene.with(model),
+    Scene.expect(Scene.selector('code [data-rte-start="0"]')).toExist(),
+    Scene.expect(Scene.selector('code [data-rte-start="5"]')).toExist(),
+    Scene.expect(Scene.selector('code [data-rte-start="6"]')).toExist(),
+    Scene.expect(Scene.selector('code [data-rte-start="11"]')).toExist(),
+  );
+});
+
+test("code block language selector overlays code without reserving a top line", () => {
+  Scene.scene(
+    { update, view },
+    Scene.with(
+      afterMessages(initRichTextEditor("const value = 1"), [
+        SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" }),
+      ]),
+    ),
+    Scene.expect(Scene.selector("pre.pr-48")).toExist(),
+    Scene.expect(Scene.selector("[data-rte-ignore-events].absolute")).toExist(),
+  );
+});
+
+test("typing markdown fences formats an empty code block", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(InsertedRichTextEditorText({ value: "`" })),
+    Story.message(InsertedRichTextEditorText({ value: "`" })),
+    Story.message(InsertedRichTextEditorText({ value: "`" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "codeBlock" });
+      expect(richTextEditorPlainText(model)).toBe("");
+    }),
+  );
+
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(InsertedRichTextEditorText({ value: "~" })),
+    Story.message(InsertedRichTextEditorText({ value: "~" })),
+    Story.message(InsertedRichTextEditorText({ value: "~" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "codeBlock" });
+      expect(richTextEditorPlainText(model)).toBe("");
     }),
   );
 });
@@ -265,7 +489,11 @@ test("command i toggles italic marks", () => {
 test("shift arrow keys move focus while preserving anchor", () => {
   const model = initRichTextEditor("Text");
   expect(
-    richTextEditorKeyDownMessage("ArrowRight", { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true }, model),
+    richTextEditorKeyDownMessage(
+      "ArrowRight",
+      { altKey: false, ctrlKey: false, metaKey: false, shiftKey: true },
+      model,
+    ),
   ).toEqual(UpdatedRichTextEditorSelection({ start: 4, end: 4 }));
 
   expect(
@@ -373,21 +601,21 @@ test("story: backspace uses live DOM selection over stale model selection", () =
   );
 });
 
-test("story: slash query remains visible while typing", () => {
+test("story: slash query stays in menu state while typing", () => {
   Story.story(
     update,
     Story.with(initRichTextEditor("Draft")),
     Story.message(OpenedRichTextEditorSlashMenu()),
     Story.message(UpdatedRichTextEditorSlashMenuQuery({ value: "h" })),
     Story.model((model) => {
-      expect(richTextEditorPlainText(model)).toBe("Draft/h");
+      expect(richTextEditorPlainText(model)).toBe("Draft");
       expect(model.slashMenu).toMatchObject({ isOpen: true, query: "h" });
-      expect(model.selection).toEqual({ anchor: 7, focus: 7 });
+      expect(model.selection).toEqual({ anchor: 5, focus: 5 });
     }),
   );
 });
 
-test("story: closing slash menu removes transient slash text", () => {
+test("story: closing slash menu clears query without changing text", () => {
   Story.story(
     update,
     Story.with(initRichTextEditor("Draft")),
@@ -460,6 +688,31 @@ test("story: markdown paste creates blockquote nodes", () => {
   );
 });
 
+test("story: markdown paste creates code block nodes", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(PastedRichTextEditorMarkdown({ value: "```ts\nconst value = 1\n```" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "codeBlock", language: "typescript" });
+      expect(model.document.children[0]?.children).toEqual([{ type: "text", text: "const value = 1" }]);
+      expect(richTextEditorPlainText(model)).toBe("const value = 1");
+    }),
+  );
+});
+
+test("story: markdown paste accepts tilde code fences and supported language aliases", () => {
+  Story.story(
+    update,
+    Story.with(initRichTextEditor("")),
+    Story.message(PastedRichTextEditorMarkdown({ value: "~~~py\nprint('hello')\n~~~" })),
+    Story.model((model) => {
+      expect(model.document.children[0]).toMatchObject({ type: "codeBlock", language: "python" });
+      expect(richTextEditorMarkdown(model)).toBe("```python\nprint('hello')\n```");
+    }),
+  );
+});
+
 test("story: markdown paste replaces the live selection", () => {
   Story.story(
     update,
@@ -487,6 +740,14 @@ test("markdown serialization copies blockquote nodes", () => {
   ]);
 
   expect(richTextEditorMarkdown(model)).toBe("> Copy **bold** quote");
+});
+
+test("markdown serialization copies code block nodes", () => {
+  const model = afterMessages(initRichTextEditor(""), [
+    PastedRichTextEditorMarkdown({ value: "```ts\nconst value = 1\n```" }),
+  ]);
+
+  expect(richTextEditorMarkdown(model)).toBe("```typescript\nconst value = 1\n```");
 });
 
 test("sample markdown round-trips supported formatting", () => {
@@ -526,7 +787,10 @@ test("selected markdown serialization preserves block format and marks", () => {
   ]);
 
   expect(
-    richTextEditorSelectedMarkdown({ ...model, selection: { anchor: 0, focus: richTextEditorPlainText(model).length } }),
+    richTextEditorSelectedMarkdown({
+      ...model,
+      selection: { anchor: 0, focus: richTextEditorPlainText(model).length },
+    }),
   ).toBe("# Title\nCopy **bold**");
 });
 

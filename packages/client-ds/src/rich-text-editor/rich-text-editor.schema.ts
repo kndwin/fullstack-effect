@@ -1,6 +1,8 @@
 import { Schema } from "effect";
+import { Ui } from "foldkit";
 import { m } from "foldkit/message";
 import { RichTextBlockquoteNodeSchema } from "./nodes/blockquote.node";
+import { RichTextCodeBlockLanguageSchema, RichTextCodeBlockNodeSchema } from "./nodes/code-block.node";
 import { RichTextHeadingLevelSchema, RichTextHeadingNodeSchema } from "./nodes/heading.node";
 import { RichTextMarkSchema } from "./nodes/mark.schema";
 import { RichTextParagraphNodeSchema } from "./nodes/paragraph.node";
@@ -19,6 +21,7 @@ export const DeletedRichTextEditorBackward = m("DeletedRichTextEditorBackward", 
   unit: Schema.optional(Schema.Union([Schema.Literal("character"), Schema.Literal("word")])),
 });
 export const SplitRichTextEditorBlock = m("SplitRichTextEditorBlock");
+export const ExitedRichTextEditorCodeBlock = m("ExitedRichTextEditorCodeBlock");
 export const SelectedRichTextEditorAll = m("SelectedRichTextEditorAll");
 export const RestoredRichTextEditorSelection = m("RestoredRichTextEditorSelection");
 export const MountedRichTextEditorHost = m("MountedRichTextEditorHost", { id: Schema.String });
@@ -35,11 +38,39 @@ export const MovedRichTextEditorSlashMenuSelection = m("MovedRichTextEditorSlash
 });
 export const SelectedRichTextEditorSlashCommand = m("SelectedRichTextEditorSlashCommand", { value: Schema.String });
 export const SelectedRichTextEditorBlockFormat = m("SelectedRichTextEditorBlockFormat", {
-  type: Schema.Union([Schema.Literal("paragraph"), Schema.Literal("heading"), Schema.Literal("blockquote")]),
+  type: Schema.Union([
+    Schema.Literal("paragraph"),
+    Schema.Literal("heading"),
+    Schema.Literal("blockquote"),
+    Schema.Literal("codeBlock"),
+  ]),
   level: Schema.optional(Schema.Union([Schema.Literal(1), Schema.Literal(2), Schema.Literal(3)])),
+  language: Schema.optional(RichTextCodeBlockLanguageSchema),
 });
 export const ClickedRichTextEditorMark = m("ClickedRichTextEditorMark", {
   type: Schema.Union([Schema.Literal("bold"), Schema.Literal("italic")]),
+});
+export const ChangedRichTextCodeBlockLanguage = m("ChangedRichTextCodeBlockLanguage", {
+  blockIndex: Schema.Number,
+  language: Schema.optional(RichTextCodeBlockLanguageSchema),
+});
+export const GotRichTextCodeBlockLanguageComboboxMessage = m("GotRichTextCodeBlockLanguageComboboxMessage", {
+  blockIndex: Schema.Number,
+  message: Ui.Combobox.Message,
+});
+export const RichTextCodeHighlightToken = Schema.Struct({
+  content: Schema.String,
+  lightColor: Schema.optional(Schema.String),
+  darkColor: Schema.optional(Schema.String),
+});
+export const RichTextCodeBlockHighlight = Schema.Struct({
+  blockIndex: Schema.Number,
+  text: Schema.String,
+  language: RichTextCodeBlockLanguageSchema,
+  lines: Schema.Array(Schema.Array(RichTextCodeHighlightToken)),
+});
+export const HighlightedRichTextCodeBlocks = m("HighlightedRichTextCodeBlocks", {
+  highlights: Schema.Array(RichTextCodeBlockHighlight),
 });
 
 export const RichTextEditorMessage = Schema.Union([
@@ -48,6 +79,7 @@ export const RichTextEditorMessage = Schema.Union([
   SyncedRichTextEditorPlainText,
   DeletedRichTextEditorBackward,
   SplitRichTextEditorBlock,
+  ExitedRichTextEditorCodeBlock,
   SelectedRichTextEditorAll,
   RestoredRichTextEditorSelection,
   MountedRichTextEditorHost,
@@ -60,6 +92,9 @@ export const RichTextEditorMessage = Schema.Union([
   SelectedRichTextEditorSlashCommand,
   SelectedRichTextEditorBlockFormat,
   ClickedRichTextEditorMark,
+  ChangedRichTextCodeBlockLanguage,
+  GotRichTextCodeBlockLanguageComboboxMessage,
+  HighlightedRichTextCodeBlocks,
 ]);
 
 export const RichTextMark = RichTextMarkSchema;
@@ -69,6 +104,7 @@ export const RichTextBlockNode = Schema.Union([
   RichTextParagraphNodeSchema,
   RichTextHeadingNodeSchema,
   RichTextBlockquoteNodeSchema,
+  RichTextCodeBlockNodeSchema,
 ]);
 export const RichTextDocument = Schema.Struct({
   type: Schema.Literal("doc"),
@@ -85,6 +121,8 @@ export const RichTextEditorModel = Schema.Struct({
   document: RichTextDocument,
   selection: RichTextSelection,
   slashMenu: RichTextSlashMenu,
+  codeBlockLanguageComboboxes: Schema.Array(Ui.Combobox.Model),
+  codeBlockHighlights: Schema.Array(RichTextCodeBlockHighlight),
   maybeMountedHostId: Schema.Option(Schema.String),
 });
 
@@ -95,6 +133,8 @@ export type RichTextBlockNode = typeof RichTextBlockNode.Type;
 export type RichTextDocument = typeof RichTextDocument.Type;
 export type RichTextSelection = typeof RichTextSelection.Type;
 export type RichTextSlashMenu = typeof RichTextSlashMenu.Type;
+export type RichTextCodeHighlightToken = typeof RichTextCodeHighlightToken.Type;
+export type RichTextCodeBlockHighlight = typeof RichTextCodeBlockHighlight.Type;
 export type RichTextEditorModel = typeof RichTextEditorModel.Type;
 
 export type RichTextEditorMessage = typeof RichTextEditorMessage.Type;

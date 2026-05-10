@@ -1,11 +1,12 @@
 import type { KeyboardModifiers } from "foldkit/html";
 import { activeSlashCommandValue } from "./rich-text-editor.commands";
-import { blockBoundaryForOffset } from "./rich-text-editor.document";
+import { blockBoundaryForOffset, blockSegmentAtOffset } from "./rich-text-editor.document";
 import { richTextMarkTypeForKeyboardShortcut } from "./rich-text-editor.registry";
 import {
   UpdatedRichTextEditorSelection,
   ClosedRichTextEditorSlashMenu,
   DeletedRichTextEditorBackward,
+  ExitedRichTextEditorCodeBlock,
   InsertedRichTextEditorText,
   MovedRichTextEditorSlashMenuSelection,
   OpenedRichTextEditorSlashMenu,
@@ -74,6 +75,14 @@ export const richTextEditorKeyDownMessage = (
     });
   }
   if (key === "Backspace") return DeletedRichTextEditorBackward({ unit: modifiers.altKey ? "word" : "character" });
+  const currentBlock = blockSegmentAtOffset(model, model.selection.focus).block;
+  if (currentBlock.type === "codeBlock") {
+    if ((modifiers.metaKey || modifiers.ctrlKey) && key === "Enter") return ExitedRichTextEditorCodeBlock();
+    if (modifiers.metaKey || modifiers.ctrlKey || modifiers.altKey) return undefined;
+    if (key === "Enter") return InsertedRichTextEditorText({ value: "\n" });
+    if (key.length === 1) return InsertedRichTextEditorText({ value: key });
+    return undefined;
+  }
   if (modifiers.metaKey || modifiers.ctrlKey || modifiers.altKey) return undefined;
   if (key === "Enter") return SplitRichTextEditorBlock();
   if (key === "/") return OpenedRichTextEditorSlashMenu();

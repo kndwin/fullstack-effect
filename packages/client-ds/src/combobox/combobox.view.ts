@@ -2,6 +2,7 @@ import { Array, Option } from "effect";
 import { Ui } from "foldkit";
 import { html } from "foldkit/html";
 import type { Attribute, Html } from "foldkit/html";
+import * as Icon from "../icon/icon.view";
 
 export type ComboboxItem = Readonly<{
   label: string;
@@ -28,10 +29,10 @@ export type ComboboxProps<Message> = Readonly<{
 }>;
 
 const defaultInputClassName =
-  "h-[var(--size-control-md)] w-0 min-w-0 flex-1 rounded-l-md border border-input bg-background px-[var(--space-control-x)] py-[var(--space-control-y)] text-sm text-foreground shadow-[var(--shadow-control)] outline-none transition-colors placeholder:text-muted-foreground focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-disabled:cursor-not-allowed data-disabled:opacity-50";
-const defaultInputWrapperClassName = "flex w-full items-stretch [--combobox-input-width:100%]";
+  "h-[var(--size-control-md)] w-full rounded-md border border-input bg-background px-[var(--space-control-x)] py-[var(--space-control-y)] pr-10 text-sm text-foreground shadow-[var(--shadow-control)] outline-none transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-disabled:cursor-not-allowed data-disabled:opacity-50";
+const defaultInputWrapperClassName = "relative flex w-full items-stretch [--combobox-input-width:100%]";
 const defaultButtonClassName =
-  "-ml-px flex h-[var(--size-control-md)] w-[var(--size-control-md)] shrink-0 items-center justify-center rounded-r-md border border-input bg-muted/40 text-muted-foreground shadow-[var(--shadow-control)] transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-open:bg-accent data-open:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50";
+  "absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none data-open:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50";
 const defaultItemsClassName =
   "z-50 max-h-72 w-[var(--combobox-input-width)] min-w-64 overflow-hidden rounded-md border border-border bg-popover p-[var(--space-1)] text-popover-foreground shadow-[var(--shadow-popover)] outline-none";
 const defaultItemClassName =
@@ -51,7 +52,8 @@ export const Combobox = <Message>(props: ComboboxProps<Message>): Html => {
     onNone: () => undefined,
     onSome: (value) => props.items.find((item) => item.value === value),
   });
-  const visibleItems = filterItems(props.items, props.model.inputValue);
+  const shouldFilterItems = props.model.inputValue.trim() !== "" && props.model.inputValue !== selected?.label;
+  const visibleItems = shouldFilterItems ? filterItems(props.items, props.model.inputValue) : props.items;
 
   return div(
     [Class(props.className ?? "w-full")],
@@ -68,7 +70,7 @@ export const Combobox = <Message>(props: ComboboxProps<Message>): Html => {
         inputClassName: props.inputClassName ?? defaultInputClassName,
         inputPlaceholder: props.placeholder ?? selected?.label ?? "Search options...",
         buttonClassName: props.buttonClassName ?? defaultButtonClassName,
-        buttonContent: span([Class("text-sm leading-none")], ["⌄"]),
+        buttonContent: Icon.chevronDown("size-4"),
         itemsClassName: props.itemsClassName ?? defaultItemsClassName,
         backdropClassName: props.backdropClassName ?? "fixed inset-0",
         attributes: props.attributes,

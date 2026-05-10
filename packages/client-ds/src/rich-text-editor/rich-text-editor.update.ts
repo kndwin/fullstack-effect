@@ -1,4 +1,5 @@
 import { Match as M, Option } from "effect";
+import { Command, Ui } from "foldkit";
 import { normalizeRichTextSlashMenuIndex } from "./rich-text-editor.commands";
 import {
   blockSegmentAtOffset,
@@ -91,14 +92,51 @@ const replaceRangeWithText = (model: RichTextEditorModel, text: string): RichTex
   return normalizeModel({ ...model, document: { type: "doc", children }, selection: collapsedSelection(cursor) });
 };
 
+const replaceRangeInCodeBlockWithText = (model: RichTextEditorModel, text: string): RichTextEditorModel | undefined => {
+  const plainText = richTextEditorPlainText(model);
+  const selection = normalizeSelection(model.selection, plainText.length);
+  const start = selectionStart(selection);
+  const end = selectionEnd(selection);
+  const startBlock = blockSegmentAtOffset(model, start);
+  const endBlock = blockSegmentAtOffset(model, end);
+  if (startBlock.index !== endBlock.index || startBlock.block.type !== "codeBlock") return undefined;
+
+  const nextBlock = normalizeBlock(
+    blockWithChildren(startBlock.block, [
+      ...textNodesInRange(startBlock.block, startBlock.start, startBlock.start, start),
+      ...textNodeForInsertedText(text, marksAtOffset(model, start)),
+      ...textNodesInRange(startBlock.block, startBlock.start, end, endBlock.end),
+    ]),
+  );
+  const children = model.document.children.map((block, index) => (index === startBlock.index ? nextBlock : block));
+  return normalizeModel({
+    ...model,
+    document: { type: "doc", children },
+    selection: collapsedSelection(start + text.length),
+  });
+};
+
 const applyTextInputRule = (model: RichTextEditorModel, text: string): RichTextEditorModel | undefined => {
   const plainText = richTextEditorPlainText(model);
   const selection = normalizeSelection(model.selection, plainText.length);
   const start = selectionStart(selection);
-  if (text !== " " || !isSelectionCollapsed(selection)) return undefined;
+  if (!isSelectionCollapsed(selection)) return undefined;
 
   const blockSegment = blockSegmentAtOffset(model, start);
   const currentBlockText = blockText(blockSegment.block);
+
+  if ((text === "`" || text === "~") && currentBlockText === text.repeat(2) && start === blockSegment.end) {
+    const blocks = model.document.children.map((block, index) =>
+      index === blockSegment.index ? richTextCreateBlock({ type: "codeBlock" }, [TextNode.empty()]) : block,
+    );
+    return normalizeModel({
+      ...model,
+      document: { type: "doc", children: blocks },
+      selection: collapsedSelection(blockSegment.start),
+    });
+  }
+
+  if (text !== " ") return undefined;
 
   const headingLevel =
     currentBlockText === "#" ? 1 : currentBlockText === "##" ? 2 : currentBlockText === "###" ? 3 : undefined;
@@ -128,7 +166,7 @@ const applyTextInputRule = (model: RichTextEditorModel, text: string): RichTextE
 };
 
 const insertText = (model: RichTextEditorModel, text: string): RichTextEditorModel =>
-  applyTextInputRule(model, text) ?? replaceRangeWithText(model, text);
+  replaceRangeInCodeBlockWithText(model, text) ?? applyTextInputRule(model, text) ?? replaceRangeWithText(model, text);
 
 const pasteMarkdown = (
   model: RichTextEditorModel,
@@ -224,6 +262,27 @@ const splitBlock = (model: RichTextEditorModel): RichTextEditorModel => {
   return replaceRangeWithText({ ...model, selection }, "\n");
 };
 
+const exitCodeBlock = (model: RichTextEditorModel): RichTextEditorModel => {
+  const text = richTextEditorPlainText(model);
+  const selection = normalizeSelection(model.selection, text.length);
+  const blockSegment = blockSegmentAtOffset(model, selectionEnd(selection));
+  if (blockSegment.block.type !== "codeBlock") return model;
+
+  const nextBlock = model.document.children[blockSegment.index + 1];
+  const children = nextBlock
+    ? model.document.children
+    : [
+        ...model.document.children.slice(0, blockSegment.index + 1),
+        ParagraphNode.create([TextNode.empty()]),
+        ...model.document.children.slice(blockSegment.index + 1),
+      ];
+  return normalizeModel({
+    ...model,
+    document: { type: "doc", children },
+    selection: collapsedSelection(blockSegment.end + 1),
+  });
+};
+
 const setBlockFormat = (model: RichTextEditorModel, format: RichTextBlockFormat): RichTextEditorModel => {
   const selection = normalizeSelection(model.selection, richTextEditorPlainText(model).length);
   const selectedStart = selectionStart(selection);
@@ -241,36 +300,18 @@ const setBlockFormat = (model: RichTextEditorModel, format: RichTextBlockFormat)
 
 const openSlashMenu = (model: RichTextEditorModel): RichTextEditorModel => {
   const anchorSelection = model.selection;
-  const nextModel = insertText(model, "/");
-  return { ...nextModel, slashMenu: { isOpen: true, anchorSelection, query: "", activeIndex: 0 } };
+  return { ...model, slashMenu: { isOpen: true, anchorSelection, query: "", activeIndex: 0 } };
 };
 
 const closeSlashMenu = (model: RichTextEditorModel): RichTextEditorModel => {
   if (!model.slashMenu.isOpen) return model;
-  const selection = selectionFromRange(model.slashMenu.anchorSelection.anchor, model.selection.focus);
-  const nextModel = replaceRangeWithText({ ...model, selection }, "");
-  return resetRichTextEditorSlashMenu(nextModel);
+  return resetRichTextEditorSlashMenu(model);
 };
 
-const updateSlashMenuQuery = (model: RichTextEditorModel, query: string): RichTextEditorModel => {
-  const previousQuery = model.slashMenu.query;
-  const nextModel = query.startsWith(previousQuery)
-    ? insertText(model, query.slice(previousQuery.length))
-    : previousQuery.startsWith(query)
-      ? deleteBackward(model, {
-          anchor: model.selection.focus - (previousQuery.length - query.length),
-          focus: model.selection.focus,
-        })
-      : replaceRangeWithText(
-          { ...model, selection: selectionFromRange(model.slashMenu.anchorSelection.anchor + 1, model.selection.focus) },
-          query,
-        );
-
-  return {
-    ...nextModel,
-    slashMenu: { ...model.slashMenu, query, activeIndex: normalizeRichTextSlashMenuIndex(query, 0) },
-  };
-};
+const updateSlashMenuQuery = (model: RichTextEditorModel, query: string): RichTextEditorModel => ({
+  ...model,
+  slashMenu: { ...model.slashMenu, query, activeIndex: normalizeRichTextSlashMenuIndex(query, 0) },
+});
 
 const moveSlashMenuSelection = (model: RichTextEditorModel, delta: number): RichTextEditorModel => ({
   ...model,
@@ -320,6 +361,32 @@ const toggleMark = (model: RichTextEditorModel, markType: RichTextMarkType): Ric
   return normalizeModel({ ...model, document: { type: "doc", children: blocks } });
 };
 
+const changeCodeBlockLanguage = (
+  model: RichTextEditorModel,
+  blockIndex: number,
+  language: RichTextBlockFormat["language"],
+): RichTextEditorModel => {
+  const children = model.document.children.map((block, index): RichTextBlockNode => {
+    if (index !== blockIndex || block.type !== "codeBlock") return block;
+    return richTextCreateBlock({ type: "codeBlock", language }, block.children);
+  });
+  const codeBlockLanguageComboboxes = model.codeBlockLanguageComboboxes.map((combobox, index) =>
+    index === blockIndex ? Ui.Combobox.selectItem(combobox, language ?? "none", language ?? "None")[0] : combobox,
+  );
+  return normalizeModel({ ...model, document: { type: "doc", children }, codeBlockLanguageComboboxes });
+};
+
+const updateCodeBlockLanguageCombobox = (
+  model: RichTextEditorModel,
+  blockIndex: number,
+  message: Ui.Combobox.Message,
+): RichTextEditorModel => {
+  const codeBlockLanguageComboboxes = model.codeBlockLanguageComboboxes.map((combobox, index) =>
+    index === blockIndex ? Ui.Combobox.update(combobox, message)[0] : combobox,
+  );
+  return { ...model, codeBlockLanguageComboboxes };
+};
+
 const applySlashCommand = (model: RichTextEditorModel, value: string): RichTextEditorModel => {
   const nextModel = closeSlashMenu(model);
   const blockFormat = richTextBlockFormatForSlashCommand(value);
@@ -328,17 +395,44 @@ const applySlashCommand = (model: RichTextEditorModel, value: string): RichTextE
   return markType ? toggleMark(nextModel, markType) : nextModel;
 };
 
-export const updateRichTextEditor = (model: RichTextEditorModel, message: RichTextEditorMessage): RichTextEditorModel =>
+const applyCodeBlockHighlights = (
+  model: RichTextEditorModel,
+  highlights: RichTextEditorMessage & { _tag: "HighlightedRichTextCodeBlocks" },
+): RichTextEditorModel => {
+  const nextHighlights = highlights.highlights.filter((highlight) => {
+    const block = model.document.children[highlight.blockIndex];
+    return block?.type === "codeBlock" && block.language === highlight.language && blockText(block) === highlight.text;
+  });
+  const replacedIndexes = new Set(nextHighlights.map((highlight) => highlight.blockIndex));
+  return {
+    ...model,
+    codeBlockHighlights: [
+      ...model.codeBlockHighlights.filter((highlight) => !replacedIndexes.has(highlight.blockIndex)),
+      ...nextHighlights,
+    ],
+  };
+};
+
+const updateRichTextEditorModel = (model: RichTextEditorModel, message: RichTextEditorMessage): RichTextEditorModel =>
   M.value(message).pipe(
     M.withReturnType<RichTextEditorModel>(),
     M.tagsExhaustive({
       InsertedRichTextEditorText: ({ value }) => insertText(model, value),
       PastedRichTextEditorMarkdown: ({ value, start, end }) =>
-        pasteMarkdown(model, value, start === undefined || end === undefined ? undefined : selectionFromRange(start, end)),
+        pasteMarkdown(
+          model,
+          value,
+          start === undefined || end === undefined ? undefined : selectionFromRange(start, end),
+        ),
       SyncedRichTextEditorPlainText: ({ value }) => syncPlainText(model, value),
       DeletedRichTextEditorBackward: ({ start, end, unit }) =>
-        deleteBackward(model, start === undefined || end === undefined ? undefined : selectionFromRange(start, end), unit),
+        deleteBackward(
+          model,
+          start === undefined || end === undefined ? undefined : selectionFromRange(start, end),
+          unit,
+        ),
       SplitRichTextEditorBlock: () => splitBlock(model),
+      ExitedRichTextEditorCodeBlock: () => exitCodeBlock(model),
       SelectedRichTextEditorAll: () => {
         const textLength = richTextEditorPlainText(model).length;
         return { ...model, selection: selectionFromRange(0, textLength) };
@@ -348,14 +442,34 @@ export const updateRichTextEditor = (model: RichTextEditorModel, message: RichTe
       FailedMountRichTextEditorHost: () => model,
       UpdatedRichTextEditorSelection: (selection) => ({
         ...model,
-        selection: normalizeSelection(selectionFromRange(selection.start, selection.end), richTextEditorPlainText(model).length),
+        selection: normalizeSelection(
+          selectionFromRange(selection.start, selection.end),
+          richTextEditorPlainText(model).length,
+        ),
       }),
       OpenedRichTextEditorSlashMenu: () => openSlashMenu(model),
       ClosedRichTextEditorSlashMenu: () => closeSlashMenu(model),
       UpdatedRichTextEditorSlashMenuQuery: ({ value }) => updateSlashMenuQuery(model, value),
       MovedRichTextEditorSlashMenuSelection: ({ delta }) => moveSlashMenuSelection(model, delta),
       SelectedRichTextEditorSlashCommand: ({ value }) => applySlashCommand(model, value),
-      SelectedRichTextEditorBlockFormat: ({ type, level }) => setBlockFormat(model, { type, level }),
+      SelectedRichTextEditorBlockFormat: ({ type, level, language }) =>
+        setBlockFormat(model, { type, level, language }),
       ClickedRichTextEditorMark: ({ type }) => toggleMark(model, type),
+      ChangedRichTextCodeBlockLanguage: ({ blockIndex, language }) =>
+        changeCodeBlockLanguage(model, blockIndex, language),
+      GotRichTextCodeBlockLanguageComboboxMessage: ({ blockIndex, message }) =>
+        updateCodeBlockLanguageCombobox(model, blockIndex, message),
+      HighlightedRichTextCodeBlocks: (message) => applyCodeBlockHighlights(model, message),
     }),
   );
+
+export const updateRichTextEditorWithCommands = (
+  model: RichTextEditorModel,
+  message: RichTextEditorMessage,
+): readonly [RichTextEditorModel, ReadonlyArray<Command.Command<RichTextEditorMessage>>] => {
+  const nextModel = updateRichTextEditorModel(model, message);
+  return [nextModel, []];
+};
+
+export const updateRichTextEditor = (model: RichTextEditorModel, message: RichTextEditorMessage): RichTextEditorModel =>
+  updateRichTextEditorWithCommands(model, message)[0];

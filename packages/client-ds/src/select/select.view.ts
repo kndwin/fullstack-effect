@@ -1,6 +1,7 @@
 import { Ui } from "foldkit";
 import { html } from "foldkit/html";
 import type { Attribute, Html } from "foldkit/html";
+import * as Icon from "../icon/icon.view";
 
 export type SelectOption = Readonly<{
   label: string;
@@ -62,8 +63,8 @@ export const Select = <Message>(props: SelectProps<Message>): Html => {
                 ),
               ),
               span(
-                [Class("pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground")],
-                ["v"],
+                [Class("pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground")],
+                [Icon.chevronDown("size-4")],
               ),
             ],
           ),

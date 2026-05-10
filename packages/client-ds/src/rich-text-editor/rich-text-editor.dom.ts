@@ -45,8 +45,7 @@ export const richTextSelectionMessageFromDom = (textLength: number): typeof Upda
     return collapsedSelectionMessage(textLength);
   }
   const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0)
-    return collapsedSelectionMessage(textLength);
+  if (!selection || selection.rangeCount === 0) return collapsedSelectionMessage(textLength);
 
   const range = selection.getRangeAt(0);
   const root = (
@@ -93,7 +92,10 @@ const textNodeForOffset = (root: Element, offset: number): { node: Text; offset:
   if (!textNode) return undefined;
 
   const textLength = textNode.textContent?.length ?? 0;
-  return { node: textNode, offset: isPlaceholderTextElement(element) ? 0 : Math.max(0, Math.min(offset - start, textLength)) };
+  return {
+    node: textNode,
+    offset: isPlaceholderTextElement(element) ? 0 : Math.max(0, Math.min(offset - start, textLength)),
+  };
 };
 
 export const restoreRichTextDomSelection = (element: Element, selection: RichTextSelection): void => {

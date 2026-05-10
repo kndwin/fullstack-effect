@@ -6,17 +6,18 @@ import { Preview, type PreviewControlValues } from "@qaveai/foldkit-preview";
 import { Combobox } from "./combobox.view";
 
 const GotPreviewComboboxMessage = m("GotPreviewComboboxMessage", {
-  combobox: Schema.Literals(["default", "selected", "replay"]),
+  combobox: Schema.Literals(["default", "selected", "open", "replay"]),
   message: Ui.Combobox.Message,
 });
 const SelectedPreviewComboboxItem = m("SelectedPreviewComboboxItem", {
-  combobox: Schema.Literals(["default", "selected", "replay"]),
+  combobox: Schema.Literals(["default", "selected", "open", "replay"]),
   value: Schema.String,
 });
 
 const Model = Schema.Struct({
   defaultCombobox: Ui.Combobox.Model,
   selectedCombobox: Ui.Combobox.Model,
+  openCombobox: Ui.Combobox.Model,
   combobox: Ui.Combobox.Model,
   selectedValue: Schema.Option(Schema.String),
 });
@@ -26,6 +27,10 @@ type Model = typeof Model.Type;
 const Message = Schema.Union([GotPreviewComboboxMessage, SelectedPreviewComboboxItem]);
 
 const UpdatedInputValue = (value: string): Ui.Combobox.UpdatedInputValue => ({ _tag: "UpdatedInputValue", value });
+
+const initOpenCombobox = () => Ui.Combobox.open(Ui.Combobox.init({ id: "preview-combobox-open" }))[0];
+
+const keepOpen = (combobox: Ui.Combobox.Model) => Ui.Combobox.open(combobox)[0];
 
 const items = [
   { label: "Inbox", value: "inbox", description: "Customer requests and triage." },
@@ -41,6 +46,7 @@ const init = (): Model => ({
     selectedItem: "engineering",
     selectedDisplayText: "Engineering",
   }),
+  openCombobox: initOpenCombobox(),
   combobox: Ui.Combobox.init({ id: "preview-combobox-replay", selectInputOnFocus: true }),
   selectedValue: Option.none(),
 });
@@ -51,6 +57,8 @@ const comboboxField = (combobox: typeof GotPreviewComboboxMessage.Type.combobox)
       return "defaultCombobox";
     case "selected":
       return "selectedCombobox";
+    case "open":
+      return "openCombobox";
     case "replay":
       return "combobox";
   }
@@ -62,9 +70,10 @@ const update = (model: Model, message: typeof Message.Type) => {
       const sourceCombobox = message.combobox;
       const field = comboboxField(sourceCombobox);
       const [combobox, commands] = Ui.Combobox.update(model[field], message.message);
+      const nextCombobox = sourceCombobox === "open" ? keepOpen(combobox) : combobox;
 
       return [
-        { ...model, [field]: combobox },
+        { ...model, [field]: nextCombobox },
         commands.map(
           Command.mapEffect(Effect.map((message) => GotPreviewComboboxMessage({ combobox: sourceCombobox, message }))),
         ),
@@ -75,11 +84,12 @@ const update = (model: Model, message: typeof Message.Type) => {
       const field = comboboxField(sourceCombobox);
       const item = items.find((item) => item.value === message.value);
       const [combobox, commands] = Ui.Combobox.selectItem(model[field], message.value, item?.label ?? message.value);
+      const nextCombobox = sourceCombobox === "open" ? keepOpen(combobox) : combobox;
 
       return [
         {
           ...model,
-          [field]: combobox,
+          [field]: nextCombobox,
           selectedValue: sourceCombobox === "replay" ? Option.some(message.value) : model.selectedValue,
         },
         commands.map(
@@ -130,6 +140,22 @@ export const ComboboxPreview = Preview.module({
                     SelectedPreviewComboboxItem({ combobox: "selected", value }) as typeof Message.Type,
                   items,
                   placeholder: "Search teams",
+                }),
+              ],
+            ),
+            div(
+              [Class("grid gap-2 rounded-xl border border-border bg-card p-4 text-card-foreground shadow-sm")],
+              [
+                p([Class("m-0 text-sm font-medium")], ["Open"]),
+                Combobox({
+                  model: model.openCombobox,
+                  toParentMessage: (message) =>
+                    GotPreviewComboboxMessage({ combobox: "open", message }) as typeof Message.Type,
+                  onSelectedItem: (value) =>
+                    SelectedPreviewComboboxItem({ combobox: "open", value }) as typeof Message.Type,
+                  items,
+                  placeholder: "Search teams",
+                  backdropClassName: "pointer-events-none fixed inset-0",
                 }),
               ],
             ),

@@ -5,6 +5,7 @@ import {
   UpdatedRichTextEditorSelection,
   ClosedRichTextEditorSlashMenu,
   DeletedRichTextEditorBackward,
+  ExitedRichTextEditorCodeBlock,
   InsertedRichTextEditorText,
   FailedMountRichTextEditorHost,
   MountedRichTextEditorHost,
@@ -20,11 +21,15 @@ import {
   SplitRichTextEditorBlock,
   SyncedRichTextEditorPlainText,
   ClickedRichTextEditorMark,
+  ChangedRichTextCodeBlockLanguage,
+  GotRichTextCodeBlockLanguageComboboxMessage,
   UpdatedRichTextEditorSlashMenuQuery,
+  HighlightedRichTextCodeBlocks,
   initRichTextEditor,
   richTextEditorPlainText,
   richTextEditorSubscriptions,
   updateRichTextEditor,
+  updateRichTextEditorWithCommands,
   type RichTextEditorModel,
 } from "./rich-text-editor.view";
 
@@ -34,6 +39,7 @@ const Message = Schema.Union([
   SyncedRichTextEditorPlainText,
   DeletedRichTextEditorBackward,
   SplitRichTextEditorBlock,
+  ExitedRichTextEditorCodeBlock,
   SelectedRichTextEditorAll,
   RestoredRichTextEditorSelection,
   MountedRichTextEditorHost,
@@ -46,6 +52,9 @@ const Message = Schema.Union([
   SelectedRichTextEditorSlashCommand,
   SelectedRichTextEditorBlockFormat,
   ClickedRichTextEditorMark,
+  ChangedRichTextCodeBlockLanguage,
+  GotRichTextCodeBlockLanguageComboboxMessage,
+  HighlightedRichTextCodeBlocks,
 ]);
 
 type Model = RichTextEditorModel;
@@ -107,7 +116,7 @@ const states = () => {
         id: "preview-rich-text-editor-slash-open",
         model: slashOpenModel,
         label: "Slash menu open",
-        description: "Shows the transient slash token and open command menu state.",
+        description: "Shows the open command menu state without inserting slash query text into the document.",
         isSlashMenuBackdropDisabled: true,
         toParentMessage: (message) => message,
       }),
@@ -148,7 +157,7 @@ export const RichTextEditorPreview = Preview.module({
         isDisabled: Preview.boolean(false),
       },
       init: (): Model => initRichTextEditor(initialValue),
-      update: updateRichTextEditor,
+      update: updateRichTextEditorWithCommands,
       subscriptions: ({ model, controls }) =>
         richTextEditorSubscriptions({
           id: "preview-rich-text-editor-replay",

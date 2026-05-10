@@ -1,5 +1,7 @@
 import { BoldNode } from "./nodes/bold.node";
 import { BlockquoteNode } from "./nodes/blockquote.node";
+import { CodeBlockNode } from "./nodes/code-block.node";
+import type { RichTextCodeBlockLanguage } from "./nodes/code-block.node";
 import { HeadingNode } from "./nodes/heading.node";
 import { ItalicNode } from "./nodes/italic.node";
 import { ParagraphNode } from "./nodes/paragraph.node";
@@ -9,17 +11,20 @@ import type { RichTextBlockNode, RichTextHeadingLevel, RichTextMark } from "./ri
 import type { RichTextMarkType } from "./nodes/mark.schema";
 
 export type RichTextBlockFormat = Readonly<{
-  type: "paragraph" | "heading" | "blockquote";
+  type: "paragraph" | "heading" | "blockquote" | "codeBlock";
   level?: RichTextHeadingLevel;
+  language?: RichTextCodeBlockLanguage;
 }>;
 
-export const richTextBlockNodes = [ParagraphNode, HeadingNode, BlockquoteNode] as const;
+export const richTextBlockNodes = [ParagraphNode, HeadingNode, BlockquoteNode, CodeBlockNode] as const;
 export const richTextMarkNodes = [BoldNode, ItalicNode] as const;
 
 export const richTextBlockToolbarItems = [
   ParagraphNode.toolbarItem,
   ...HeadingNode.toolbarItems,
   BlockquoteNode.toolbarItem,
+  CodeBlockNode.toolbarItem,
+  ...CodeBlockNode.toolbarItems,
 ] as const;
 
 export const richTextMarkToolbarItems = richTextMarkNodes.map((node) => node.toolbarItem);
@@ -28,6 +33,8 @@ export const richTextSlashCommandDefinitions = [
   ParagraphNode.slashCommand,
   ...HeadingNode.slashCommands,
   BlockquoteNode.slashCommand,
+  CodeBlockNode.slashCommand,
+  ...CodeBlockNode.slashCommands,
   ...richTextMarkNodes.map((node) => node.slashCommand),
 ] as const;
 
@@ -52,7 +59,8 @@ export const richTextMarkTypeForKeyboardShortcut = (
 export const richTextBlockFormatForSlashCommand = (value: string): RichTextBlockFormat | undefined =>
   ParagraphNode.formatForSlashCommand(value) ??
   HeadingNode.formatForSlashCommand(value) ??
-  BlockquoteNode.formatForSlashCommand(value);
+  BlockquoteNode.formatForSlashCommand(value) ??
+  CodeBlockNode.formatForSlashCommand(value);
 
 export const richTextCreateBlock = (
   format: RichTextBlockFormat,
@@ -60,6 +68,7 @@ export const richTextCreateBlock = (
 ): RichTextBlockNode => {
   if (format.type === "heading") return HeadingNode.create(format.level ?? 1, children);
   if (format.type === "blockquote") return BlockquoteNode.create(children);
+  if (format.type === "codeBlock") return CodeBlockNode.create(children, format.language);
   return ParagraphNode.create(children);
 };
 
@@ -69,7 +78,8 @@ export const richTextMarkTypeForSlashCommand = (value: string): RichTextMarkType
 export const richTextRenderBlock = <Message>(block: RichTextBlockNode, children: ReadonlyArray<Html | string>) => {
   if (block.type === "paragraph") return ParagraphNode.render<Message>(children);
   if (block.type === "blockquote") return BlockquoteNode.render<Message>(children);
+  if (block.type === "codeBlock") return CodeBlockNode.render<Message>(children, block.language);
   return HeadingNode.render<Message>(block.level, children);
 };
 
-export { BoldNode, BlockquoteNode, HeadingNode, ItalicNode, ParagraphNode };
+export { BoldNode, BlockquoteNode, CodeBlockNode, HeadingNode, ItalicNode, ParagraphNode };

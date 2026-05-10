@@ -1,12 +1,22 @@
-import { blockSegments, blockText, isSelectionCollapsed, normalizeSelection, selectionEnd, selectionStart, textNodesInRange } from "./rich-text-editor.document";
+import {
+  blockSegments,
+  blockText,
+  isSelectionCollapsed,
+  normalizeSelection,
+  selectionEnd,
+  selectionStart,
+  textNodesInRange,
+} from "./rich-text-editor.document";
 import {
   BlockquoteNode,
+  CodeBlockNode,
   HeadingNode,
   ParagraphNode,
   richTextMarkNodeForType,
   richTextMarkNodes,
 } from "./rich-text-editor.registry";
 import { TextNode } from "./nodes/text.node";
+import { richTextCodeBlockLanguageFromMarkdown } from "./nodes/code-block.node";
 import type {
   RichTextBlockNode,
   RichTextDocument,
@@ -79,7 +89,32 @@ const markdownLineToBlock = (line: string): RichTextBlockNode => {
 
 export const richTextDocumentFromMarkdown = (markdown: string): RichTextDocument => {
   const lines = markdown.replace(/\r\n?/g, "\n").split("\n");
-  return { type: "doc", children: lines.map(markdownLineToBlock) };
+  const children: Array<RichTextBlockNode> = [];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index] ?? "";
+    const fenceMatch = /^(```|~~~)([\w.-]+)?\s*$/.exec(line);
+    if (!fenceMatch) {
+      children.push(markdownLineToBlock(line));
+      continue;
+    }
+
+    const fence = fenceMatch[1] ?? "```";
+    const closingFencePattern = new RegExp(`^${fence}\\s*$`);
+    const codeLines: Array<string> = [];
+    let closingFenceIndex = index + 1;
+    while (closingFenceIndex < lines.length && !closingFencePattern.test(lines[closingFenceIndex] ?? "")) {
+      codeLines.push(lines[closingFenceIndex] ?? "");
+      closingFenceIndex += 1;
+    }
+
+    children.push(
+      CodeBlockNode.create([TextNode.of(codeLines.join("\n"))], richTextCodeBlockLanguageFromMarkdown(fenceMatch[2])),
+    );
+    index = closingFenceIndex < lines.length ? closingFenceIndex : lines.length;
+  }
+
+  return { type: "doc", children };
 };
 
 const escapeMarkdownText = (value: string): string => value.replace(/([\\*#>])/g, "\\$1");
@@ -97,6 +132,7 @@ const blockMarkdown = (block: RichTextBlockNode): string => {
   const content = block.children.map(textNodeMarkdown).join("");
   if (block.type === "heading") return HeadingNode.markdown.serialize(block, content);
   if (block.type === "blockquote") return BlockquoteNode.markdown.serialize(block, content);
+  if (block.type === "codeBlock") return CodeBlockNode.markdown.serialize(block, blockText(block));
   return ParagraphNode.markdown.serialize(block, content);
 };
 

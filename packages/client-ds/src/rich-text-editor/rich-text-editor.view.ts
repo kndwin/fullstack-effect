@@ -1,12 +1,14 @@
 import { Effect, Function } from "effect";
-import { Mount } from "foldkit";
+import { Mount, Ui } from "foldkit";
 import { html } from "foldkit/html";
 import type { Attribute, Html, MountResult } from "foldkit/html";
 import { Button } from "../button/button.view";
+import { Combobox } from "../combobox/combobox.view";
 import { blockText, isSelectionCollapsed, selectionEnd, selectionStart } from "./rich-text-editor.document";
 import { restoreRichTextDomSelection } from "./rich-text-editor.dom";
 import { richTextEditorMarkdown } from "./rich-text-editor.markdown";
 import { initRichTextEditor, richTextEditorPlainText } from "./rich-text-editor.model";
+import { CodeBlockNode, supportedRichTextCodeBlockLanguages } from "./nodes/code-block.node";
 import {
   ParagraphNode,
   richTextBlockToolbarItems,
@@ -18,6 +20,7 @@ import {
   UpdatedRichTextEditorSelection,
   ClosedRichTextEditorSlashMenu,
   DeletedRichTextEditorBackward,
+  ExitedRichTextEditorCodeBlock,
   FailedMountRichTextEditorHost,
   InsertedRichTextEditorText,
   MountedRichTextEditorHost,
@@ -32,7 +35,10 @@ import {
   SelectedRichTextEditorAll,
   SelectedRichTextEditorSlashCommand,
   ClickedRichTextEditorMark,
+  ChangedRichTextCodeBlockLanguage,
+  GotRichTextCodeBlockLanguageComboboxMessage,
   UpdatedRichTextEditorSlashMenuQuery,
+  HighlightedRichTextCodeBlocks,
   type RichTextEditorModel,
   type RichTextBlockNode,
   type RichTextSelection,
@@ -40,12 +46,18 @@ import {
 import type { RichTextMarkType } from "./nodes/mark.schema";
 import { RichTextEditorSlashMenu } from "./rich-text-editor.slash-menu.view";
 import { richTextEditorSubscriptions, type RichTextEditorSubscriptionOptions } from "./rich-text-editor.subscriptions";
-import { updateRichTextEditor } from "./rich-text-editor.update";
+import { updateRichTextEditor, updateRichTextEditorWithCommands } from "./rich-text-editor.update";
+
+const codeBlockLanguageItems = [
+  { label: "None", value: "none" },
+  ...supportedRichTextCodeBlockLanguages.map((language) => ({ label: language, value: language })),
+] as const;
 
 export {
   UpdatedRichTextEditorSelection,
   ClosedRichTextEditorSlashMenu,
   DeletedRichTextEditorBackward,
+  ExitedRichTextEditorCodeBlock,
   FailedMountRichTextEditorHost,
   InsertedRichTextEditorText,
   MountedRichTextEditorHost,
@@ -60,11 +72,15 @@ export {
   SplitRichTextEditorBlock,
   SyncedRichTextEditorPlainText,
   ClickedRichTextEditorMark,
+  ChangedRichTextCodeBlockLanguage,
+  GotRichTextCodeBlockLanguageComboboxMessage,
   UpdatedRichTextEditorSlashMenuQuery,
+  HighlightedRichTextCodeBlocks,
   initRichTextEditor,
   richTextEditorPlainText,
   richTextEditorSubscriptions,
   updateRichTextEditor,
+  updateRichTextEditorWithCommands,
 };
 export type { RichTextEditorModel, RichTextEditorSubscriptionOptions };
 
@@ -204,6 +220,101 @@ const renderBlockInlineContent = <Message>({
   });
 };
 
+const renderHighlightedCodeBlockToken = <Message>({
+  content,
+  lightColor,
+  darkColor,
+  start,
+  selection,
+}: Readonly<{
+  content: string;
+  lightColor?: string;
+  darkColor?: string;
+  start: number;
+  selection: RichTextSelection;
+}>): ReadonlyArray<Html | string> => {
+  const { span, Class, DataAttribute, Style } = html<Message>();
+  const end = start + content.length;
+  const selectedStart = Math.max(start, selectionStart(selection));
+  const selectedEnd = Math.min(end, selectionEnd(selection));
+  const ranges =
+    selectedStart < selectedEnd
+      ? [
+          { text: content.slice(0, selectedStart - start), selected: false, start },
+          { text: content.slice(selectedStart - start, selectedEnd - start), selected: true, start: selectedStart },
+          { text: content.slice(selectedEnd - start), selected: false, start: selectedEnd },
+        ].filter((range) => range.text.length > 0)
+      : [{ text: content, selected: false, start }];
+
+  return ranges.map((range) =>
+    span(
+      [
+        Class(`${range.selected ? "rounded-sm bg-primary/20 text-foreground" : "rte-code-token"}`),
+        DataAttribute("rte-start", String(range.start)),
+        DataAttribute("rte-end", String(range.start + range.text.length)),
+        ...(!range.selected && (lightColor || darkColor)
+          ? [
+              Style({
+                ...(lightColor ? { "--rte-code-token-light": lightColor } : {}),
+                ...(darkColor ? { "--rte-code-token-dark": darkColor } : {}),
+              }),
+            ]
+          : []),
+      ],
+      [range.text],
+    ),
+  );
+};
+
+const renderCodeBlockInlineContent = <Message>({
+  block,
+  blockStart,
+  selection,
+}: Readonly<{
+  block: RichTextBlockNode;
+  blockStart: number;
+  selection: RichTextSelection;
+}>): ReadonlyArray<Html | string> => {
+  let textOffset = blockStart;
+
+  return block.children.flatMap((node) => {
+    const rendered = renderHighlightedCodeBlockToken<Message>({
+      content: node.text,
+      start: textOffset,
+      selection,
+    });
+    textOffset += node.text.length;
+    return rendered;
+  });
+};
+
+const renderHighlightedCodeBlockContent = <Message>(
+  highlight: RichTextEditorModel["codeBlockHighlights"][number],
+  blockStart: number,
+  selection: RichTextSelection,
+): ReadonlyArray<Html | string> => {
+  let textOffset = blockStart;
+
+  return highlight.lines.flatMap((line, lineIndex) => {
+    const renderedLine = line.flatMap((token) => {
+      const rendered = renderHighlightedCodeBlockToken<Message>({
+        content: token.content,
+        lightColor: token.lightColor,
+        darkColor: token.darkColor,
+        start: textOffset,
+        selection,
+      });
+      textOffset += token.content.length;
+      return rendered;
+    });
+
+    if (lineIndex >= highlight.lines.length - 1) return renderedLine;
+    const renderedNewline = renderHighlightedCodeBlockToken<Message>({ content: "\n", start: textOffset, selection });
+    textOffset += 1;
+    return [...renderedLine, ...renderedNewline];
+  });
+};
+
 const renderEmptyBlockFallback = <Message>({
   blockIndex,
   blockStart,
@@ -229,33 +340,114 @@ const renderBlockNode = <Message>({
   blockStart,
   selection,
   placeholder,
+  model,
+  toParentMessage,
 }: Readonly<{
   block: RichTextBlockNode;
   blockIndex: number;
   blockStart: number;
   selection: RichTextSelection;
   placeholder: string;
+  model: RichTextEditorModel;
+  toParentMessage: (message: RichTextEditorMessage) => Message;
 }>): Html => {
   const blockContent =
     blockText(block).length > 0
       ? renderBlockInlineContent<Message>({ block, blockStart, selection })
       : [renderEmptyBlockFallback<Message>({ blockIndex, blockStart, placeholder })];
 
+  if (block.type === "codeBlock") {
+    const { div, Class, Attribute } = html<Message>();
+    const highlightedContent = block.language
+      ? model.codeBlockHighlights.find(
+          (highlight) =>
+            highlight.blockIndex === blockIndex &&
+            highlight.language === block.language &&
+            highlight.text === blockText(block),
+        )
+      : undefined;
+    return div(
+      [Class("relative")],
+      [
+        div(
+          [
+            Attribute("contenteditable", "false"),
+            Attribute("data-rte-ignore-events", "true"),
+            Class("absolute right-2 top-2 z-10 w-40"),
+          ],
+          [
+            Combobox<Message>({
+              model:
+                model.codeBlockLanguageComboboxes[blockIndex] ??
+                Ui.Combobox.init({ id: `rte-code-language-${blockIndex}` }),
+              toParentMessage: (message) =>
+                toParentMessage(GotRichTextCodeBlockLanguageComboboxMessage({ blockIndex, message })),
+              onSelectedItem: (language) =>
+                toParentMessage(
+                  ChangedRichTextCodeBlockLanguage({
+                    blockIndex,
+                    language:
+                      language === "bash"
+                        ? "bash"
+                        : language === "python"
+                          ? "python"
+                          : language === "typescript"
+                            ? "typescript"
+                            : undefined,
+                  }),
+                ),
+              items: codeBlockLanguageItems,
+              placeholder: block.language ?? "None",
+              attributes: [Attribute("contenteditable", "false")],
+              inputWrapperClassName: "flex w-full items-stretch [--combobox-input-width:10rem]",
+              inputClassName:
+                "h-8 w-0 min-w-0 flex-1 rounded-l-md border border-border bg-background px-2 text-xs text-foreground shadow-sm outline-none placeholder:text-foreground focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring",
+              buttonClassName:
+                "-ml-px flex h-8 w-8 shrink-0 items-center justify-center rounded-r-md border border-border bg-muted/40 text-muted-foreground shadow-sm hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-open:bg-accent",
+              itemsClassName:
+                "z-50 max-h-40 w-[var(--combobox-input-width)] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-[var(--shadow-popover)] outline-none",
+              itemClassName:
+                "relative cursor-default rounded-sm px-2 py-1.5 text-xs outline-none transition-colors data-active:bg-accent data-active:text-accent-foreground data-selected:bg-accent data-selected:text-accent-foreground",
+            }),
+          ],
+        ),
+        CodeBlockNode.render<Message>(
+          highlightedContent
+            ? renderHighlightedCodeBlockContent<Message>(highlightedContent, blockStart, selection)
+            : renderCodeBlockInlineContent<Message>({ block, blockStart, selection }),
+          block.language,
+        ),
+      ],
+    );
+  }
+
   return richTextRenderBlock<Message>(block, blockContent);
 };
 
 const renderDocument = <Message>({
   blocks,
+  model,
   selection,
   placeholder,
+  toParentMessage,
 }: Readonly<{
   blocks: ReadonlyArray<RichTextBlockNode>;
+  model: RichTextEditorModel;
   selection: RichTextSelection;
   placeholder: string;
+  toParentMessage: (message: RichTextEditorMessage) => Message;
 }>): ReadonlyArray<Html> => {
   let blockStart = 0;
   return blocks.map((block, blockIndex) => {
-    const rendered = renderBlockNode<Message>({ block, blockIndex, blockStart, selection, placeholder });
+    const rendered = renderBlockNode<Message>({
+      block,
+      blockIndex,
+      blockStart,
+      selection,
+      placeholder,
+      model,
+      toParentMessage,
+    });
     blockStart += blockText(block).length + 1;
     return rendered;
   });
@@ -384,8 +576,10 @@ export const RichTextEditor = <Message>(props: RichTextEditorProps<Message>): Ht
             ],
             renderDocument<Message>({
               blocks: props.model.document.children,
+              model: props.model,
               selection: props.model.selection,
               placeholder: props.placeholder ?? "Start writing...",
+              toParentMessage: props.toParentMessage,
             }),
           ),
           ...(props.model.slashMenu.isOpen

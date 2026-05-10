@@ -11,6 +11,7 @@
     "./card": "./src/card/index.ts",
     "./fieldset": "./src/fieldset/fieldset.view.ts",
     "./input": "./src/input/input.view.ts",
+    "./icon": "./src/icon/index.ts",
     "./combobox": "./src/combobox/combobox.view.ts",
     "./dialog": "./src/dialog/dialog.view.ts",
     "./listbox": "./src/listbox/listbox.view.ts",
@@ -38,7 +39,8 @@
     "@qaveai/foldkit-preview": "workspace:*",
     "@radix-ui/colors": "^3.0.0",
     "effect": "4.0.0-beta.59",
-    "foldkit": "0.82.0"
+    "foldkit": "0.82.0",
+    "shiki": "^4.0.2"
   },
   "devDependencies": {
     "tailwindcss": "^4.0.0"

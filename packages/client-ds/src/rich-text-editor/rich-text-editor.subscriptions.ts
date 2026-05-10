@@ -1,11 +1,14 @@
 import { Effect, Function, Option, Queue, Stream } from "effect";
 import type { KeyboardModifiers } from "foldkit/html";
+import { blockText } from "./rich-text-editor.document";
 import { richTextSelectionMessageFromDom, selectRichTextEditorDomAll } from "./rich-text-editor.dom";
 import { richTextEditorKeyDownMessage, richTextEditorKeyUpMessage } from "./rich-text-editor.keyboard";
 import { richTextEditorSelectedMarkdown } from "./rich-text-editor.markdown";
 import { richTextEditorPlainText } from "./rich-text-editor.model";
+import { highlightRichTextCodeBlock, type RichTextCodeBlockHighlightRequest } from "./rich-text-editor.highlight";
 import {
   DeletedRichTextEditorBackward,
+  HighlightedRichTextCodeBlocks,
   PastedRichTextEditorMarkdown,
   SyncedRichTextEditorPlainText,
   type RichTextEditorMessage,
@@ -34,6 +37,9 @@ const isRichTextEditorFocused = (id: string): boolean => {
   return !!root && !!activeElement && (root === activeElement || root.contains(activeElement));
 };
 
+const isIgnoredRichTextEditorEvent = (event: Event): boolean =>
+  event.target instanceof Element && !!event.target.closest("[data-rte-ignore-events]");
+
 const mountedHostId = (options: RichTextEditorSubscriptionOptions): string | undefined =>
   Option.getOrUndefined(options.model.maybeMountedHostId);
 
@@ -41,6 +47,7 @@ const handledKeyDownMessage = (
   event: KeyboardEvent,
   options: RichTextEditorSubscriptionOptions,
 ): RichTextEditorMessage | undefined => {
+  if (isIgnoredRichTextEditorEvent(event)) return undefined;
   if (options.isDisabled || !isRichTextEditorFocused(options.id)) return undefined;
 
   const modifiers = keyboardModifiersFromEvent(event);
@@ -73,6 +80,7 @@ const handledKeyUpMessage = (
   event: KeyboardEvent,
   options: RichTextEditorSubscriptionOptions,
 ): RichTextEditorMessage | undefined => {
+  if (isIgnoredRichTextEditorEvent(event)) return undefined;
   if (options.isDisabled || !isRichTextEditorFocused(options.id)) return undefined;
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "a") return undefined;
 
@@ -125,13 +133,13 @@ const hostEventStream = (
         const onKeyUp = (event: KeyboardEvent) => {
           offerMessage(queue, handledKeyUpMessage(event, options), event);
         };
-        const onInput = () => {
-          if (!options.isDisabled)
+        const onInput = (event: Event) => {
+          if (!options.isDisabled && !isIgnoredRichTextEditorEvent(event))
             Queue.offerUnsafe(queue, SyncedRichTextEditorPlainText({ value: element.innerText }));
         };
         const onPaste = (event: ClipboardEvent) => {
           const markdown = event.clipboardData?.getData("text/plain");
-          if (options.isDisabled || !markdown) return;
+          if (options.isDisabled || !markdown || isIgnoredRichTextEditorEvent(event)) return;
           event.preventDefault();
           const selection = currentDomSelection(options.model);
           Queue.offerUnsafe(
@@ -140,11 +148,21 @@ const hostEventStream = (
           );
         };
         const onCopy = (event: ClipboardEvent) => {
-          if (options.isDisabled || !writeMarkdownClipboard(event, options.model)) return;
+          if (
+            options.isDisabled ||
+            isIgnoredRichTextEditorEvent(event) ||
+            !writeMarkdownClipboard(event, options.model)
+          )
+            return;
           event.preventDefault();
         };
         const onCut = (event: ClipboardEvent) => {
-          if (options.isDisabled || !writeMarkdownClipboard(event, options.model)) return;
+          if (
+            options.isDisabled ||
+            isIgnoredRichTextEditorEvent(event) ||
+            !writeMarkdownClipboard(event, options.model)
+          )
+            return;
           event.preventDefault();
           const selection = currentDomSelection(options.model);
           Queue.offerUnsafe(queue, DeletedRichTextEditorBackward({ start: selection.anchor, end: selection.focus }));
@@ -177,12 +195,34 @@ const hostEventStream = (
     ).pipe(Effect.flatMap(() => Effect.never)),
   );
 
+const highlightRequestsForModel = (model: RichTextEditorModel): ReadonlyArray<RichTextCodeBlockHighlightRequest> =>
+  model.document.children.flatMap((block, blockIndex) => {
+    if (block.type !== "codeBlock" || !block.language) return [];
+    const text = blockText(block);
+    const existing = model.codeBlockHighlights.find(
+      (highlight) =>
+        highlight.blockIndex === blockIndex && highlight.language === block.language && highlight.text === text,
+    );
+    return existing ? [] : [{ blockIndex, text, language: block.language }];
+  });
+
+const codeHighlightStream = (model: RichTextEditorModel): Stream.Stream<RichTextEditorMessage> => {
+  const requests = highlightRequestsForModel(model);
+  if (requests.length === 0) return Stream.empty;
+  return Stream.fromEffect(
+    Effect.promise(async () =>
+      HighlightedRichTextCodeBlocks({ highlights: await Promise.all(requests.map(highlightRichTextCodeBlock)) }),
+    ),
+  );
+};
+
 export const richTextEditorSubscriptions = (
   options: RichTextEditorSubscriptionOptions,
 ): Stream.Stream<RichTextEditorMessage> => {
-  if (typeof document === "undefined") return Stream.empty;
+  const highlightStream = codeHighlightStream(options.model);
+  if (typeof document === "undefined") return highlightStream;
   const hostId = mountedHostId(options);
-  if (!hostId) return Stream.empty;
+  if (!hostId) return highlightStream;
 
-  return hostEventStream(hostId, { ...options, id: hostId });
+  return Stream.merge(highlightStream, hostEventStream(hostId, { ...options, id: hostId }));
 };

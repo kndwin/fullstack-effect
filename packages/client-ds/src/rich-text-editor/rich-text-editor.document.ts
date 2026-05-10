@@ -5,6 +5,7 @@ import type {
   RichTextSelection,
   RichTextTextNode,
 } from "./rich-text-editor.schema";
+import { Ui } from "foldkit";
 import { ParagraphNode, richTextCreateBlock } from "./rich-text-editor.registry";
 import { TextNode } from "./nodes/text.node";
 
@@ -68,10 +69,21 @@ export const normalizeBlock = (block: RichTextBlockNode): RichTextBlockNode => {
 export const normalizeModel = (model: RichTextEditorModel): RichTextEditorModel => {
   const children = model.document.children.length > 0 ? model.document.children.map(normalizeBlock) : [paragraph()];
   const textLength = children.map(blockText).join("\n").length;
+  const codeBlockLanguageComboboxes = children.map(
+    (_block, index) =>
+      model.codeBlockLanguageComboboxes[index] ?? Ui.Combobox.init({ id: `rte-code-language-${index}` }),
+  );
   return {
     document: { type: "doc", children },
     selection: normalizeSelection(model.selection, textLength),
     slashMenu: model.slashMenu,
+    codeBlockLanguageComboboxes,
+    codeBlockHighlights: model.codeBlockHighlights.filter((highlight) => {
+      const block = children[highlight.blockIndex];
+      return (
+        block?.type === "codeBlock" && block.language === highlight.language && blockText(block) === highlight.text
+      );
+    }),
     maybeMountedHostId: model.maybeMountedHostId,
   };
 };

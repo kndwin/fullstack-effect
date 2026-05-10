@@ -1,0 +1,45 @@
+{
+  "$schema": "https://webreel.dev/schema/v1.json",
+  "outDir": "./videos",
+  "viewport": "macbook-air",
+  "defaultDelay": 250,
+  "videos": {
+    "slider-replay-demo": {
+      "url": "http://localhost:6006/?module=Ui%2FSlider&preview=Replay",
+      "output": "slider-replay-demo.mp4",
+      "waitFor": "#preview-volume-slider-thumb",
+      "steps": [
+        { "action": "pause", "ms": 1000 },
+        { "action": "click", "text": "Play", "label": "Play replay" },
+        { "action": "pause", "ms": 3000 },
+        { "action": "select", "selector": "aside select", "value": "2", "label": "Long drag" },
+        { "action": "pause", "ms": 500 },
+        { "action": "click", "text": "Play", "label": "Play long drag" },
+        { "action": "pause", "ms": 3500 }
+      ]
+    },
+    "rich-text-editor-slash-demo": {
+      "url": "http://localhost:6006/?module=Ui%2FRichTextEditor&preview=Replay",
+      "output": "rich-text-editor-slash-demo.mp4",
+      "waitFor": "[aria-label='Editor draft']",
+      "steps": [
+        { "action": "pause", "ms": 800 },
+        { "action": "click", "selector": "[aria-label='Editor draft']", "label": "Focus editor" },
+        { "action": "key", "key": "mod+a", "label": "Select draft" },
+        { "action": "type", "text": "A quick product note", "charDelay": 45 },
+        { "action": "key", "key": "Enter" },
+        { "action": "type", "text": "/", "charDelay": 45, "label": "Open slash menu" },
+        { "action": "pause", "ms": 500 },
+        { "action": "click", "text": "Heading 1", "label": "Choose heading" },
+        { "action": "type", "text": "Launch checklist", "charDelay": 45 },
+        { "action": "key", "key": "Enter" },
+        {
+          "action": "type",
+          "text": "Confirm the editor keeps structure while capturing each command in the inspector.",
+          "charDelay": 35
+        },
+        { "action": "pause", "ms": 1500 }
+      ]
+    }
+  }
+}
