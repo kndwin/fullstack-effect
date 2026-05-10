@@ -1,0 +1,190 @@
+packages/client-ds/src/icon/index.ts
+  s_5911019c97ae0a::t_069da1142a3985 1
+docs/sync-engine-plan.md
+  s_f812624714088f::t_100a90951e38d3 114-116,125-134,143,433-442
+  s_f812624714088f::t_05db41ef59bdcc 1-113,117-124,135-142,144-432,443-1075
+packages/client-ds/src/rich-text-editor/rich-text-editor.scene.test.ts
+  s_5911019c97ae0a::t_3675e25c938a63 31,223,229,231-234
+  s_5911019c97ae0a::t_a35906860dd5b5 148-164,209-210
+  s_003f34e66aae27::t_1a6797bc019228 275-277,282,286-288,292-294
+  s_0c3956c54ba10a::t_09dbb0d3929b1f 16,165-207
+  s_3c2656f29662f6::t_0299eee9373e35 120-128,245-247,298-323,700-711
+  s_3c2656f29662f6::t_bf5b044991728b 135-139,214-218
+  s_003f34e66aae27::t_0f964f12c62672 278-281
+  s_5911019c97ae0a::t_bd329ac2c63de9 33,220-222,224-228,230,235-241
+  s_003f34e66aae27::t_1fb73119c1d66e 11,27
+  s_3c2656f29662f6::t_1a372bfe502d01 492-496,790-793
+  s_3c2656f29662f6::t_9342d39888ac81 697,750
+  s_3c2656f29662f6::t_4d4b2ab0fb595c 242-244,264,266
+  s_0c3956c54ba10a::t_37108fce97c88d 208
+  s_3c2656f29662f6::t_5e3a7b4be67dc5 26,129-134,140-147,211-213,219
+  s_003f34e66aae27::t_fc32878a77ea0d 289-291
+  s_003f34e66aae27::t_b761428ac386f8 248-263,265,267-274,283-285,295-297
+  s_5911019c97ae0a::t_fb10a4b7b5ed8f 604,611,613,618
+  s_3c2656f29662f6::t_02add5e70daf89 106-119,691-696,698-699,745-749
+packages/client-ds/src/rich-text-editor/rich-text-editor.keyboard.ts
+  s_0c3956c54ba10a::t_d647bf7feef2c6 3
+  s_0c3956c54ba10a::t_cfd62dd06160a1 9,78-85
+packages/client-ds/src/combobox/combobox.view.ts
+  s_5911019c97ae0a::t_680cc963bf114f 55-56
+  s_5911019c97ae0a::t_6c04d905e7e778 5,32-33,35,73
+packages/client-ds/src/combobox/combobox.preview.ts
+  s_5911019c97ae0a::t_673814b2ff7ee8 33-34,73,76,87,92
+  s_5911019c97ae0a::t_b6fca6ddc0e98b 158
+  s_5911019c97ae0a::t_5f0b364c200f27 9,13,20,31-32,49,60-61,146-155
+packages/client-ds/src/icon/icon.preview.ts
+  s_5911019c97ae0a::t_eb2a64b20e431b 1-37,42-52
+  s_5911019c97ae0a::t_0b31e5afc006a6 38-41
+packages/client-ds/src/rich-text-editor/rich-text-editor.highlight.ts
+  s_3c2656f29662f6::t_470f9425864c32 4,7,18,21-40,42-49,55
+  s_5911019c97ae0a::t_c160053cb322da 1-3,5-6,8-17,19-20,41,50-54,56-58
+  s_5911019c97ae0a::t_4b06090508a293 60-62
+  s_5911019c97ae0a::t_c5525853d95062 64
+  s_5911019c97ae0a::t_0b31e5afc006a6 59,63,65-66
+packages/client-ds/src/icon/icon.view.ts
+  s_5911019c97ae0a::t_069da1142a3985 1-21,23,25,27-64
+  s_5911019c97ae0a::t_0b31e5afc006a6 22,24,26
+packages/client-ds/src/rich-text-editor/rich-text-editor.document.ts
+  s_3c2656f29662f6::t_bc138151882a0a 73-74
+  s_3c2656f29662f6::t_19982059239cfb 8,72,75,80
+  s_5911019c97ae0a::t_43e7e2034b933e 81-82,86
+  s_5911019c97ae0a::t_0b31e5afc006a6 83-85
+packages/client-ds/src/rich-text-editor/rich-text-editor.view.ts
+  s_5911019c97ae0a::t_de4cdc5c7fc797 291-292,295,316-317,361-368,413-414,418
+  s_3c2656f29662f6::t_bf5b044991728b 442-447,449-450,582
+  s_5911019c97ae0a::t_680cc963bf114f 51-54,389-396,399-400
+  s_0c3956c54ba10a::t_5b0c5de83c9fa0 252,269-290,417
+  s_3c2656f29662f6::t_d311758e6c498a 343,351,429,435,448
+  s_3c2656f29662f6::t_46130db6e88d85 2
+  s_0c3956c54ba10a::t_5d580f76397ec5 23,60
+  s_3c2656f29662f6::t_ef23ba84218fbc 11,38,75,344,352,359-360,369-372,378,386-388,397-398,401,411-412,419-422,432,438
+  s_3c2656f29662f6::t_256b969467f674 225-226,231-232,255-262,302-303
+  s_3c2656f29662f6::t_bc138151882a0a 380-382,579
+  s_3c2656f29662f6::t_ce5f56dbd478bc 373-377
+  s_3c2656f29662f6::t_48c50cde27a873 6,39,76,379,383-385,402-410
+  s_5911019c97ae0a::t_867e6e112f854d 41,49,78,83
+  s_003f34e66aae27::t_be6a2c3dd7cde0 223-224,227-230,233-251,253-254,263-268,293-294,296-301,304-315,415-416
+packages/client-ds/src/theme.css
+  s_3c2656f29662f6::t_0b4950c79b2dbf 185-194
+packages/client-ds/src/rich-text-editor/rich-text-editor.schema.ts
+  s_5911019c97ae0a::t_680cc963bf114f 55
+  s_3c2656f29662f6::t_19982059239cfb 2,57-60,96,124
+  s_0c3956c54ba10a::t_59b8ee4cd444ba 24,82
+  s_3c2656f29662f6::t_b9bc7efe165b60 5,48
+  s_3c2656f29662f6::t_272969b873a2d4 53-54,56,95
+  s_5911019c97ae0a::t_bf0193e39d4072 61-62,65-74,97,125,136-137
+  s_3c2656f29662f6::t_470f9425864c32 63-64
+  s_3c2656f29662f6::t_2314fd2de571a6 107
+  s_3c2656f29662f6::t_064fe039d36fcc 41-46
+packages/client-ds/package.json
+  s_5911019c97ae0a::t_069da1142a3985 14
+  s_5911019c97ae0a::t_936dd85a0cf9a5 42-43
+packages/client-ds/src/rich-text-editor/rich-text-editor.subscriptions.ts
+  s_5911019c97ae0a::t_eb1bfc1b786b00 3
+  s_3c2656f29662f6::t_3633e6b7feb08a 151-156,160-165
+  s_5911019c97ae0a::t_38a9c8bc66c275 8,11,198-218,222-223,225,227
+  s_3c2656f29662f6::t_ce5f56dbd478bc 40-42,50,83,136-137,142
+packages/client-ds/src/rich-text-editor/rich-text-editor.code-theme.ts
+  s_3c2656f29662f6::t_917c3ba560a82c 30-31,89-90,111-112
+  s_3c2656f29662f6::t_62a9d26391e158 1-17,21-23,26,28-29,35-45,47-88,91-110,113-128
+  s_3c2656f29662f6::t_c85310d2b41291 18-20,24-25,27,32-34,46
+packages/client-ds/src/select/select.view.ts
+  s_5911019c97ae0a::t_9af46f5f338281 4,66-67
+packages/client-ds/src/rich-text-editor/rich-text-editor.update.ts
+  s_5911019c97ae0a::t_680cc963bf114f 374
+  s_5911019c97ae0a::t_c5525853d95062 471
+  s_3c2656f29662f6::t_a7c7988dae3efe 422-426,429-433,445-448
+  s_0c3956c54ba10a::t_f2353144ba4265 95-118,169,265-283,435
+  s_5911019c97ae0a::t_26eb6179805536 303,308,311-314
+  s_3c2656f29662f6::t_bf5b044991728b 455-456,458-459
+  s_3c2656f29662f6::t_790080133a11b9 123,128-139
+  s_3c2656f29662f6::t_08e4665b70d8dc 373,375-387,460-461
+  s_3c2656f29662f6::t_272969b873a2d4 364-372,388-389
+  s_5911019c97ae0a::t_a8d6fde09dbd07 2,398-416,462,465-470,472-475
+packages/client-ds/src/rich-text-editor/rich-text-editor.registry.ts
+  s_3c2656f29662f6::t_8d6bbd4da18e72 4,16,27,37
+  s_3c2656f29662f6::t_064fe039d36fcc 3,14,19,26,36,62-63,81,85
+  s_3c2656f29662f6::t_28ba4c11358b5a 71
+packages/client-ds/src/rich-text-editor/rich-text-editor.preview.ts
+  s_5911019c97ae0a::t_03408345b752d7 27,32,57,160
+  s_3c2656f29662f6::t_16d800de06568c 25,56
+  s_5911019c97ae0a::t_0ada926f32b63e 119
+  s_3c2656f29662f6::t_398d91f63af7a0 24,55
+  s_0c3956c54ba10a::t_39dc21c9fe73b5 8,42
+webreel.config.json
+  s_5911019c97ae0a::t_0b31e5afc006a6 36-40
+  s_952f5b1ee47c67::t_daf7dd40d55fb5 10,13-18
+  s_952f5b1ee47c67::t_0c1e837ab83e4f 20-35,41-42
+  s_952f5b1ee47c67::t_742935204c9344 1-9,11-12,19,43-45
+packages/client-ds/src/rich-text-editor/rich-text-editor.model.ts
+  s_3c2656f29662f6::t_19982059239cfb 2,17
+  s_5911019c97ae0a::t_43e7e2034b933e 18
+packages/client-ds/src/rich-text-editor/rich-text-editor.dom.ts
+  s_5911019c97ae0a::t_0b31e5afc006a6 48,95-98
+packages/client-ds/src/rich-text-editor/rich-text-editor.markdown.ts
+  s_3c2656f29662f6::t_fc1d80be29ca8b 19,96,102-103,106
+  s_3c2656f29662f6::t_afe62480d65ebc 12,92-95,97-101,104-105,107-110,114-117,135
+  s_3c2656f29662f6::t_1a372bfe502d01 1-9
+  s_3c2656f29662f6::t_a7c7988dae3efe 111-113
+packages/client-ds/src/rich-text-editor/nodes/code-block.node.ts
+  s_3c2656f29662f6::t_064fe039d36fcc 1-6,25-26,28-33,49,56-59,67-73,76-90
+  s_3c2656f29662f6::t_a7c7988dae3efe 16-18,60-62
+  s_003f34e66aae27::t_fb2116822c4a2a 74
+  s_3c2656f29662f6::t_1556e0b3236b7f 7-15,19-24,27,34-48,50-55,63-66,75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "f157ba3137718fac748acbffa4d72c1bfa93f6fa",
+  "prompts": {},
+  "sessions": {
+    "s_003f34e66aae27": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f0d7cf54ffeIaiUVWKSHEbpro",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_0c3956c54ba10a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f0b25f31ffecf4TjpNvy4hF55",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_3c2656f29662f6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f3ac6254ffeGjt0cpz1Je1rlE",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_5911019c97ae0a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f36bca70ffe38BrhTbZ6bQxHi",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_952f5b1ee47c67": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f3679c93ffexp3CSaKJdyt510",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_f812624714088f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f0cd4f08ffeotZN4tMUhDWyId",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    }
+  }
+}
