@@ -1,0 +1,437 @@
+apps/server-core/src/module/task/task.service.implement.ts
+  s_f812624714088f::t_082e22c0bb25a2 8
+  s_f812624714088f::t_16636960ec842c 1,3-7,9-54
+  s_f812624714088f::t_6c65968c607733 2
+packages/client-ds/src/ui.view.skill.md
+  s_f812624714088f::t_94ef6096d14a6a 54-58,60-62
+  s_f812624714088f::t_37c3d49a3d224b 59
+  s_f812624714088f::t_bcc2a5d28cd748 68,74,80
+packages/client-ds/src/theme.css
+  s_f812624714088f::t_37c3d49a3d224b 150-171
+apps/client-web/src/main.ts
+  s_f812624714088f::t_15efbbdef35471 21
+packages/foldkit-preview/src/config.ts
+  s_d925f2a4c67130::t_3cbc2f44dd53b9 5
+packages/sync/src/client/local-storage.cursor.store.test.ts
+  s_f812624714088f::t_81d3b28fb95f85 1-22
+docs/sync-engine-plan.md
+  s_f812624714088f::t_7583603debce45 175
+  s_f812624714088f::t_fcb8df9ca8f351 53,55,81,96-97,106
+  s_f812624714088f::t_c6fbcf5b53df95 46-48,92-93,128-130,134-157
+  s_f812624714088f::t_46191bc8ca81e2 59-60,62,638,644,679
+  s_f812624714088f::t_bdda517c7bf2b2 52,94,158-165
+  s_f812624714088f::t_20033bb13ac5ec 181
+  s_f812624714088f::t_c8c3893bd7f57f 63-65,707-710,745,748
+  s_f812624714088f::t_6c65968c607733 51,54,120
+  s_f812624714088f::t_f04dd1295407d4 213-218,223-232,236,239-255,261-271
+  s_f812624714088f::t_37d0e1b96f40b4 237-238
+  s_f812624714088f::t_c1649df9024794 589-590,609-611,623-634,639-643,646-647,677-678,680-682,693-706,711-712,746-747
+  s_f812624714088f::t_a51cbf16cb1ca2 635-637,645
+  s_f812624714088f::t_6bcea759950e47 39-45,49,56-58,61,66-80,82-91,95,98-105,107-109
+  s_f812624714088f::t_5f5865e8e798b1 50,121-125
+apps/server-core/src/module/task/task.table.ts
+  s_f812624714088f::t_7a40b94fbfd3bd 1-11
+packages/sync/src/server/sync.stream.interface.ts
+  s_f812624714088f::t_19b9c632b521af 1,9-10,12-18
+  s_f812624714088f::t_c40d83a5724347 2-8,11
+apps/server-core/src/module/auth/provider.ts
+  s_3898fbc98ef1d7::t_955f68c6ae14a9 19,21
+  s_f812624714088f::t_a86759e512b5f6 16
+apps/client-web/src/module/channel/channel.preview.ts
+  s_f812624714088f::t_46ffb643e5f245 3,7-17,23
+  s_f812624714088f::t_e9968ad46c2ce8 1-2,4-6,18-22,24-28
+packages/sync/package.json
+  s_f812624714088f::t_3dfa364d5aaf42 1-5,24-31
+  s_f812624714088f::t_6c65968c607733 12
+  s_f812624714088f::t_81d3b28fb95f85 19
+  s_f812624714088f::t_bae029e02cdbb1 6-10,18,20-23
+  s_f812624714088f::t_5f5865e8e798b1 13-17
+  s_f812624714088f::t_bf8f8e928ee745 11
+apps/client-web/vite.config.ts
+  s_3898fbc98ef1d7::t_89fe2c6ff3e10f 5,7,15-16
+  s_3898fbc98ef1d7::t_9372ae6cb6d518 6,11-13
+packages/sync/src/client/projection.ts
+  s_f812624714088f::t_bae029e02cdbb1 1
+  s_f812624714088f::t_3dfa364d5aaf42 2-5
+packages/sync/src/server/sync.service.implement.sql.ts
+  s_f812624714088f::t_c40d83a5724347 1-11,13-15,17-50
+  s_f812624714088f::t_19b9c632b521af 12,16
+apps/client-web/src/rpc.ts
+  s_f812624714088f::t_2a66e6acdf6166 3,24,63-71
+  s_f812624714088f::t_01b23828e37eb8 6,27,50
+  s_d925f2a4c67130::t_cd23dec722c2ba 11
+  s_d925f2a4c67130::t_cce730fa7dbc18 83,88
+  s_f812624714088f::t_bfc78c0affced3 28
+  s_f812624714088f::t_082e22c0bb25a2 51-62
+apps/client-web/src/module/task/task.command.ts
+  s_f812624714088f::t_082e22c0bb25a2 12-15
+  s_f812624714088f::t_01b23828e37eb8 1-11,16-24
+apps/client-web/src/module/task/task.update.ts
+  s_f812624714088f::t_01b23828e37eb8 1-9,14-15,20-24,28-33,39-47
+  s_f812624714088f::t_082e22c0bb25a2 10-13,16-19,25-27,34-38
+packages/client-ds/src/rich-text-editor/rich-text-editor.view.ts
+  s_0c3956c54ba10a::t_e5d19b876045ec 303-307,309,325,458-459
+  s_f812624714088f::t_8fd9bff16ef9d1 296-298
+  s_d925f2a4c67130::t_4887e3e5b0a388 511
+  s_0c3956c54ba10a::t_18ab121f5b99be 284,286,295,301,312-323,460
+  s_0c3956c54ba10a::t_dbb632862c50a1 302,308,310-311,324
+  s_0c3956c54ba10a::t_435faa516b14c4 512-519
+  s_d925f2a4c67130::t_b75d0fb8079b41 539,611
+  s_0c3956c54ba10a::t_6fefcaa3aed3d7 335,353-356
+  s_d925f2a4c67130::t_dd6d80cd4eca01 48-52,85
+apps/client-web/src/module/channel/channel.update.ts
+  s_f812624714088f::t_0223c53d653461 1,5-6,10-12
+  s_f812624714088f::t_2a66e6acdf6166 2-4,13,15-27,31-37
+  s_f812624714088f::t_9a6fd47a787e14 14
+  s_f812624714088f::t_e999673d86f3cb 7-9,28-30
+apps/server-core/src/module/task/task.repo.interface.ts
+  s_f812624714088f::t_6c3c75b0488d0c 7-21
+  s_f812624714088f::t_b532177ab517db 22-24
+  s_f812624714088f::t_16636960ec842c 1-6
+packages/client-ds/src/rich-text-editor/rich-text-editor.scene.test.ts
+  s_0c3956c54ba10a::t_902a7c2778b2fa 195-207
+  s_0c3956c54ba10a::t_7d7dc6836ab2a5 236-243
+  s_f812624714088f::t_cad2a7aead203e 318
+  s_0c3956c54ba10a::t_0fe361c915feab 306-317,319-330
+packages/shared/src/module/module.rpc.skill.md
+  s_f812624714088f::t_20033bb13ac5ec 7,10,12,33
+apps/client-web/src/vite-env.d.ts
+  s_d925f2a4c67130::t_cd23dec722c2ba 4-7
+packages/sync/src/sync.test.ts
+  s_f812624714088f::t_bd597a1e2b5e1b 151
+  s_f812624714088f::t_1ed84f49e604cd 10
+  s_f812624714088f::t_26423a62d9ad5f 174
+  s_f812624714088f::t_5f5865e8e798b1 6,8
+  s_f812624714088f::t_d50a2a2734231e 3-5,9,23,41
+  s_f812624714088f::t_6c65968c607733 7
+  s_f812624714088f::t_07a8b4dd6f86cd 1,11-22,24-40,42-88,226-227
+  s_f812624714088f::t_4d1deafed91657 89-93,106,119-122,126-130,141,161-170,182,191,198-204
+  s_f812624714088f::t_517624a8f75567 171
+  s_f812624714088f::t_968bfcec91c1eb 143-150,153-160,172-173,175-181,183-184,186-190,193-197
+  s_f812624714088f::t_69e04d1308b037 205-225
+  s_f812624714088f::t_cd623cfee68d7e 2,94-105,107-118,123-125,131-140,142,152,185,192
+apps/client-web/src/module/task/task.preview.ts
+  s_f812624714088f::t_ecc696aa808f4f 6-13,60-63
+  s_f812624714088f::t_56c7ea9ee3ddb9 1-5,14-49,54-55,57-59,64-101
+  s_f812624714088f::t_f977f53b38f9c3 56
+  s_f812624714088f::t_fc677bb33e57fa 50-53
+apps/client-web/src/module/channel/channel.message.ts
+  s_f812624714088f::t_0223c53d653461 1,4,11
+  s_f812624714088f::t_2a66e6acdf6166 2-3,5-10
+apps/server-core/index.ts
+  s_f812624714088f::t_3a6f55b76e9993 7,17
+  s_f812624714088f::t_7583603debce45 10
+  s_3898fbc98ef1d7::t_25fd0f6113953e 26-27
+  s_f812624714088f::t_91e221747e0372 16
+packages/sync/src/shared/pending-mutation.schema.ts
+  s_f812624714088f::t_99f8879990cb0a 1-21
+apps/client-web/src/module/task/task.message.ts
+  s_f812624714088f::t_01b23828e37eb8 1-25
+apps/client-web/src/module/channel/channel.view.ts
+  s_f812624714088f::t_e999673d86f3cb 72-75
+  s_f812624714088f::t_cb5e41ec422b53 15,17
+  s_f812624714088f::t_9a6fd47a787e14 1,3,6,8-14,16,18-19,21,24,26-27,30-31,33-57,59-61,63-71,76-78
+  s_f812624714088f::t_0223c53d653461 2,4-5,7,20,22-23,25,28-29,32,58,62,79-84
+packages/client-ds/src/rich-text-editor/rich-text-editor.subscriptions.ts
+  s_d925f2a4c67130::t_86af72b0aba2ba 250-252,272,274-277,282-284
+  s_d925f2a4c67130::t_641477986fdcea 1,25-40,232-238,241-245,247-248,253-254,256-271,280,288-303,311-313,317-319
+  s_d925f2a4c67130::t_5b563eddac44c6 246
+  s_d925f2a4c67130::t_6f418df155adb2 138,147,151,155,160,171,181,193,304-310,324
+  s_d925f2a4c67130::t_894e766ec22534 255,273,278-279,281
+apps/server-core/src/module/module.service.interface.skill.md
+  s_f812624714088f::t_9468a4fb0bda35 1-40
+apps/server-core/src/module/task/task.service.interface.ts
+  s_f812624714088f::t_63377937da31a4 4
+  s_f812624714088f::t_16636960ec842c 3,11
+  s_f812624714088f::t_b532177ab517db 12-14
+  s_f812624714088f::t_6c3c75b0488d0c 1,6-7,10
+  s_f812624714088f::t_6c65968c607733 2
+  s_f812624714088f::t_d6e6725ee402c7 5,8-9
+packages/shared/src/platform/rpc.ts
+  s_f812624714088f::t_8085a641c41120 2,8,11
+  s_f812624714088f::t_7583603debce45 5,14
+packages/sync/src/client/sync-cursor.store.ts
+  s_f812624714088f::t_99f8879990cb0a 1-12
+tools/effect-oxlint.plugin.ts
+  s_f812624714088f::t_db37d51d0ffff5 70
+  s_f812624714088f::t_43844224cab336 40-54,57-62,164
+  s_f812624714088f::t_e442b13cbae9e5 64
+  s_f812624714088f::t_fc677bb33e57fa 110-111
+  s_f812624714088f::t_082e22c0bb25a2 55-56
+  s_f812624714088f::t_94ef6096d14a6a 112-139,166
+  s_f812624714088f::t_326483f2080dde 63,65-69,71-109,165
+packages/sync/src/server/server.skill.md
+  s_f812624714088f::t_326483f2080dde 1-26
+apps/server-core/src/module/channel/channel.service.interface.ts
+  s_f812624714088f::t_3a6f55b76e9993 1-12
+apps/client-web/src/module/channel/channel.command.ts
+  s_f812624714088f::t_2a66e6acdf6166 1-15
+apps/client-web/src/module/task/task.projection.store.ts
+  s_f812624714088f::t_81d3b28fb95f85 1-33
+apps/server-core/src/module/auth/auth.http.ts
+  s_d925f2a4c67130::t_8195835b547bc8 22
+  s_d925f2a4c67130::t_cce730fa7dbc18 23,25-32,36-40,44
+  s_d925f2a4c67130::t_06d297b70a9516 24
+portless.json
+  s_d925f2a4c67130::t_a868179a0582d5 4-5
+  s_3898fbc98ef1d7::t_fbca9fb70a1c18 1-3,7-9
+  s_7dd83265e69e61::t_91b029206a2032 6
+apps/server-core/src/module/channel/channel.repo.implement.ts
+  s_f812624714088f::t_3a6f55b76e9993 1-31
+apps/server-core/src/module/task/task.service.schema.ts
+  s_f812624714088f::t_d6e6725ee402c7 1-16
+packages/sync/src/shared/sync-visibility.schema.ts
+  s_f812624714088f::t_99f8879990cb0a 1-12
+apps/server-core/src/module/channel/channel.service.schema.ts
+  s_f812624714088f::t_3a6f55b76e9993 1-8
+packages/foldkit-preview/src/cli.ts
+  s_d925f2a4c67130::t_75561a949a1cb9 25
+apps/client-web/src/module/channel/channel.route.ts
+  s_f812624714088f::t_0223c53d653461 6-9
+  s_f812624714088f::t_15efbbdef35471 1-5,10
+packages/sync/src/shared/sync-event.schema.ts
+  s_f812624714088f::t_99f8879990cb0a 1-37
+packages/client-ds/src/rich-text-editor/nodes/code-block.node.ts
+  s_0c3956c54ba10a::t_75b7dbcf86211d 74
+apps/server-core/src/module/module.service.implement.skill.md
+  s_f812624714088f::t_9468a4fb0bda35 1-17,20-49
+  s_f812624714088f::t_ad64c6127a1d14 18-19
+apps/server-core/src/module/task/task.rpc.implement.ts
+  s_f812624714088f::t_7583603debce45 1-29
+apps/client-web/src/module/task/task.route.ts
+  s_f812624714088f::t_0223c53d653461 6-9
+  s_f812624714088f::t_15efbbdef35471 1-5,10
+apps/server-core/src/module/channel/channel.service.implement.ts
+  s_f812624714088f::t_3a6f55b76e9993 1-51
+apps/client-web/preview.config.ts
+  s_d925f2a4c67130::t_038a1fc4e9bb4b 4
+  s_d925f2a4c67130::t_3cbc2f44dd53b9 7
+apps/server-core/src/module/sync/sync.table.ts
+  s_f812624714088f::t_e3e0951c599654 1-38
+apps/server-core/src/module/auth/provider.test.ts
+  s_f812624714088f::t_e572e92bc16a8b 10-12
+  s_f812624714088f::t_a86759e512b5f6 7
+packages/shared/src/module/task/task.rpc.interface.ts
+  s_f812624714088f::t_7583603debce45 1-24
+packages/shared/package.json
+  s_f812624714088f::t_e65243d8af0de1 16
+  s_f812624714088f::t_8085a641c41120 10-11
+  s_f812624714088f::t_7583603debce45 17
+apps/client-web/src/module/task/task.view.ts
+  s_f812624714088f::t_73aa92a90d9615 1-3,33,39,42,112-113,115
+  s_f812624714088f::t_fc677bb33e57fa 36-37,49-51,53-54,56,59-61,73-74,76-77
+  s_f812624714088f::t_3ecbaee05d4081 45-48,103-105
+  s_f812624714088f::t_e8f6066190ba9c 31,41,43-44,68-72,78-83,85,89-99,101-102,106-108,110
+  s_f812624714088f::t_56c7ea9ee3ddb9 4-13,15-16,18-21,28,38,114,116
+  s_f812624714088f::t_ecc696aa808f4f 84,87-88,109,111
+  s_f812624714088f::t_e681c8631a1a74 30,57-58,63-67,75,86
+  s_f812624714088f::t_0fde4ad0e03383 14,17,22-27,29,32,34-35,40,52,62,100
+  s_f812624714088f::t_cb5e41ec422b53 55
+packages/sync/src/server/visibility.resolver.implement.allow-tenant.ts
+  s_f812624714088f::t_c40d83a5724347 3,5-6
+  s_f812624714088f::t_19b9c632b521af 1-2,4,7-11
+package.json
+  s_3898fbc98ef1d7::t_fbca9fb70a1c18 28
+  s_d925f2a4c67130::t_a868179a0582d5 10
+apps/client-web/src/platform/app.message.ts
+  s_f812624714088f::t_ad28d6f99c607a 5,7,10-11,21-22
+packages/sync/src/shared/tenant-context.schema.ts
+  s_f812624714088f::t_99f8879990cb0a 1-7
+apps/server-core/src/module/channel/channel.repo.interface.ts
+  s_f812624714088f::t_3a6f55b76e9993 1-17
+packages/sync/src/server/sync.service.implement.memory.ts
+  s_f812624714088f::t_19b9c632b521af 11,33
+  s_f812624714088f::t_c40d83a5724347 1-4,12-32,34-96
+  s_f812624714088f::t_479e848a8ad011 5-10
+apps/client-web/src/platform/app.model.ts
+  s_f812624714088f::t_f17b9a596df2f4 16-17,25
+  s_f812624714088f::t_15efbbdef35471 6,9-15
+  s_f812624714088f::t_ad28d6f99c607a 4,24
+apps/server-core/src/module/sync/sync.repo.implement.ts
+  s_f812624714088f::t_082e22c0bb25a2 3-7,20,68-71,104-105,112,135-137,144-149,152-162
+  s_f812624714088f::t_5f5865e8e798b1 12
+  s_f812624714088f::t_3409fa66701301 1-2,8-11,14-19,21-67,72-82,88-103,107-111,113-134,138-143,150-151,163-176
+  s_f812624714088f::t_5a5a9e3a81ec0f 13
+  s_f812624714088f::t_657542cc2c6d70 83-87,106
+packages/client-ds/src/rich-text-editor/rich-text-editor.preview.ts
+  s_d925f2a4c67130::t_ef0cbe3f6d7407 30,140-151
+apps/server-core/src/module/sync/sync.repo.interface.ts
+  s_f812624714088f::t_5a5a9e3a81ec0f 1
+  s_f812624714088f::t_b532177ab517db 2,4-6
+  s_f812624714088f::t_3409fa66701301 3
+packages/sync/src/client/outbox.store.ts
+  s_f812624714088f::t_99f8879990cb0a 1-7
+apps/client-web/src/backend-origin.ts
+  s_d925f2a4c67130::t_cce730fa7dbc18 1
+  s_d925f2a4c67130::t_cd23dec722c2ba 2-3
+apps/client-web/src/module/module.view.skill.md
+  s_f812624714088f::t_94ef6096d14a6a 1-17,19-26
+  s_f812624714088f::t_37c3d49a3d224b 18
+packages/sync/tsconfig.json
+  s_f812624714088f::t_3dfa364d5aaf42 1-8
+apps/server-core/package.json
+  s_f812624714088f::t_94b9957e28298d 16
+apps/server-core/src/module/module.rpc.skill.md
+  s_f812624714088f::t_20033bb13ac5ec 3,7,10,12,17,19-20,36
+apps/server-core/src/module/module.repo.implement.skill.md
+  s_f812624714088f::t_9468a4fb0bda35 1-50
+apps/client-web/src/platform/app.update.ts
+  s_f812624714088f::t_3ecbaee05d4081 80
+  s_f812624714088f::t_46ffb643e5f245 8,10,79,98,101
+  s_f812624714088f::t_15efbbdef35471 87,93
+  s_f812624714088f::t_112aef510df61d 5,115-118
+  s_f812624714088f::t_fad7bb63a20186 9,13-15,23,25,29-31,33,35,37,40,42,44,47-48,99,136-137
+apps/client-web/src/module/auth/auth.view.ts
+  s_d925f2a4c67130::t_cd23dec722c2ba 5,46
+packages/sync/src/client/local-storage.cursor.store.ts
+  s_f812624714088f::t_81d3b28fb95f85 1-26
+tsconfig.json
+  s_f812624714088f::t_bae029e02cdbb1 14-18,32,34-37
+  s_f812624714088f::t_89c0a73d6b10ae 33
+  s_f812624714088f::t_bf8f8e928ee745 19
+  s_f812624714088f::t_6c65968c607733 20
+  s_f812624714088f::t_479e848a8ad011 21-23,30
+  s_f812624714088f::t_5f5865e8e798b1 24-29,31
+apps/server-core/src/module/module.repo.interface.skill.md
+  s_f812624714088f::t_9468a4fb0bda35 1-42
+apps/client-web/src/platform/route.ts
+  s_f812624714088f::t_ad28d6f99c607a 4-5,8,11
+packages/sync/src/server/sync.service.interface.ts
+  s_f812624714088f::t_43dd6aa8e54c22 1-4,6-29,49-55,57-65
+  s_f812624714088f::t_19b9c632b521af 5,56
+  s_f812624714088f::t_5a5a9e3a81ec0f 30-48
+packages/sync/src/client/event.router.ts
+  s_f812624714088f::t_99f8879990cb0a 1-24
+packages/sync/src/shared/client-mutation.schema.ts
+  s_f812624714088f::t_99f8879990cb0a 1-27
+apps/client-web/src/platform/app.view.ts
+  s_f812624714088f::t_46ffb643e5f245 250-254
+  s_f812624714088f::t_0ea126f5decb59 258-264
+  s_f812624714088f::t_83d88a99a70d0d 15-16,19-20,24,26,34,36,40,42,129-130,143-144,161-162,170,185-186,194,196,199,203,205,208,224,229,249,255,268
+apps/client-web/src/module/task/task.model.ts
+  s_f812624714088f::t_c85b56382965fb 1-11
+apps/server-core/src/platform/db.ts
+  s_f812624714088f::t_e3e0951c599654 8,16
+  s_f812624714088f::t_7a40b94fbfd3bd 9,17
+apps/client-web/src/module/task/task.projection.ts
+  s_f812624714088f::t_d50a2a2734231e 1-3
+  s_f812624714088f::t_c85b56382965fb 4-10,12-14,18-21,23-34
+  s_f812624714088f::t_fd55b2ea4987bb 11,22
+  s_f812624714088f::t_84f29d4d615454 15-17
+packages/shared/src/module/channel/channel.schema.ts
+  s_f812624714088f::t_8085a641c41120 1-26
+apps/client-ds-preview/package.json
+  s_d925f2a4c67130::t_a868179a0582d5 1-8
+apps/client-web/src/platform/app.preview.ts
+  s_f812624714088f::t_470519c324133c 6,9
+  s_f812624714088f::t_6899eaa5ca24df 2,5,7-8,11,17-25,38,40,57,61,72,75,77-79,85,87,90-94,102-103
+  s_f812624714088f::t_41ee2bedf11092 10,27,71,86,88
+  s_f812624714088f::t_46ffb643e5f245 39,41-56
+apps/client-web/src/module/channel/channel.model.ts
+  s_f812624714088f::t_0223c53d653461 2-4,9-11,17
+  s_f812624714088f::t_2a66e6acdf6166 1,5-8,12-16
+packages/shared/src/module/task/task.schema.ts
+  s_f812624714088f::t_e65243d8af0de1 1-27
+  s_f812624714088f::t_082e22c0bb25a2 37-42
+  s_f812624714088f::t_bf8f8e928ee745 28-36
+apps/client-web/package.json
+  s_3898fbc98ef1d7::t_9372ae6cb6d518 7
+packages/foldkit-preview/src/index.ts
+  s_d925f2a4c67130::t_c79963d3e791ff 538-539
+  s_d925f2a4c67130::t_4514673b247b94 1494-1495,1500,1502-1506,1509-1514,1516-1520,1523,1525-1530
+  s_d925f2a4c67130::t_ffebac4918f18a 102-106
+  s_d925f2a4c67130::t_b33679c3f9b177 2,41-53,79
+  s_f812624714088f::t_37c3d49a3d224b 766-767,771-777,780-781,785-791
+  s_d925f2a4c67130::t_5b563eddac44c6 1515
+packages/sync/src/shared/sync-error.schema.ts
+  s_f812624714088f::t_bf8f8e928ee745 1-16
+packages/shared/src/module/channel/channel.rpc.interface.ts
+  s_f812624714088f::t_8085a641c41120 1-15
+apps/client-web/src/module/task/task.projection.test.ts
+  s_f812624714088f::t_81d3b28fb95f85 6,67-77,79-87
+  s_f812624714088f::t_c85b56382965fb 1-2,4-5,7-28,30-52,54-66,78
+  s_f812624714088f::t_d50a2a2734231e 3,29,53
+apps/client-web-preview/package.json
+  s_d925f2a4c67130::t_a868179a0582d5 1-8
+packages/sync/src/server/visibility.resolver.interface.ts
+  s_f812624714088f::t_19b9c632b521af 1,5,8
+  s_f812624714088f::t_ef1a8b44295fca 9-16
+  s_f812624714088f::t_c40d83a5724347 2-4,6-7
+apps/server-core/src/module/task/task.repo.implement.ts
+  s_f812624714088f::t_082e22c0bb25a2 10
+  s_f812624714088f::t_16636960ec842c 1-9,11-42
+apps/server-core/src/module/channel/channel.rpc.implement.ts
+  s_f812624714088f::t_3a6f55b76e9993 1-20
+.oxlintrc.json
+  s_f812624714088f::t_326483f2080dde 22
+  s_f812624714088f::t_94ef6096d14a6a 23
+  s_f812624714088f::t_43844224cab336 21
+apps/server-core/src/module/module.skill.md
+  s_f812624714088f::t_20033bb13ac5ec 18
+  s_f812624714088f::t_43844224cab336 19-22,40,42,48,50
+  s_f812624714088f::t_326483f2080dde 41,49
+emulate.config.yaml
+  s_3898fbc98ef1d7::t_955f68c6ae14a9 9
+apps/server-core/src/module/module.repo.skill.md
+  s_f812624714088f::t_9468a4fb0bda35 3,7,10,12,17-20,22-32,34,37-39,42,51,53,58-60,74-75
+  s_f812624714088f::t_ad64c6127a1d14 21,48
+apps/server-core/src/module/channel/channel.table.ts
+  s_f812624714088f::t_3a6f55b76e9993 1-10
+packages/sync/src/client/sync-client.ts
+  s_f812624714088f::t_bae029e02cdbb1 1-3
+  s_f812624714088f::t_0bdbd34be2c4d4 5-8
+  s_f812624714088f::t_3dfa364d5aaf42 4,9-28
+apps/server-core/src/module/module.service.skill.md
+  s_f812624714088f::t_9468a4fb0bda35 3,7,10,12,17-18,20-31,34-38,41-42,47,49,54-56,67-68
+  s_f812624714088f::t_ad64c6127a1d14 32-33
+packages/foldkit-preview/preview/vite.config.ts
+  s_d925f2a4c67130::t_3cbc2f44dd53b9 89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "964f1b83269672b16f27374a5203f6a57dd9e300",
+  "prompts": {},
+  "sessions": {
+    "s_0c3956c54ba10a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f0b25f31ffecf4TjpNvy4hF55",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_3898fbc98ef1d7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1ef9e8dd4ffechaopNTaMj6IeK",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_7dd83265e69e61": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1e8af028effe92QHONphpiF4uw",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_d925f2a4c67130": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1daa5a0ddffe1rOTvorio919dp",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    },
+    "s_f812624714088f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f0cd4f08ffeotZN4tMUhDWyId",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Kevin <kevin@sucasa.com.au>"
+    }
+  }
+}
