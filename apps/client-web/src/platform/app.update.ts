@@ -2,15 +2,17 @@ import { Effect, Match } from "effect";
 import { initPopover, updatePopover } from "@qaveai/client-ds/popover";
 import { Command } from "foldkit";
 import type { Url } from "foldkit/url";
+import { toString as urlToString } from "foldkit/url";
 import type { AuthMessage } from "../module/auth/auth.message";
 import { init as initAuth, update as updateAuth } from "../module/auth/auth.update";
+import { emptyChannelModel } from "../module/channel/channel.model";
+import type { ChannelMessage } from "../module/channel/channel.message";
+import { update as updateChannel } from "../module/channel/channel.update";
 import { OrgStarted, type OrgMessage } from "../module/org/org.message";
 import { init as initOrg, selectedOrgId, update as updateOrg } from "../module/org/org.update";
-import { ProjectStarted } from "../module/project/project.message";
-import type { ProjectMessage } from "../module/project/project.message";
-import { init as initProject, update as updateProject } from "../module/project/project.update";
-import type { TodoMessage } from "../module/todo/todo.message";
-import { init as initTodo, update as updateTodo } from "../module/todo/todo.update";
+import { emptyTaskModel } from "../module/task/task.model";
+import type { TaskMessage } from "../module/task/task.message";
+import { update as updateTask } from "../module/task/task.update";
 import { loadExternal, navigateInternal } from "./route.command";
 import { ChangedUrl } from "./route.message";
 import { urlToAppRoute } from "./route";
@@ -18,30 +20,32 @@ import type { AppModel } from "./app.model";
 import {
   AppMessage,
   GotAuthMessage,
+  GotChannelMessage,
   GotOrgMessage,
-  GotProjectMessage,
-  GotTodoMessage,
+  GotTaskMessage,
   GotUserPopoverMessage,
 } from "./app.message";
 
-const delegateTodo = (
-  model: AppModel,
-  message: TodoMessage,
-): readonly [AppModel, ReadonlyArray<Command.Command<AppMessage>>] => {
-  const [todo, commands] = updateTodo(model.todo, message);
+const taskModel = (tenantId: string) => ({ ...emptyTaskModel(tenantId), draft: "", error: null });
 
-  return [{ ...model, todo }, commands.map(Command.mapEffect(Effect.map((message) => GotTodoMessage({ message }))))];
+const delegateTask = (
+  model: AppModel,
+  message: TaskMessage,
+): readonly [AppModel, ReadonlyArray<Command.Command<AppMessage>>] => {
+  const [task, commands] = updateTask(model.task, message);
+
+  return [{ ...model, task }, commands.map(Command.mapEffect(Effect.map((message) => GotTaskMessage({ message }))))];
 };
 
-const delegateProject = (
+const delegateChannel = (
   model: AppModel,
-  message: ProjectMessage,
+  message: ChannelMessage,
 ): readonly [AppModel, ReadonlyArray<Command.Command<AppMessage>>] => {
-  const [project, commands] = updateProject(model.project, message);
+  const [channel, commands] = updateChannel(model.channel, message);
 
   return [
-    { ...model, project },
-    commands.map(Command.mapEffect(Effect.map((message) => GotProjectMessage({ message })))),
+    { ...model, channel },
+    commands.map(Command.mapEffect(Effect.map((message) => GotChannelMessage({ message })))),
   ];
 };
 
@@ -71,39 +75,30 @@ const delegateOrg = (
   const [org, commands] = updateOrg(model.org, message);
   const orgId = selectedOrgId(org);
   if (orgId && (message._tag === "OrgLoaded" || message._tag === "OrgSelected" || message._tag === "OrgCreated")) {
-    const [project, projectCommands] = updateProject(model.project, ProjectStarted({ orgId }));
     return [
-      { ...model, org, project },
-      [
-        ...commands.map(Command.mapEffect(Effect.map((message) => GotOrgMessage({ message })))),
-        ...projectCommands.map(Command.mapEffect(Effect.map((message) => GotProjectMessage({ message })))),
-      ],
+      { ...model, org, channel: emptyChannelModel(orgId), task: taskModel(orgId) },
+      commands.map(Command.mapEffect(Effect.map((message) => GotOrgMessage({ message })))),
     ];
   }
 
   return [{ ...model, org }, commands.map(Command.mapEffect(Effect.map((message) => GotOrgMessage({ message }))))];
 };
 
-export const init = (url: Url) => {
-  const [todo, commands] = initTodo();
-  const [project] = initProject();
+export const init = () => {
   const [auth, authCommands] = initAuth();
   const [org] = initOrg();
 
   return [
     {
-      route: urlToAppRoute(url),
+      route: { _tag: "ChannelList" as const },
       isSidebarCollapsed: false,
       userPopover: initPopover({ id: "app-user-popover" }),
       auth,
       org,
-      project,
-      todo,
+      channel: emptyChannelModel("tenant_dev"),
+      task: taskModel("tenant_dev"),
     },
-    [
-      ...commands.map(Command.mapEffect(Effect.map((message) => GotTodoMessage({ message })))),
-      ...authCommands.map(Command.mapEffect(Effect.map((message) => GotAuthMessage({ message })))),
-    ],
+    [...authCommands.map(Command.mapEffect(Effect.map((message) => GotAuthMessage({ message }))))],
   ] as const;
 };
 
@@ -117,10 +112,10 @@ export const update = (
       ClickedLink: ({ request }) =>
         Match.value(request).pipe(
           Match.tagsExhaustive({
-            Internal: ({ url }): readonly [AppModel, ReadonlyArray<Command.Command<AppMessage>>] => [
-              model,
-              [navigateInternal(url)],
-            ],
+            Internal: ({ url }): readonly [AppModel, ReadonlyArray<Command.Command<AppMessage>>] => {
+              const href = urlToString(url);
+              return href.startsWith("/auth/") ? [model, [loadExternal(href)]] : [model, [navigateInternal(url)]];
+            },
             External: ({ href }): readonly [AppModel, ReadonlyArray<Command.Command<AppMessage>>] => [
               model,
               [loadExternal(href)],
@@ -138,8 +133,8 @@ export const update = (
       },
       CompletedNavigateInternal: () => [model, []],
       CompletedLoadExternal: () => [model, []],
-      GotTodoMessage: ({ message }) => delegateTodo(model, message),
-      GotProjectMessage: ({ message }) => delegateProject(model, message),
+      GotChannelMessage: ({ message }) => delegateChannel(model, message),
+      GotTaskMessage: ({ message }) => delegateTask(model, message),
       GotAuthMessage: ({ message }) => delegateAuth(model, message),
       GotOrgMessage: ({ message }) => delegateOrg(model, message),
     }),

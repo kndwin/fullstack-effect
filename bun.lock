@@ -12,6 +12,7 @@
         "effect-oxlint": "^0.2.0",
         "oxfmt": "^0.47.0",
         "oxlint": "^1.62.0",
+        "portless": "latest",
         "typescript": "^6.0.3",
       },
     },
@@ -37,6 +38,7 @@
         "@effect/sql": "0.0.0-snapshot-6ebc752baf28354006ca2a0ae783a5bccf5de9ad",
         "@effect/sql-pg": "4.0.0-beta.60",
         "@qaveai/shared": "workspace:*",
+        "@qaveai/sync": "workspace:*",
         "drizzle-kit": "^0.31.10",
         "drizzle-orm": "1.0.0-rc.1",
         "effect": "4.0.0-beta.59",
@@ -83,6 +85,12 @@
     },
     "packages/shared": {
       "name": "@qaveai/shared",
+      "dependencies": {
+        "effect": "4.0.0-beta.59",
+      },
+    },
+    "packages/sync": {
+      "name": "@qaveai/sync",
       "dependencies": {
         "effect": "4.0.0-beta.59",
       },
@@ -282,6 +290,8 @@
     "@qaveai/server-core": ["@qaveai/server-core@workspace:apps/server-core"],
 
     "@qaveai/shared": ["@qaveai/shared@workspace:packages/shared"],
+
+    "@qaveai/sync": ["@qaveai/sync@workspace:packages/sync"],
 
     "@radix-ui/colors": ["@radix-ui/colors@3.0.0", "", {}, "sha512-FUOsGBkHrYJwCSEtWRCIfQbZG7q1e6DgxCIOe1SUQzDe/7rXXeA47s8yCn6fuTNQAj1Zq4oTFi9Yjp3wzElcxg=="],
 
@@ -684,6 +694,8 @@
     "picomatch": ["picomatch@4.0.4", "", {}, "sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A=="],
 
     "pkce-challenge": ["pkce-challenge@5.0.1", "", {}, "sha512-wQ0b/W4Fr01qtpHlqSqspcj3EhBvimsdh0KlHhH8HRZnMsEa0ea2fTULOXOS9ccQr3om+GcGRk4e+isrZWV8qQ=="],
+
+    "portless": ["portless@0.13.0", "", { "os": [ "linux", "win32", "darwin", ], "bin": { "portless": "dist/cli.js" } }, "sha512-PxMZ5BHH+ZZi9rTq4T8m003aZxh56qI0aBdNsxLn7jrTtvNJYBWYD3lc5PuQrom/aVh6z8iLb+tKUI6b7QNYQw=="],
 
     "postcss": ["postcss@8.5.12", "", { "dependencies": { "nanoid": "^3.3.11", "picocolors": "^1.1.1", "source-map-js": "^1.2.1" } }, "sha512-W62t/Se6rA0Az3DfCL0AqJwXuKwBeYg6nOaIgzP+xZ7N5BFCI7DYi1qs6ygUYT6rvfi6t9k65UMLJC+PHZpDAA=="],
 

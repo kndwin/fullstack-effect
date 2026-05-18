@@ -27,7 +27,7 @@ import {
   HighlightedRichTextCodeBlocks,
   initRichTextEditor,
   richTextEditorPlainText,
-  richTextEditorSubscriptions,
+  richTextEditorSubscriptionConfig,
   updateRichTextEditor,
   updateRichTextEditorWithCommands,
   type RichTextEditorModel,
@@ -124,27 +124,6 @@ const states = () => {
   );
 };
 
-const inspector = (model: Model) => {
-  const { div, pre, span, Class } = html<Message>();
-
-  return div(
-    [Class("grid gap-2 rounded-lg border border-border bg-muted p-3")],
-    [
-      span(
-        [Class("text-xs font-medium uppercase tracking-[var(--letter-spacing-label)] text-muted-foreground")],
-        ["Serialized model"],
-      ),
-      pre(
-        [Class("m-0 max-h-64 overflow-auto whitespace-pre-wrap break-words text-xs leading-5 text-foreground")],
-        [
-          // eslint-disable-next-line effect-local/no-json-parse -- preview-only model inspector output
-          JSON.stringify(model, null, 2),
-        ],
-      ),
-    ],
-  );
-};
-
 export const RichTextEditorPreview = Preview.module({
   title: "Ui/RichTextEditor",
   previews: [
@@ -158,12 +137,18 @@ export const RichTextEditorPreview = Preview.module({
       },
       init: (): Model => initRichTextEditor(initialValue),
       update: updateRichTextEditorWithCommands,
-      subscriptions: ({ model, controls }) =>
-        richTextEditorSubscriptions({
-          id: "preview-rich-text-editor-replay",
-          model,
-          isDisabled: Boolean(controls.isDisabled),
-        }),
+      subscriptions: ({ model, controls }) => {
+        const subscription = richTextEditorSubscriptionConfig();
+        return {
+          ...subscription,
+          modelToDependencies: () =>
+            subscription.modelToDependencies({
+              id: "preview-rich-text-editor-replay",
+              model,
+              isDisabled: Boolean(controls.isDisabled),
+            }),
+        };
+      },
       view: (model: Model, controls: PreviewControlValues) => {
         const { div, p, Class } = html<Message>();
 
@@ -179,7 +164,6 @@ export const RichTextEditorPreview = Preview.module({
               toParentMessage: (message) => message,
             }),
             p([Class("m-0 text-sm text-muted-foreground")], [`Plain text: ${richTextEditorPlainText(model)}`]),
-            inspector(model),
           ],
         );
       },

@@ -2,6 +2,7 @@ import { Button } from "@qaveai/client-ds/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@qaveai/client-ds/card";
 import { html } from "foldkit/html";
 import type { Html } from "foldkit/html";
+import { backendUrl } from "../../backend-origin";
 import type { AuthModel } from "./auth.model";
 import { AuthLogoutClicked, type AuthMessage } from "./auth.message";
 
@@ -42,7 +43,7 @@ export const authGateView = <Message>(model: AuthModel, wrap: (message: AuthMess
           model.error ? p([Class("text-sm text-destructive")], [model.error]) : div([], []),
           a(
             [
-              Href("/auth/google/start"),
+              Href(backendUrl("/auth/google/start")),
               Class(
                 "inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary-hover",
               ),

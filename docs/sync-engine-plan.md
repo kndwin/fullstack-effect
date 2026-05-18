@@ -36,6 +36,77 @@ draft
 rich text
 ```
 
+## Current Progress
+
+Last updated: 2026-05-10
+
+Completed:
+
+- Created `packages/sync` with `src/server` and `src/client` exports.
+- Refactored `packages/sync` to explicit per-file package exports with no `src/index.ts`, `src/server/index.ts`, or `src/client/index.ts` barrels.
+- Moved shared sync contracts into `packages/sync/src/shared` and made public data shapes schema-first with types derived from Effect Schema.
+- Added core sync contracts: `TenantContextSchema`, `SyncEventSchema`, `SyncVisibilitySchema`, `EphemeralEventSchema`, `ClientMutationSchema`, `PendingMutationSchema`, cursor store, outbox store, event router, projection adapter, and minimal sync client.
+- Added an in-memory sync server store for executable semantics before Drizzle persistence.
+- Added a generic SQL store adapter contract in `packages/sync/src/server/sync.service.interface.ts` without coupling sync-core to Drizzle.
+- Refactored server sync behavior into the Effect `SyncStore` `Context.Service` in `packages/sync/src/server/sync.service.interface.ts`.
+- Added `SyncStoreMemoryLive` and `makeSqlSyncStoreLayer` so implementations are provided as Effect layers.
+- Added persistent server-core sync tables in `apps/server-core/src/module/sync/sync.table.ts` using the `sync` Postgres schema.
+- Added `apps/server-core/src/module/sync/sync.repo.implement.ts`, a Drizzle-backed `SqlSyncAdapter` and `SyncStoreSqlLive` layer.
+- Updated `withClientMutation` so command handlers receive a sync transaction and append events through that transaction.
+- Verified tenant-local event sequencing, tenant filtering, visibility-filtered pull, event routing, cursor advancement, duplicate-safe pull, and client mutation idempotency.
+- Added shared task contracts in `packages/shared/src/module/task/task.schema.ts`.
+- Added initial server task skeleton in `apps/server-core/src/module/task` with table, repository, and service.
+- Added shared task RPC contracts and server RPC implementation.
+- Wired task RPC into `AppRpcs` and server `RpcLive`.
+- Added initial client task projection in `apps/client-web/src/module/task` with reducer tests for `task.created` and `task.status.updated`.
+- Added client task RPC helper plus Foldkit command/message/update wiring.
+- Added durable browser cursor storage via `packages/sync/src/client/local-storage.cursor.store.ts`.
+- Added durable tenant-local task projection storage via `apps/client-web/src/module/task/task.projection.store.ts`.
+- Added task view and Foldkit preview scenarios for empty, seeded, tenant switch, replay, duplicate replay, status update, and failure states.
+
+Verification passed:
+
+```txt
+bun test "packages/sync/src/sync.test.ts" "apps/client-web/src/module/task/task.projection.test.ts"
+bun run format:check
+bun run typecheck
+```
+
+Current changed areas:
+
+```txt
+packages/sync/
+packages/shared/src/module/task/
+apps/server-core/src/module/task/
+apps/server-core/src/module/sync/
+apps/client-web/src/module/task/
+packages/shared/package.json
+apps/server-core/package.json
+apps/server-core/src/platform/db.ts
+tsconfig.json
+```
+
+Current implementation stance:
+
+- `packages/sync` is still domain-free.
+- `packages/sync` public data shapes are schema-first; exported types are derived from Effect Schema.
+- `packages/sync` exports only explicit `./shared/*`, `./server/*`, and `./client/*` files from `package.json`.
+- Server sync behavior is consumed via `SyncStore`, not by passing plain store objects through domain method parameters.
+- The in-memory sync store is the executable reference implementation for invariants.
+- Persistent Drizzle-backed sync tables and an app-level SQL adapter now exist in `apps/server-core/src/module/sync`.
+- The current SQL adapter is a first persistent pass; tenant-local sequence allocation should be hardened with transaction/locking semantics before production use.
+- Task server code exists as a skeleton but is not wired to RPC or an app-level sync store yet.
+- Client task projection exists but not full Foldkit task UI/preview integration yet.
+
+Open implementation questions for sparring:
+
+- Should `TenantContext` include only `tenantId` and `userId`, or also roles/permissions/resource grants resolved at the boundary?
+- Should `SyncEvent.seq` be a number in TypeScript, or should we move to string/bigint to match Postgres `bigint` safely?
+- Should idempotency return the prior event only, or a richer domain result envelope?
+- Should the Drizzle adapter own a full DB transaction including domain writes, or should domain repositories expose transaction-aware methods before wiring RPC?
+- Should task replace existing `todo`, or should `todo` remain a separate non-sync demo module while `task` proves sync?
+- Should the client event router silently ignore unknown event types, collect diagnostics, or put the sync machine into a controlled error state?
+
 ## Architecture
 
 ### Package Shape
@@ -46,23 +117,52 @@ packages/sync/
   tsconfig.json
   src/
     server/
-      context.ts
-      event.ts
-      event-store.ts
-      mutation-store.ts
-      visibility.ts
-      stream.ts
-      index.ts
+      sync.service.interface.ts
+      sync.service.implement.memory.ts
+      sync.service.implement.sql.ts
+      sync.stream.interface.ts
+      visibility.resolver.interface.ts
+      visibility.resolver.implement.allow-tenant.ts
 
     client/
-      cursor-store.ts
-      outbox-store.ts
-      event-router.ts
+      sync-cursor.store.ts
+      outbox.store.ts
+      event.router.ts
       sync-client.ts
       projection.ts
-      index.ts
 
-    index.ts
+    shared/
+      tenant-context.schema.ts
+      sync-visibility.schema.ts
+      sync-event.schema.ts
+      client-mutation.schema.ts
+      pending-mutation.schema.ts
+```
+
+Package export rule:
+
+```txt
+No source-level barrel files.
+No packages/sync/src/index.ts.
+No packages/sync/src/server/index.ts.
+No packages/sync/src/client/index.ts.
+Only explicit per-file package exports in packages/sync/package.json.
+```
+
+Naming rule:
+
+```txt
+schema source files: *.schema.ts
+store source files: *.store.ts
+router source files: *.router.ts
+```
+
+Server behavior rule:
+
+```txt
+Expose server capabilities as Effect Context.Service services.
+Provide concrete implementations as Layer values or layer constructors.
+Do not pass sync stores as ad-hoc method parameters in domain services.
 ```
 
 ### Server Domain Locations
@@ -72,13 +172,13 @@ apps/server-core/src/module/task/
   task.table.ts
   task.repo.ts
   task.service.ts
-  task.rpc.impl.ts
+  task.rpc.implement.ts
 
 apps/server-core/src/module/channel/
   channel.table.ts
   channel.repo.ts
   channel.service.ts
-  channel.rpc.impl.ts
+  channel.rpc.implement.ts
 ```
 
 ### Client Domain Locations
@@ -110,37 +210,65 @@ Existing `todo` can either remain as-is or become the seed for the new simple `t
 Every server command runs with:
 
 ```ts
-type TenantContext = {
-  tenantId: string;
-  userId: string;
-};
+export const TenantContextSchema = Schema.Struct({
+  tenantId: Schema.String,
+  userId: Schema.String,
+});
+
+export type TenantContext = typeof TenantContextSchema.Type;
 ```
 
 Tenant context is resolved at the app boundary, then passed into sync/domain services.
 
+### Schema-First Rule
+
+All public sync data shapes are Effect Schema values. Exported TypeScript types are derived from those schemas.
+
+```txt
+No hand-written exported type is the source of truth for public data.
+Use Schema.Unknown for persisted/network payloads at the sync-core boundary.
+Domain packages decode payloads with their own schemas.
+```
+
 ### Sync Event
 
 ```ts
-type SyncEvent<TPayload = unknown> = {
-  tenantId: string;
-  seq: number;
-  domain: string;
-  type: string;
-  visibility: SyncVisibility;
-  aggregateType: string;
-  aggregateId: string;
-  payload: TPayload;
-  createdAt: string;
-};
+export const SyncEventSchema = Schema.Struct({
+  tenantId: Schema.String,
+  userId: Schema.String,
+  seq: Schema.Number,
+  domain: Schema.String,
+  type: Schema.String,
+  visibility: SyncVisibilitySchema,
+  aggregateType: Schema.String,
+  aggregateId: Schema.String,
+  payload: Schema.Unknown,
+  createdAt: Schema.String,
+});
+
+export type SyncEvent = typeof SyncEventSchema.Type;
+```
+
+Domain code narrows event payloads explicitly:
+
+```ts
+const payload = Schema.decodeUnknownSync(TaskCreatedPayload)(event.payload);
 ```
 
 ### Visibility
 
 ```ts
-type SyncVisibility =
-  | { type: "tenant" }
-  | { type: "user"; userId: string }
-  | { type: "resource"; resourceType: string; resourceId: string };
+export const SyncVisibilitySchema = Schema.Union([
+  Schema.Struct({ type: Schema.Literal("tenant") }),
+  Schema.Struct({ type: Schema.Literal("user"), userId: Schema.String }),
+  Schema.Struct({
+    type: Schema.Literal("resource"),
+    resourceType: Schema.String,
+    resourceId: Schema.String,
+  }),
+]);
+
+export type SyncVisibility = typeof SyncVisibilitySchema.Type;
 ```
 
 Examples:
@@ -458,6 +586,8 @@ tasks.* = denied
 
 ### Phase 1: Sync Contract Skeleton
 
+Status: completed.
+
 Implement type-only or near-type-only sync primitives.
 
 Deliverables:
@@ -476,9 +606,9 @@ VisibilityResolver interface
 Verification:
 
 ```txt
-Typecheck passes.
-A task event and channel event can be represented.
-sync package has no domain imports.
+[x] Typecheck passes.
+[x] A task event and channel event can be represented.
+[x] sync package has no domain imports.
 ```
 
 Promotion gate:
@@ -489,6 +619,31 @@ tenantId is required by core event/mutation types.
 ```
 
 ### Phase 2: Server Sync Core With Simple Task Create
+
+Status: partially complete.
+
+Completed:
+
+```txt
+[x] in-memory sync event store
+[x] tenant-local event sequencing
+[x] pullEvents after seq
+[x] visibility-filtered pull
+[x] client mutation idempotency helper
+[x] shared task schema
+[x] server task table/repo/service skeleton
+[x] persistent sync.sync_event table
+[x] persistent sync.client_mutation table
+[x] Drizzle-backed app-level sync store adapter
+[x] task RPC contract and implementation
+```
+
+Remaining:
+
+```txt
+[ ] createTask end-to-end manual/browser verification through RPC
+[ ] harden SQL adapter with full transaction/locking semantics for tenant-local seq allocation
+```
 
 Implement:
 
@@ -519,11 +674,12 @@ createTask
 Verification:
 
 ```txt
-createTask inserts task.
-createTask appends task.created.
-retry same clientMutationId does not duplicate.
-pullEvents returns events after seq.
-pullEvents does not return another tenant's events.
+[ ] createTask inserts task through persistent server path.
+[ ] createTask appends task.created through persistent server path.
+[x] createTask is wired through shared/server RPC types.
+[x] retry same clientMutationId does not duplicate in reference in-memory store.
+[x] pullEvents returns events after seq in reference in-memory store.
+[x] pullEvents does not return another tenant's events in reference in-memory store.
 ```
 
 Promotion gate:
@@ -533,6 +689,27 @@ Task proves sync-core can support a non-chat domain.
 ```
 
 ### Phase 3: Client Sync Core With Task Projection
+
+Status: partially complete.
+
+Completed:
+
+```txt
+[x] event router
+[x] minimal pull/apply/advance sync client
+[x] task event reducer
+[x] task local projection tests
+```
+
+Remaining:
+
+```txt
+[x] durable browser cursor store
+[x] durable task local projection store
+[x] Foldkit task model/message/update integration
+[x] task previews
+[ ] reload rehydration demo
+```
 
 Implement:
 
@@ -565,9 +742,10 @@ Task create failure
 Verification:
 
 ```txt
-Reload renders projected tasks.
-Duplicate replay does not duplicate tasks.
-Tenant switch uses separate projection/cursor.
+[x] Reload renders projected tasks.
+[x] Duplicate replay does not duplicate tasks.
+[x] Other-tenant task events are ignored by projection.
+[x] Tenant switch uses separate durable projection/cursor.
 ```
 
 Promotion gate:

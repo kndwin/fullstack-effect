@@ -4,12 +4,12 @@ description: House rules for shared module RPC contract files in packages/shared
 license: Apache-2.0
 metadata:
   scope: packages/shared
-  prefix: "src/module/<feature>/<feature>.rpc.ts"
+  prefix: "src/module/<feature>/<feature>.rpc.interface.ts"
 ---
 
-# Shared `*.rpc.ts`
+# Shared `*.rpc.interface.ts`
 
-Shared RPC files define the wire contract between `apps/server-core` and `apps/client-web`. Server implementations bind these contracts in `apps/server-core/src/module/<feature>/<feature>.rpc.impl.ts`.
+Shared RPC interface files define the wire contract between `apps/server-core` and `apps/client-web`. Server implementations bind these contracts in `apps/server-core/src/module/<feature>/<feature>.rpc.implement.ts`.
 
 ## Canonical Shape
 
@@ -30,7 +30,7 @@ export const WidgetRpcs = RpcGroup.make(
 
 ## Do
 
-- Place RPC contracts at `packages/shared/src/module/<feature>/<feature>.rpc.ts`.
+- Place RPC contracts at `packages/shared/src/module/<feature>/<feature>.rpc.interface.ts`.
 - Import schemas and tagged errors from the sibling `<feature>.schema.ts` file.
 - Use PascalCase endpoint names: `TodoList`, `ProjectCreate`, `OrgCreate`.
 - Declare `payload`, `success`, and `error` schemas explicitly when applicable.

@@ -45,7 +45,11 @@ import {
 } from "./rich-text-editor.schema";
 import type { RichTextMarkType } from "./nodes/mark.schema";
 import { RichTextEditorSlashMenu } from "./rich-text-editor.slash-menu.view";
-import { richTextEditorSubscriptions, type RichTextEditorSubscriptionOptions } from "./rich-text-editor.subscriptions";
+import {
+  richTextEditorSubscriptionConfig,
+  richTextEditorSubscriptions,
+  type RichTextEditorSubscriptionOptions,
+} from "./rich-text-editor.subscriptions";
 import { updateRichTextEditor, updateRichTextEditorWithCommands } from "./rich-text-editor.update";
 
 const codeBlockLanguageItems = [
@@ -78,6 +82,7 @@ export {
   HighlightedRichTextCodeBlocks,
   initRichTextEditor,
   richTextEditorPlainText,
+  richTextEditorSubscriptionConfig,
   richTextEditorSubscriptions,
   updateRichTextEditor,
   updateRichTextEditorWithCommands,
@@ -276,8 +281,9 @@ const renderCodeBlockInlineContent = <Message>({
   selection: RichTextSelection;
 }>): ReadonlyArray<Html | string> => {
   let textOffset = blockStart;
+  const text = blockText(block);
 
-  return block.children.flatMap((node) => {
+  const content = block.children.flatMap((node) => {
     const rendered = renderHighlightedCodeBlockToken<Message>({
       content: node.text,
       start: textOffset,
@@ -286,6 +292,37 @@ const renderCodeBlockInlineContent = <Message>({
     textOffset += node.text.length;
     return rendered;
   });
+
+  return text.endsWith("\n")
+    ? [...content, renderCodeBlockCaretPlaceholder<Message>(blockStart + text.length)]
+    : content;
+};
+
+const renderCodeBlockCaretPlaceholder = <Message>(blockStart: number, placeholder?: string): Html => {
+  const { span, Class, DataAttribute, Attribute } = html<Message>();
+  return span(
+    [
+      DataAttribute("rte-start", String(blockStart)),
+      DataAttribute("rte-end", String(blockStart + 1)),
+      DataAttribute("rte-placeholder", "true"),
+      Class("rte-placeholder-caret relative inline-block whitespace-pre"),
+    ],
+    [
+      "\u00A0",
+      ...(placeholder
+        ? [
+            span(
+              [
+                Attribute("aria-hidden", "true"),
+                Attribute("contenteditable", "false"),
+                Class("pointer-events-none absolute left-0 top-0 w-max select-none text-muted-foreground/60"),
+              ],
+              [placeholder],
+            ),
+          ]
+        : []),
+    ],
+  );
 };
 
 const renderHighlightedCodeBlockContent = <Message>(
@@ -295,7 +332,7 @@ const renderHighlightedCodeBlockContent = <Message>(
 ): ReadonlyArray<Html | string> => {
   let textOffset = blockStart;
 
-  return highlight.lines.flatMap((line, lineIndex) => {
+  const content = highlight.lines.flatMap((line, lineIndex) => {
     const renderedLine = line.flatMap((token) => {
       const rendered = renderHighlightedCodeBlockToken<Message>({
         content: token.content,
@@ -313,6 +350,10 @@ const renderHighlightedCodeBlockContent = <Message>(
     textOffset += 1;
     return [...renderedLine, ...renderedNewline];
   });
+
+  return highlight.text.endsWith("\n")
+    ? [...content, renderCodeBlockCaretPlaceholder<Message>(blockStart + highlight.text.length)]
+    : content;
 };
 
 const renderEmptyBlockFallback = <Message>({
@@ -414,7 +455,9 @@ const renderBlockNode = <Message>({
         CodeBlockNode.render<Message>(
           highlightedContent
             ? renderHighlightedCodeBlockContent<Message>(highlightedContent, blockStart, selection)
-            : renderCodeBlockInlineContent<Message>({ block, blockStart, selection }),
+            : blockText(block).length > 0
+              ? renderCodeBlockInlineContent<Message>({ block, blockStart, selection })
+              : [renderCodeBlockCaretPlaceholder<Message>(blockStart, "Write code...")],
           block.language,
         ),
       ],
@@ -465,6 +508,15 @@ const isMarkActive = (model: RichTextEditorModel, type: RichTextMarkType): boole
   );
 };
 
+const richTextEditorRenderKey = (model: RichTextEditorModel): string =>
+  JSON.stringify({
+    blocks: model.document.children.map((block) => ({
+      type: block.type,
+      ...(block.type === "heading" ? { level: block.level } : {}),
+      ...(block.type === "codeBlock" ? { language: block.language } : {}),
+    })),
+  });
+
 export const RichTextEditor = <Message>(props: RichTextEditorProps<Message>): Html => {
   const {
     div,
@@ -484,6 +536,7 @@ export const RichTextEditor = <Message>(props: RichTextEditorProps<Message>): Ht
     Tabindex,
   } = html<Message>();
   const plainText = richTextEditorPlainText(props.model);
+  const renderKey = richTextEditorRenderKey(props.model);
   const markdown = richTextEditorMarkdown(props.model);
   const editorClassName =
     "rte-editor min-h-28 rounded-md border border-border bg-muted px-3 py-2 text-foreground outline-none transition-colors empty:before:text-muted-foreground empty:before:content-[attr(data-placeholder)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-disabled:cursor-not-allowed data-disabled:opacity-50";
@@ -555,7 +608,7 @@ export const RichTextEditor = <Message>(props: RichTextEditorProps<Message>): Ht
           div(
             [
               Id(props.id),
-              Key(`${plainText}:${props.model.selection.anchor}:${props.model.selection.focus}`),
+              Key(renderKey),
               AriaLabel(props.label ?? "Rich text editor"),
               Attribute("aria-multiline", "true"),
               // NOTE: Rich text editing requires a model-owned contenteditable host so selections,

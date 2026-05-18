@@ -11,6 +11,30 @@
     "paths": {
       "@qaveai/foldkit-preview": ["./packages/foldkit-preview/src/index.ts"],
       "@qaveai/foldkit-preview/config": ["./packages/foldkit-preview/src/config.ts"],
+      "@qaveai/sync/shared/tenant-context.schema": ["./packages/sync/src/shared/tenant-context.schema.ts"],
+      "@qaveai/sync/shared/sync-visibility.schema": ["./packages/sync/src/shared/sync-visibility.schema.ts"],
+      "@qaveai/sync/shared/sync-event.schema": ["./packages/sync/src/shared/sync-event.schema.ts"],
+      "@qaveai/sync/shared/client-mutation.schema": ["./packages/sync/src/shared/client-mutation.schema.ts"],
+      "@qaveai/sync/shared/pending-mutation.schema": ["./packages/sync/src/shared/pending-mutation.schema.ts"],
+      "@qaveai/sync/shared/sync-error.schema": ["./packages/sync/src/shared/sync-error.schema.ts"],
+      "@qaveai/sync/server/sync.service.interface": ["./packages/sync/src/server/sync.service.interface.ts"],
+      "@qaveai/sync/server/visibility.resolver.interface": [
+        "./packages/sync/src/server/visibility.resolver.interface.ts"
+      ],
+      "@qaveai/sync/server/visibility.resolver.implement.allow-tenant": [
+        "./packages/sync/src/server/visibility.resolver.implement.allow-tenant.ts"
+      ],
+      "@qaveai/sync/server/sync.service.implement.memory": [
+        "./packages/sync/src/server/sync.service.implement.memory.ts"
+      ],
+      "@qaveai/sync/server/sync.service.implement.sql": ["./packages/sync/src/server/sync.service.implement.sql.ts"],
+      "@qaveai/sync/server/sync.stream.interface": ["./packages/sync/src/server/sync.stream.interface.ts"],
+      "@qaveai/sync/client/sync-cursor.store": ["./packages/sync/src/client/sync-cursor.store.ts"],
+      "@qaveai/sync/client/local-storage.cursor.store": ["./packages/sync/src/client/local-storage.cursor.store.ts"],
+      "@qaveai/sync/client/outbox.store": ["./packages/sync/src/client/outbox.store.ts"],
+      "@qaveai/sync/client/event.router": ["./packages/sync/src/client/event.router.ts"],
+      "@qaveai/sync/client/sync-client": ["./packages/sync/src/client/sync-client.ts"],
+      "@qaveai/sync/client/projection": ["./packages/sync/src/client/projection.ts"],
       "@qaveai/client-ds/button": ["./packages/client-design-system-ui/src/button/index.ts"],
       "@qaveai/client-ds/checkbox": ["./packages/client-design-system-ui/src/checkbox/index.ts"],
       "@qaveai/shared": ["./packages/shared/src/index.ts"],

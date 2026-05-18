@@ -71,7 +71,7 @@ export const CodeBlockNode = {
     },
   },
   className: () =>
-    "m-0 overflow-x-auto rounded-md border border-border bg-muted p-3 pr-48 font-mono text-[length:var(--font-size-sm)] leading-[var(--line-height-sm)] text-foreground whitespace-pre-wrap",
+    "m-0 min-h-28 overflow-x-auto rounded-md border border-border bg-muted p-3 pr-48 font-mono text-[length:var(--font-size-sm)] leading-[var(--line-height-sm)] text-foreground whitespace-pre-wrap",
   render: <Message>(children: ReadonlyArray<Html | string>, language?: RichTextCodeBlockLanguage): Html => {
     const { pre, code, Class, Attribute } = html<Message>();
     return pre(

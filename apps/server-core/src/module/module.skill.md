@@ -15,9 +15,11 @@ A server module is the backend implementation slice for a feature. Shared wire/d
 
 ```text
 apps/server-core/src/module/<feature>/
-  <feature>.rpc.impl.ts  # RpcGroup.toLayer handlers, transport only
-  <feature>.service.ts   # Context.Service domain layer
-  <feature>.repo.ts      # Context.Service persistence layer, if DB-backed
+  <feature>.rpc.implement.ts  # RpcGroup.toLayer handlers, transport only
+  <feature>.service.interface.ts  # Context.Service contract/tag for domain logic
+  <feature>.service.implement.ts  # Live domain service layer
+  <feature>.repo.interface.ts     # Context.Service contract/tag for persistence
+  <feature>.repo.implement.ts     # Live persistence layer, if DB-backed
   <feature>.table.ts     # Drizzle pgTable definitions, if persisted
   <feature>.util.ts      # pure deterministic helpers, if useful
 ```
@@ -35,14 +37,17 @@ packages/shared/src/module/<feature>/
 - Keep RPC impls thin: bind shared RPC endpoints to service methods.
 - Keep business rules in `<feature>.service.ts`.
 - Keep Drizzle imports and table imports confined to `<feature>.repo.ts` and platform DB registration.
-- Use one `Context.Service` per service and repo, with `make` in the class declaration.
-- Export one `<Name>ServiceLive` / `<Name>RepositoryLive` layer from the same file as the service/repo.
+- Use one service/repo interface file and one implementation file.
+- Interface files own the exported service/repo `Context.Service` class. In Effect v4, use `Context.Service` as the capability tag.
+- Implementation files own the exported `<Name>ServiceLive` / `<Name>RepositoryLive` layer.
 - Merge RPC handler layers in `apps/server-core/index.ts`.
 - Add shared RPC groups to `packages/shared/src/platform/rpc.ts`.
 
 ## Don't
 
-- Don't add `.contract.ts` / `.impl.ts` splits for services or repos.
+- Don't put live service/repo implementations in `.interface.ts` files.
+- Don't use type-only service/repo `.interface.ts` files; export a `Context.Service` tag from them.
+- Don't create unsplit `<feature>.service.ts` or `<feature>.repo.ts` files.
 - Don't import another module's repo from a repo. Cross-module coordination belongs in a service.
 - Don't expose Drizzle rows or table types from services unless they already match the shared schema shape.
 - Don't throw for domain failures. Use shared `Schema.TaggedErrorClass` errors.

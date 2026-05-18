@@ -13,12 +13,12 @@ export type OAuthProvider = {
   getProfile: (accessToken: string) => Promise<OAuthProfile>;
 };
 
-const issuer = () => process.env.GOOGLE_ISSUER_URL ?? "http://localhost:4002";
+const issuer = () => process.env.GOOGLE_ISSUER_URL ?? "http://localhost:4000";
 const clientId = () => process.env.GOOGLE_CLIENT_ID ?? "qaveai-client.apps.googleusercontent.com";
 const clientSecret = () => process.env.GOOGLE_CLIENT_SECRET ?? "GOCSPX-qaveai-secret";
-const authBaseUrl = () => process.env.AUTH_BASE_URL ?? "http://127.0.0.1:3010";
+const authBaseUrl = () => process.env.AUTH_BASE_URL ?? "https://backend.fullstack-effect.localhost";
 
-export const appUrl = () => process.env.AUTH_APP_URL ?? "http://localhost:5173";
+export const appUrl = () => process.env.AUTH_APP_URL ?? "https://fullstack-effect.localhost";
 
 export const googleProvider: OAuthProvider = {
   id: "google",

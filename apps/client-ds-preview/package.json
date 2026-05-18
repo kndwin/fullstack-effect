@@ -1,0 +1,8 @@
+{
+  "name": "@qaveai/client-ds-preview",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --cwd ../../packages/client-ds preview"
+  }
+}

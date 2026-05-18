@@ -19,14 +19,29 @@ import {
 const json = (value: unknown, init?: ResponseInit) =>
   new Response(JSON.stringify(value), { ...init, headers: { "content-type": "application/json", ...init?.headers } });
 
+const corsHeaders = (request: Request): Record<string, string> => {
+  const origin = request.headers.get("origin");
+  if (!origin || origin !== appUrl()) return {};
+  return {
+    "access-control-allow-credentials": "true",
+    "access-control-allow-headers": "content-type",
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+    "access-control-allow-origin": origin,
+  };
+};
+
 export const handleAuthRequest = async (request: Request) => {
   const url = new URL(request.url);
 
-  if (url.pathname === "/auth/me") return json(await getSession(request));
+  if (url.pathname.startsWith("/auth/") && request.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders(request) });
+  }
+
+  if (url.pathname === "/auth/me") return json(await getSession(request), { headers: corsHeaders(request) });
 
   if (url.pathname === "/auth/logout") {
     await destroySession(request);
-    return json(null, { headers: { "set-cookie": clearCookie(sessionCookieName) } });
+    return json(null, { headers: { ...corsHeaders(request), "set-cookie": clearCookie(sessionCookieName) } });
   }
 
   if (url.pathname === "/auth/google/start") {

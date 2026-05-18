@@ -1,4 +1,4 @@
-import { Effect, Function, Option, Queue, Stream } from "effect";
+import { Effect, Equivalence, Function, Option, Queue, Stream } from "effect";
 import type { KeyboardModifiers } from "foldkit/html";
 import { blockText } from "./rich-text-editor.document";
 import { richTextSelectionMessageFromDom, selectRichTextEditorDomAll } from "./rich-text-editor.dom";
@@ -20,6 +20,22 @@ export type RichTextEditorSubscriptionOptions = Readonly<{
   id: string;
   model: RichTextEditorModel;
   isDisabled?: boolean;
+}>;
+
+export type RichTextEditorSubscriptionDependencies = Readonly<{
+  hostId: string | undefined;
+  isDisabled: boolean;
+  model: RichTextEditorModel;
+  codeBlockStructure: string;
+}>;
+
+export type RichTextEditorSubscriptionConfig = Readonly<{
+  modelToDependencies: (options: RichTextEditorSubscriptionOptions) => RichTextEditorSubscriptionDependencies;
+  dependenciesToStream: (
+    dependencies: RichTextEditorSubscriptionDependencies,
+    readDependencies: () => RichTextEditorSubscriptionDependencies,
+  ) => Stream.Stream<RichTextEditorMessage>;
+  equivalence: Equivalence.Equivalence<RichTextEditorSubscriptionDependencies>;
 }>;
 
 const keyboardModifiersFromEvent = (event: KeyboardEvent): KeyboardModifiers => ({
@@ -119,7 +135,7 @@ const writeMarkdownClipboard = (event: ClipboardEvent, model: RichTextEditorMode
 
 const hostEventStream = (
   id: string,
-  options: RichTextEditorSubscriptionOptions,
+  readOptions: () => RichTextEditorSubscriptionOptions,
 ): Stream.Stream<RichTextEditorMessage> =>
   Stream.callback<RichTextEditorMessage>((queue) =>
     Effect.acquireRelease(
@@ -128,16 +144,20 @@ const hostEventStream = (
         if (!(element instanceof HTMLElement)) return Function.constVoid;
 
         const onKeyDown = (event: KeyboardEvent) => {
+          const options = readOptions();
           offerMessage(queue, handledKeyDownMessage(event, options), event);
         };
         const onKeyUp = (event: KeyboardEvent) => {
+          const options = readOptions();
           offerMessage(queue, handledKeyUpMessage(event, options), event);
         };
         const onInput = (event: Event) => {
+          const options = readOptions();
           if (!options.isDisabled && !isIgnoredRichTextEditorEvent(event))
             Queue.offerUnsafe(queue, SyncedRichTextEditorPlainText({ value: element.innerText }));
         };
         const onPaste = (event: ClipboardEvent) => {
+          const options = readOptions();
           const markdown = event.clipboardData?.getData("text/plain");
           if (options.isDisabled || !markdown || isIgnoredRichTextEditorEvent(event)) return;
           event.preventDefault();
@@ -148,6 +168,7 @@ const hostEventStream = (
           );
         };
         const onCopy = (event: ClipboardEvent) => {
+          const options = readOptions();
           if (
             options.isDisabled ||
             isIgnoredRichTextEditorEvent(event) ||
@@ -157,6 +178,7 @@ const hostEventStream = (
           event.preventDefault();
         };
         const onCut = (event: ClipboardEvent) => {
+          const options = readOptions();
           if (
             options.isDisabled ||
             isIgnoredRichTextEditorEvent(event) ||
@@ -168,6 +190,7 @@ const hostEventStream = (
           Queue.offerUnsafe(queue, DeletedRichTextEditorBackward({ start: selection.anchor, end: selection.focus }));
         };
         const onPointerUp = () => {
+          const options = readOptions();
           if (!options.isDisabled) {
             Queue.offerUnsafe(queue, richTextSelectionMessageFromDom(richTextEditorPlainText(options.model).length));
           }
@@ -206,23 +229,97 @@ const highlightRequestsForModel = (model: RichTextEditorModel): ReadonlyArray<Ri
     return existing ? [] : [{ blockIndex, text, language: block.language }];
   });
 
-const codeHighlightStream = (model: RichTextEditorModel): Stream.Stream<RichTextEditorMessage> => {
-  const requests = highlightRequestsForModel(model);
-  if (requests.length === 0) return Stream.empty;
-  return Stream.fromEffect(
-    Effect.promise(async () =>
-      HighlightedRichTextCodeBlocks({ highlights: await Promise.all(requests.map(highlightRichTextCodeBlock)) }),
+const highlightRequestFingerprint = (requests: ReadonlyArray<RichTextCodeBlockHighlightRequest>): string =>
+  JSON.stringify(requests.map((request) => [request.blockIndex, request.language, request.text]));
+
+const codeBlockStructure = (model: RichTextEditorModel): string =>
+  JSON.stringify(
+    model.document.children.flatMap((block, blockIndex) =>
+      block.type === "codeBlock" && block.language ? [[blockIndex, block.language]] : [],
     ),
   );
+
+const codeHighlightStream = (
+  dependencies: RichTextEditorSubscriptionDependencies,
+  readDependencies: () => RichTextEditorSubscriptionDependencies,
+): Stream.Stream<RichTextEditorMessage> => {
+  if (dependencies.isDisabled || dependencies.codeBlockStructure === "[]") {
+    return Stream.empty;
+  }
+
+  return Stream.callback<RichTextEditorMessage>((queue) =>
+    Effect.acquireRelease(
+      Effect.sync(() => {
+        let lastSeenFingerprint = "";
+        let lastHighlightedFingerprint = "";
+        let isCancelled = false;
+
+        const interval = globalThis.setInterval(() => {
+          const requests = highlightRequestsForModel(readDependencies().model);
+          const fingerprint = highlightRequestFingerprint(requests);
+          if (requests.length === 0) {
+            lastSeenFingerprint = "";
+            lastHighlightedFingerprint = "";
+            return;
+          }
+          if (fingerprint !== lastSeenFingerprint) {
+            lastSeenFingerprint = fingerprint;
+            return;
+          }
+          if (fingerprint === lastHighlightedFingerprint) return;
+          lastHighlightedFingerprint = fingerprint;
+
+          void Promise.all(requests.map(highlightRichTextCodeBlock)).then((highlights) => {
+            if (isCancelled) return;
+            Queue.offerUnsafe(queue, HighlightedRichTextCodeBlocks({ highlights }));
+          });
+        }, 180);
+
+        return () => {
+          isCancelled = true;
+          globalThis.clearInterval(interval);
+        };
+      }),
+      (cleanup) => Effect.sync(cleanup),
+    ).pipe(Effect.flatMap(() => Effect.never)),
+  );
 };
+
+export const richTextEditorSubscriptionConfig = (): RichTextEditorSubscriptionConfig => ({
+  modelToDependencies: (options) => ({
+    hostId: mountedHostId(options),
+    isDisabled: Boolean(options.isDisabled),
+    model: options.model,
+    codeBlockStructure: codeBlockStructure(options.model),
+  }),
+  equivalence: Equivalence.make(
+    (a, b) =>
+      a.hostId === b.hostId && a.isDisabled === b.isDisabled && a.codeBlockStructure === b.codeBlockStructure,
+  ),
+  dependenciesToStream: (dependencies, readDependencies) => {
+    const highlightStream = codeHighlightStream(dependencies, readDependencies);
+    if (typeof document === "undefined") return highlightStream;
+    if (!dependencies.hostId) return highlightStream;
+
+    return Stream.merge(
+      highlightStream,
+      hostEventStream(dependencies.hostId, () => {
+        const latest = readDependencies();
+        return { id: latest.hostId ?? dependencies.hostId!, model: latest.model, isDisabled: latest.isDisabled };
+      }),
+    );
+  },
+});
 
 export const richTextEditorSubscriptions = (
   options: RichTextEditorSubscriptionOptions,
 ): Stream.Stream<RichTextEditorMessage> => {
-  const highlightStream = codeHighlightStream(options.model);
+  const config = richTextEditorSubscriptionConfig();
+  const dependencies = config.modelToDependencies(options);
+  const highlightStream = codeHighlightStream(dependencies, () => dependencies);
   if (typeof document === "undefined") return highlightStream;
   const hostId = mountedHostId(options);
   if (!hostId) return highlightStream;
 
-  return Stream.merge(highlightStream, hostEventStream(hostId, { ...options, id: hostId }));
+  return Stream.merge(highlightStream, hostEventStream(hostId, () => ({ ...options, id: hostId })));
 };

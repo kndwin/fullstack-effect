@@ -1,0 +1,9 @@
+{
+  "apps": {
+    "apps/client-web": { "name": "fullstack-effect" },
+    "apps/client-web-preview": { "name": "app-preview.fullstack-effect" },
+    "apps/client-ds-preview": { "name": "ds-preview.fullstack-effect" },
+    "packages/client-ds": { "name": "ds.fullstack-effect" },
+    "apps/server-core": { "name": "backend.fullstack-effect" }
+  }
+}

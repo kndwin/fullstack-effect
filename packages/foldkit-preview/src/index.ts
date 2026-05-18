@@ -1,5 +1,5 @@
 import { cva } from "class-variance-authority";
-import { Effect, Option, Schema, Stream } from "effect";
+import { Effect, Equivalence, Option, Schema, Stream } from "effect";
 import { Command, Runtime, Subscription, Task, Ui } from "foldkit";
 import { html } from "foldkit/html";
 import type { Document, Html } from "foldkit/html";
@@ -38,6 +38,19 @@ export type PreviewCommandResolutions<Model = unknown, Message = unknown> = Read
   Record<string, ReadonlyArray<PreviewCommandResolution<Model, Message>>>
 >;
 
+export type PreviewSubscriptionConfig<Model = unknown, Message = unknown, Dependencies = unknown> = Readonly<{
+  modelToDependencies: (context: Readonly<{ model: Model; controls: PreviewControlValues }>) => Dependencies;
+  dependenciesToStream: (
+    dependencies: Dependencies,
+    readDependencies: () => Dependencies,
+  ) => Stream.Stream<Message>;
+  equivalence?: Equivalence.Equivalence<Dependencies>;
+}>;
+
+export type PreviewSubscriptions<Model = unknown, Message = unknown> =
+  | Stream.Stream<Message>
+  | PreviewSubscriptionConfig<Model, Message, any>;
+
 export const Preview = {
   module: <Module extends PreviewModule>(module: Module): Module => module,
   preview: <Model, Message>(preview: Preview<Model, Message>): Preview<Model, Message> => preview,
@@ -63,7 +76,7 @@ export type Preview<Model = unknown, Message = unknown> = Readonly<{
   init?: (controls: PreviewControlValues) => Model;
   update?: (model: Model, message: Message) => Model | readonly [Model, ReadonlyArray<unknown>];
   view: ((controls: PreviewControlValues) => Html) | ((model: Model, controls: PreviewControlValues) => Html);
-  subscriptions?: (context: Readonly<{ model: Model; controls: PreviewControlValues }>) => Stream.Stream<Message>;
+  subscriptions?: (context: Readonly<{ model: Model; controls: PreviewControlValues }>) => PreviewSubscriptions<Model, Message>;
   routing?: Readonly<{
     onUrlRequest?: (request: typeof Runtime.UrlRequest.Type) => Message;
   }>;
@@ -85,6 +98,11 @@ export type LoadedPreviewModule = PreviewModule &
 
 const isPreviewModule = (value: unknown): value is PreviewModule =>
   typeof value === "object" && value !== null && "title" in value && "previews" in value;
+
+const isPreviewSubscriptionConfig = <Model, Message>(
+  value: PreviewSubscriptions<Model, Message>,
+): value is PreviewSubscriptionConfig<Model, Message, unknown> =>
+  typeof value === "object" && value !== null && "modelToDependencies" in value && "dependenciesToStream" in value;
 
 const previewModuleFromExport = (value: unknown): PreviewModule | undefined => {
   if (isPreviewModule(value)) {
@@ -517,6 +535,8 @@ const SubscriptionDeps = Schema.Struct({
     previewIndex: Schema.Number,
     model: Schema.Any,
     controls: Schema.Any,
+    previewSubscriptions: Schema.Any,
+    previewSubscriptionDependencies: Schema.Any,
   }),
 });
 
@@ -743,14 +763,32 @@ const themePlaygroundStyle = (model: Model): Record<string, string> => {
     "--space-list-item-y": `${0.25 * spacing}rem`,
     "--font-size-xs": `${0.75 * scale}rem`,
     "--font-size-sm": `${0.875 * scale}rem`,
+    "--font-size-md": `${1 * scale}rem`,
+    "--font-size-lg": `${1.125 * scale}rem`,
     "--font-size-xl": `${1.25 * scale}rem`,
     "--font-size-2xl": `${1.5 * scale}rem`,
     "--font-size-3xl": `${1.875 * scale}rem`,
+    "--text-xs": `${0.75 * scale}rem`,
+    "--text-sm": `${0.875 * scale}rem`,
+    "--text-base": `${1 * scale}rem`,
+    "--text-lg": `${1.125 * scale}rem`,
+    "--text-xl": `${1.25 * scale}rem`,
+    "--text-2xl": `${1.5 * scale}rem`,
+    "--text-3xl": `${1.875 * scale}rem`,
     "--line-height-xs": `${1 * scale}rem`,
     "--line-height-sm": `${1.5 * scale}rem`,
+    "--line-height-base": `${1.5 * scale}rem`,
+    "--line-height-lg": `${1.75 * scale}rem`,
     "--line-height-xl": `${1.75 * scale}rem`,
     "--line-height-2xl": `${2 * scale}rem`,
     "--line-height-3xl": `${2.25 * scale}rem`,
+    "--text-xs--line-height": `${1 * scale}rem`,
+    "--text-sm--line-height": `${1.5 * scale}rem`,
+    "--text-base--line-height": `${1.5 * scale}rem`,
+    "--text-lg--line-height": `${1.75 * scale}rem`,
+    "--text-xl--line-height": `${1.75 * scale}rem`,
+    "--text-2xl--line-height": `${2 * scale}rem`,
+    "--text-3xl--line-height": `${2.25 * scale}rem`,
     "--size-control-md": `${2 * scale}rem`,
   };
 };
@@ -1453,21 +1491,43 @@ export const runPreviewApp = (config: PreviewAppConfig): void => {
         const selectedModule = config.modules[model.selectedModuleIndex] ?? config.modules[0];
         const selectedPreview = selectedModule?.previews[model.selectedPreviewIndex] ?? selectedModule?.previews[0];
         const controls = selectedPreview ? controlValuesForPreview(model, selectedPreview) : {};
+        const previewModel = selectedPreview ? getPreviewModel(model, selectedPreview, controls) : undefined;
+        const previewSubscriptions = selectedPreview?.subscriptions?.({ model: previewModel, controls });
 
         return {
           moduleIndex: model.selectedModuleIndex,
           previewIndex: model.selectedPreviewIndex,
-          model: selectedPreview ? getPreviewModel(model, selectedPreview, controls) : undefined,
+          model: previewModel,
           controls,
+          previewSubscriptions,
+          previewSubscriptionDependencies:
+            previewSubscriptions && isPreviewSubscriptionConfig(previewSubscriptions)
+              ? previewSubscriptions.modelToDependencies({ model: previewModel, controls })
+              : undefined,
         };
       },
-      dependenciesToStream: ({ moduleIndex, previewIndex, model, controls }) => {
+      equivalence: Equivalence.make((a, b) => {
+        if (a.moduleIndex !== b.moduleIndex || a.previewIndex !== b.previewIndex) return false;
+        const aSubscriptions = a.previewSubscriptions;
+        const bSubscriptions = b.previewSubscriptions;
+        if (!aSubscriptions || !bSubscriptions) return aSubscriptions === bSubscriptions;
+        if (!isPreviewSubscriptionConfig(aSubscriptions) || !isPreviewSubscriptionConfig(bSubscriptions)) return false;
+        return (aSubscriptions.equivalence ?? Equivalence.make((left, right) => left === right))(
+          a.previewSubscriptionDependencies,
+          b.previewSubscriptionDependencies,
+        );
+      }),
+      dependenciesToStream: ({ moduleIndex, previewIndex, model, controls, previewSubscriptions }, readDependencies) => {
         const selectedModule = config.modules[moduleIndex] ?? config.modules[0];
         const selectedPreview = selectedModule?.previews[previewIndex] ?? selectedModule?.previews[0];
+        const subscriptions = previewSubscriptions ?? selectedPreview?.subscriptions?.({ model, controls });
 
-        return selectedPreview?.subscriptions
-          ? selectedPreview.subscriptions({ model, controls: controls as PreviewControlValues })
-          : Stream.empty;
+        if (!subscriptions) return Stream.empty;
+        if (!isPreviewSubscriptionConfig(subscriptions)) return subscriptions;
+        return subscriptions.dependenciesToStream(subscriptions.modelToDependencies({ model, controls }), () => {
+          const dependencies = readDependencies();
+          return dependencies.previewSubscriptionDependencies;
+        });
       },
     },
   });

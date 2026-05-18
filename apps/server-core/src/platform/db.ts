@@ -5,12 +5,16 @@ import { defineRelations } from "drizzle-orm/relations";
 import * as authTables from "../module/auth/auth.table";
 import * as orgTables from "../module/org/org.table";
 import * as projectTables from "../module/project/project.table";
+import * as syncTables from "../module/sync/sync.table";
+import * as taskTables from "../module/task/task.table";
 import * as todoTables from "../module/todo/todo.table";
 
 export const schema = {
   ...authTables,
   ...orgTables,
   ...projectTables,
+  ...syncTables,
+  ...taskTables,
   ...todoTables,
 };
 

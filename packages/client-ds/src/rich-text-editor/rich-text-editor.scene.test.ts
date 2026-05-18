@@ -192,6 +192,19 @@ test("code block enter inserts a newline inside the code block", () => {
   expect(richTextEditorPlainText(nextModel)).toBe("const value = 1\n");
 });
 
+test("code block trailing newline renders a caret placeholder on the next line", () => {
+  Scene.scene(
+    { update, view },
+    Scene.with(
+      afterMessages(initRichTextEditor("con"), [
+        SelectedRichTextEditorSlashCommand({ value: "code-block" }),
+        InsertedRichTextEditorText({ value: "\n" }),
+      ]),
+    ),
+    Scene.expect(Scene.selector('pre code [data-rte-placeholder="true"][data-rte-start="4"]')).toExist(),
+  );
+});
+
 test("command enter exits a code block", () => {
   const model = afterMessages(initRichTextEditor("const value = 1"), [
     SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" }),
@@ -217,6 +230,14 @@ test("code block renders a language selector", () => {
       ]),
     ),
     Scene.expect(Scene.role("combobox")).toExist(),
+  );
+});
+
+test("empty code block renders its caret placeholder inside code", () => {
+  Scene.scene(
+    { update, view },
+    Scene.with(afterMessages(initRichTextEditor(""), [SelectedRichTextEditorSlashCommand({ value: "code-block" })])),
+    Scene.expect(Scene.selector('pre code [data-rte-placeholder="true"][data-rte-start="0"]')).toExist(),
   );
 });
 
@@ -279,6 +300,31 @@ test("highlighted code tokens keep rich text selection offsets", () => {
     Scene.expect(Scene.selector('code [data-rte-start="5"]')).toExist(),
     Scene.expect(Scene.selector('code [data-rte-start="6"]')).toExist(),
     Scene.expect(Scene.selector('code [data-rte-start="11"]')).toExist(),
+  );
+});
+
+test("highlighted code block trailing newline renders a caret placeholder on the next line", () => {
+  const model = updateRichTextEditor(
+    afterMessages(initRichTextEditor("const value = 1"), [
+      SelectedRichTextEditorSlashCommand({ value: "code-block-typescript" }),
+      InsertedRichTextEditorText({ value: "\n" }),
+    ]),
+    HighlightedRichTextCodeBlocks({
+      highlights: [
+        {
+          blockIndex: 0,
+          text: "const value = 1\n",
+          language: "typescript",
+          lines: [[{ content: "const", lightColor: "#ff0000", darkColor: "#880000" }, { content: " value = 1" }], []],
+        },
+      ],
+    }),
+  );
+
+  Scene.scene(
+    { update, view },
+    Scene.with(model),
+    Scene.expect(Scene.selector('pre code [data-rte-placeholder="true"][data-rte-start="16"]')).toExist(),
   );
 });
 

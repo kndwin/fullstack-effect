@@ -51,24 +51,33 @@ Avoid these in DS views:
 - Solid `bg-primary` for selected listbox/menu rows by default. Use subtle selected states (`bg-accent`) unless the component is an action button or strong selected card.
 - Non-semantic dark mode classes in component views. Theme switching should come from semantic tokens and preview/app theme scopes.
 
+## Spacing Tokens
+
+- Use spacing tokens from `theme.css`: `--space-1` through `--space-6`, plus semantic tokens like `--space-card`, `--space-panel`, `--space-control-x`, `--space-control-y`, `--space-list-item-x`, and `--space-list-item-y`.
+- Prefer client-ds components such as `Button`, `Input`, `Card`, `Fieldset`, `Listbox`, and `Dialog` before hand-rolling controls in app modules.
+- In class strings, use token-backed arbitrary values: `gap-[var(--space-3)]`, `p-[var(--space-card)]`, `px-[var(--space-control-x)]`.
+- Font sizes should also be token-backed. Prefer client-ds typography defaults or Tailwind text utilities that resolve to themed `--text-*` tokens; use `text-[length:var(--font-size-sm)]` when defining DS internals that must explicitly scale.
+- Avoid raw Tailwind spacing utilities in app views and previews: `gap-4`, `p-5`, `px-3`, `py-2`, `m-0`, and similar.
+- Only use raw spacing utilities inside client-ds internals when defining the tokenized component itself or when no semantic token exists yet.
+
 ## Class Patterns
 
 Base interactive control shape:
 
 ```ts
-"inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-disabled:pointer-events-none data-disabled:opacity-50";
+"inline-flex h-[var(--size-control-md)] items-center justify-center rounded-md border border-input bg-background px-[var(--space-control-x)] py-[var(--space-control-y)] text-sm font-medium shadow-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-disabled:pointer-events-none data-disabled:opacity-50";
 ```
 
 Floating panel shape:
 
 ```ts
-"z-50 rounded-lg border border-border bg-popover p-4 text-popover-foreground shadow-lg outline-none";
+"z-50 rounded-lg border border-border bg-popover p-[var(--space-panel)] text-popover-foreground shadow-lg outline-none";
 ```
 
 Subtle selectable row shape:
 
 ```ts
-"rounded-sm px-2 py-1.5 text-sm outline-none data-active:bg-accent data-active:text-accent-foreground data-selected:bg-accent data-selected:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50";
+"rounded-sm px-[var(--space-list-item-x)] py-[var(--space-list-item-y)] text-sm outline-none data-active:bg-accent data-active:text-accent-foreground data-selected:bg-accent data-selected:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50";
 ```
 
 Card/surface shape:

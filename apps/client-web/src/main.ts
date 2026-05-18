@@ -18,7 +18,7 @@ const program = Runtime.makeProgram({
     onUrlRequest: (request) => ClickedLink({ request }),
     onUrlChange: (url: Url) => onUrlChange(url),
   },
-  devTools: { Message: AppMessage, banner: "QaveAI Todo" },
+  devTools: { Message: AppMessage, banner: "QaveAI Sync" },
 });
 
 Runtime.run(program);

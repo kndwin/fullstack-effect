@@ -7,9 +7,7 @@
   ],
   "type": "module",
   "scripts": {
-    "dev:client": "bun run --cwd apps/client-web dev",
-    "preview:client": "bun run --cwd apps/client-web preview",
-    "dev:server": "bun run --cwd apps/server-core dev",
+    "dev": "portless",
     "dev:emulate": "bunx emulate --service google",
     "format": "oxfmt . --write",
     "format:check": "oxfmt . --check",
@@ -27,6 +25,7 @@
     "effect-oxlint": "^0.2.0",
     "oxfmt": "^0.47.0",
     "oxlint": "^1.62.0",
+    "portless": "latest",
     "typescript": "^6.0.3"
   }
 }

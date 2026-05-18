@@ -12,18 +12,18 @@ import { Popover } from "@qaveai/client-ds/popover";
 import { html } from "foldkit/html";
 import type { Document } from "foldkit/html";
 import { authGateView } from "../module/auth/auth.view";
+import { channelListRouter } from "../module/channel/channel.route";
+import { channelListView } from "../module/channel/channel.view";
 import { orgSwitcherView } from "../module/org/org.view";
 import { selectedOrgId } from "../module/org/org.update";
-import { projectListRouter } from "../module/project/project.route";
-import { projectDetailView, projectListView, projectTodoDetailView } from "../module/project/project.view";
-import { todoListRouter } from "../module/todo/todo.route";
-import { todoListView } from "../module/todo/todo.view";
+import { taskListRouter } from "../module/task/task.route";
+import { taskListView } from "../module/task/task.view";
 import type { AppModel } from "./app.model";
 import {
   GotAuthMessage,
+  GotChannelMessage,
   GotOrgMessage,
-  GotProjectMessage,
-  GotTodoMessage,
+  GotTaskMessage,
   GotUserPopoverMessage,
   ToggledSidebarCollapsed,
   type AppMessage,
@@ -31,15 +31,15 @@ import {
 
 const { a, div, nav, p, span, keyed, Class, Href, Style } = html<AppMessage>();
 
-const isTodoRoute = (model: AppModel): boolean =>
+const isChannelRoute = (model: AppModel): boolean =>
   Match.value(model.route).pipe(
-    Match.tags({ TodoList: () => true }),
+    Match.tags({ ChannelList: () => true }),
     Match.orElse(() => false),
   );
 
-const isProjectRoute = (model: AppModel): boolean =>
+const isTaskRoute = (model: AppModel): boolean =>
   Match.value(model.route).pipe(
-    Match.tags({ ProjectList: () => true, ProjectDetail: () => true, ProjectTodoDetail: () => true }),
+    Match.tags({ TaskList: () => true }),
     Match.orElse(() => false),
   );
 
@@ -126,8 +126,8 @@ const sidebarView = (model: AppModel) =>
             label: "›",
             className: "static mx-auto size-7 shadow-none",
           }),
-          desktopNavItem(todoListRouter(), isTodoRoute(model), "T", "Todos", true),
-          desktopNavItem(projectListRouter(), isProjectRoute(model), "P", "Projects", true),
+          desktopNavItem(channelListRouter(), isChannelRoute(model), "C", "Channels", true),
+          desktopNavItem(taskListRouter(), isTaskRoute(model), "T", "Tasks", true),
           div([Class("mt-auto")], [userPopover(model, true)]),
         ],
       })
@@ -140,8 +140,8 @@ const sidebarView = (model: AppModel) =>
               div(
                 [Class("grid gap-0.5")],
                 [
-                  p([Class("m-0 text-sm font-semibold leading-none")], ["Todo RPC"]),
-                  p([Class("m-0 text-xs text-muted-foreground")], ["Playground"]),
+                  p([Class("m-0 text-sm font-semibold leading-none")], ["Sync App"]),
+                  p([Class("m-0 text-xs text-muted-foreground")], ["Channels and tasks"]),
                 ],
               ),
               AppShellTrigger<AppMessage>({
@@ -158,8 +158,8 @@ const sidebarView = (model: AppModel) =>
                 [Class("m-0 px-2 pb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground")],
                 ["Application"],
               ),
-              desktopNavItem(todoListRouter(), isTodoRoute(model), "T", "Todos", false),
-              desktopNavItem(projectListRouter(), isProjectRoute(model), "P", "Projects", false),
+              desktopNavItem(channelListRouter(), isChannelRoute(model), "C", "Channels", false),
+              desktopNavItem(taskListRouter(), isTaskRoute(model), "T", "Tasks", false),
             ],
           ),
           div([Class("border-t border-border p-3")], [userPopover(model, false)]),
@@ -167,7 +167,7 @@ const sidebarView = (model: AppModel) =>
       });
 
 export const view = (model: AppModel): Document => ({
-  title: `${model.route._tag} - Todo RPC Playground`,
+  title: `${model.route._tag} - Sync App`,
   body: AppShell<AppMessage>({
     className: "min-h-screen rounded-none border-0",
     attributes: [Style(shellGridStyle(model))],
@@ -182,8 +182,8 @@ export const view = (model: AppModel): Document => ({
               div(
                 [Class("mb-3 grid gap-0.5")],
                 [
-                  p([Class("m-0 text-sm font-semibold leading-none")], ["Todo RPC Playground"]),
-                  p([Class("m-0 text-xs text-muted-foreground")], ["Foldkit client shell"]),
+                  p([Class("m-0 text-sm font-semibold leading-none")], ["Sync App"]),
+                  p([Class("m-0 text-xs text-muted-foreground")], ["Channels and tasks"]),
                 ],
               ),
               nav(
@@ -191,21 +191,21 @@ export const view = (model: AppModel): Document => ({
                 [
                   a(
                     [
-                      Href(todoListRouter()),
+                      Href(channelListRouter()),
                       Class(
-                        `rounded-md px-3 py-1.5 font-medium text-foreground hover:bg-background ${isTodoRoute(model) ? "bg-background shadow-sm" : ""}`,
+                        `rounded-md px-3 py-1.5 font-medium text-foreground hover:bg-background ${isChannelRoute(model) ? "bg-background shadow-sm" : ""}`,
                       ),
                     ],
-                    ["Todos"],
+                    ["Channels"],
                   ),
                   a(
                     [
-                      Href(projectListRouter()),
+                      Href(taskListRouter()),
                       Class(
-                        `rounded-md px-3 py-1.5 font-medium text-foreground hover:bg-background ${isProjectRoute(model) ? "bg-background shadow-sm" : ""}`,
+                        `rounded-md px-3 py-1.5 font-medium text-foreground hover:bg-background ${isTaskRoute(model) ? "bg-background shadow-sm" : ""}`,
                       ),
                     ],
-                    ["Projects"],
+                    ["Tasks"],
                   ),
                 ],
               ),
@@ -221,12 +221,12 @@ export const view = (model: AppModel): Document => ({
                     children: [
                       CardTitle<AppMessage>({
                         className: "m-0 text-3xl font-semibold tracking-tight sm:text-4xl",
-                        children: ["Todo RPC Playground"],
+                        children: ["Sync App"],
                       }),
                       CardDescription<AppMessage>({
                         className: "m-0 max-w-2xl text-sm leading-6 text-muted-foreground",
                         children: [
-                          "Foldkit drives state. Effect RPC crosses the wire. Drizzle models the SQL on the server.",
+                          "Foldkit drives state. Effect RPC crosses the wire. Channels and tasks share the sync foundation.",
                         ],
                       }),
                     ],
@@ -246,27 +246,28 @@ export const view = (model: AppModel): Document => ({
                                 [
                                   Match.value(model.route).pipe(
                                     Match.tagsExhaustive({
-                                      TodoList: () =>
-                                        todoListView(model.todo, (message) => GotTodoMessage({ message })),
-                                      ProjectList: () => {
+                                      ChannelList: () =>
+                                        channelListView(model.channel, {
+                                          tenantId: selectedOrgId(model.org) ?? model.channel.tenantId,
+                                          userId: "user_dev",
+                                          toParentMessage: (message) => GotChannelMessage({ message }),
+                                        }),
+                                      TaskList: () => {
                                         const orgId = selectedOrgId(model.org);
                                         return orgId
-                                          ? projectListView(model.project, orgId, (message) =>
-                                              GotProjectMessage({ message }),
+                                          ? taskListView(
+                                              { ...model.task, tenantId: orgId },
+                                              {
+                                                tenantId: orgId,
+                                                userId: "user_dev",
+                                                toParentMessage: (message) => GotTaskMessage({ message }),
+                                              },
                                             )
                                           : p(
                                               [Class("text-sm text-destructive")],
-                                              ["Create an org before creating projects."],
+                                              ["Create an org before creating tasks."],
                                             );
                                       },
-                                      ProjectDetail: ({ projectId }) =>
-                                        projectDetailView(model.project, model.todo, projectId, (message) =>
-                                          GotTodoMessage({ message }),
-                                        ),
-                                      ProjectTodoDetail: ({ projectId, todoId }) =>
-                                        projectTodoDetailView(model.project, model.todo, projectId, todoId, (message) =>
-                                          GotTodoMessage({ message }),
-                                        ),
                                       NotFound: ({ path }) =>
                                         p([Class("text-sm text-destructive")], [`No route matches ${path}.`]),
                                     }),

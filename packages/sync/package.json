@@ -1,0 +1,31 @@
+{
+  "name": "@qaveai/sync",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./shared/tenant-context.schema": "./src/shared/tenant-context.schema.ts",
+    "./shared/sync-visibility.schema": "./src/shared/sync-visibility.schema.ts",
+    "./shared/sync-event.schema": "./src/shared/sync-event.schema.ts",
+    "./shared/client-mutation.schema": "./src/shared/client-mutation.schema.ts",
+    "./shared/pending-mutation.schema": "./src/shared/pending-mutation.schema.ts",
+    "./shared/sync-error.schema": "./src/shared/sync-error.schema.ts",
+    "./server/sync.service.interface": "./src/server/sync.service.interface.ts",
+    "./server/visibility.resolver.interface": "./src/server/visibility.resolver.interface.ts",
+    "./server/visibility.resolver.implement.allow-tenant": "./src/server/visibility.resolver.implement.allow-tenant.ts",
+    "./server/sync.service.implement.memory": "./src/server/sync.service.implement.memory.ts",
+    "./server/sync.service.implement.sql": "./src/server/sync.service.implement.sql.ts",
+    "./server/sync.stream.interface": "./src/server/sync.stream.interface.ts",
+    "./client/sync-cursor.store": "./src/client/sync-cursor.store.ts",
+    "./client/local-storage.cursor.store": "./src/client/local-storage.cursor.store.ts",
+    "./client/outbox.store": "./src/client/outbox.store.ts",
+    "./client/event.router": "./src/client/event.router.ts",
+    "./client/sync-client": "./src/client/sync-client.ts",
+    "./client/projection": "./src/client/projection.ts"
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "effect": "4.0.0-beta.59"
+  }
+}

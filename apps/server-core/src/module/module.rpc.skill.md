@@ -1,22 +1,23 @@
 ---
 name: rpc
-description: House rules for server RPC implementation files (*.rpc.impl.ts). Use when binding shared RPC contracts to server services.
+description: House rules for server RPC implementation files (*.rpc.implement.ts). Use when binding shared RPC contracts to server services.
 license: Apache-2.0
 metadata:
   scope: apps/server-core
-  prefix: ".rpc.impl.ts"
+  prefix: ".rpc.implement.ts"
 ---
 
-# `*.rpc.impl.ts` - RPC Handlers
+# `*.rpc.implement.ts` - RPC Handlers
 
-RPC impl files are transport bindings. The shared contract lives in `packages/shared/src/module/<feature>/<feature>.rpc.ts`; the server impl binds that contract to the module service.
+RPC implement files are transport bindings. The shared contract lives in `packages/shared/src/module/<feature>/<feature>.rpc.interface.ts`; the server implementation binds that contract to the module service.
 
 ## Canonical Shape
 
 ```ts
-import { WidgetRpcs } from "@qaveai/shared/module/widget/widget.rpc";
+import { WidgetRpcs } from "@qaveai/shared/module/widget/widget.rpc.interface";
 import { Effect, Layer, Stream } from "effect";
-import { WidgetService, WidgetServiceLive } from "./widget.service";
+import { WidgetService } from "./widget.service.interface";
+import { WidgetServiceLive } from "./widget.service.implement";
 
 export const WidgetRpcLive = WidgetRpcs.toLayer(
   Effect.gen(function* () {
@@ -32,7 +33,7 @@ export const WidgetRpcLive = WidgetRpcs.toLayer(
 
 ## Do
 
-- Import shared RPC groups from `@qaveai/shared/module/<feature>/<feature>.rpc`.
+- Import shared RPC groups from `@qaveai/shared/module/<feature>/<feature>.rpc.interface`.
 - Depend on `<Name>Service`, not repos or tables.
 - Surface only declared domain errors from the shared RPC contract.
 - Defect infrastructure errors such as `EffectDrizzleQueryError` with `Effect.die`.

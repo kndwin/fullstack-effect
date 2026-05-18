@@ -5,8 +5,6 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { createServer } from "vite";
 
-const defaultPort = 6006;
-
 type Options = Readonly<{
   config: string;
   port: number;
@@ -23,6 +21,8 @@ const parsePort = (value: string): number => {
   validatePort(port);
   return port;
 };
+
+const defaultPort = process.env.PORT === undefined ? 6006 : parsePort(process.env.PORT);
 
 const parseArgs = (argv: ReadonlyArray<string>) => {
   const args = argv.slice(2);

@@ -86,7 +86,7 @@ const previewConfig = (previewConfigModule?.default ?? {}) as PreviewConfig;
 
 export default defineConfig({
   root: new URL(".", import.meta.url).pathname,
-  plugins: [previewPlugin(previewConfig, previewRoot), tailwindcss(), foldkit({ devToolsMcpPort: 9987 })],
+  plugins: [previewPlugin(previewConfig, previewRoot), tailwindcss(), foldkit({ devToolsMcpPort: previewConfig.devToolsMcpPort ?? 9987 })],
   server: {
     port: 6006,
     fs: {
